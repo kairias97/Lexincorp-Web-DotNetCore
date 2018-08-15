@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <meta name="viewport" content="width=device-width">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" asp-href-include="/css/*.css" />
+    <link rel="stylesheet"
+          asp-href-include="/lib/bootstrap/dist/**/*.min.css"
+          asp-href-exclude="**/*-reboot*,**/*-grid" />
+
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" role="navigation">
+        <a class="navbar-brand" href="#">Lexincorp Nicaragua</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Usuarios
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownUsuarios">
+                        <a class="dropdown-item" href="#">Crear</a>
+                        <a class="dropdown-item" href="#">Administrar</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Clientes
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownClientes">
+                        <a class="dropdown-item" asp-controller="Client" asp-action="New">Agregar nuevo</a>
+                        <a class="dropdown-item" href="#">Administrar</a>
+                        <a class="dropdown-item" href="#">Registrar nuevo Retainer</a>
+                        <a class="dropdown-item" href="#">Registrar nuevo Paquete</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownServicios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Servicios
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownServicios">
+                        <a class="dropdown-item" href="#">Crear categoría</a>
+                        <a class="dropdown-item" href="#">Administrar categorías</a>
+                        <a class="dropdown-item" href="#">Crear servicio</a>
+                        <a class="dropdown-item" href="#">Administrar servicios</a>
+                        <a class="dropdown-item" href="#">Crear ítems</a>
+                        <a class="dropdown-item" href="#">Administrar ítems</a>
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownGastos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Gastos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownGastos">
+                        <a class="dropdown-item" href="#">Crear nuevo tipo de gasto</a>
+                        <a class="dropdown-item" href="#">Administrar tipos de gastos</a>
+                    </div>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+ 
+    <div class="container">
+
+        @RenderBody()
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

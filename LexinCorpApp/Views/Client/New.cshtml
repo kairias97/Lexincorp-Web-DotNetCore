@@ -1,0 +1,54 @@
+﻿@model NewClientViewModel
+    <h4>Agregar nuevo cliente</h4>
+    <form asp-action="Add" asp-controller="Client">
+        <div class="form-row">
+
+            <div class="form-group col-md-6">
+                <label for="Client_Email">Nombre del cliente:</label>
+                <input type="email" asp-for="@Model.Client.Name" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Client_Email">Contacto (Atención a):</label>
+                <input type="text" asp-for="@Model.Client.Contact" class="form-control" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        @*<div class="form-group">
+            <label for="Client_Email">Contacto (Atención a):</label>
+            <input type="email" asp-for="@Model.Client.Email" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_ContactEmail">Email del contacto:</label>
+            <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_ContactPhone">Teléfono del contacto:</label>
+            <input type="email" asp-for="@Model.Client.ContactPhone" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_ContactJobName">Cargo del contacto:</label>
+            <input type="email" asp-for="@Model.Client.ContactJobName" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_Address">Dirección:</label>
+            <input type="email" asp-for="@Model.Client.Address" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_ContactPhone">Referido por:</label>
+            <input type="email" asp-for="@Model.Client.ContactPhone" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_TributaryId">Identificación tributaria:</label>
+            <input type="email" asp-for="@Model.Client.TributaryId" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_PhoneNumber">Teléfono del cliente:</label>
+            <input type="email" asp-for="@Model.Client.PhoneNumber" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Client_Fax">Fax del cliente:</label>
+            <input type="email" asp-for="@Model.Client.Fax" class="form-control">
+        </div>*@
+
+    </form>
+    
