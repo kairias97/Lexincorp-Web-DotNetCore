@@ -17,14 +17,18 @@ namespace LexincorpApp.Models
         public DbSet<ClientType> ClientTypes { get; set; }
         public DbSet<DocumentDeliveryMethod> DocumentDeliveryMethods { get; set; }
         public DbSet<Client> Clients { get; set; }
-
-        
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Attorney> Attorneys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>()
                 .HasAlternateKey(c => c.TributaryId)
                 .HasName("UQ_Client_TributaryId");
+            modelBuilder.Entity<User>()
+                .HasAlternateKey(u => u.Username)
+                .HasName("UQ_User_Username");
         }
     }
 }
