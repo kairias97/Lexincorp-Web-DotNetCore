@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace LexinCorpApp
+namespace LexincorpApp
 {
     public class Program
     {
@@ -19,6 +19,8 @@ namespace LexinCorpApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseDefaultServiceProvider(options => 
+                    options.ValidateScopes = false);
     }
 }

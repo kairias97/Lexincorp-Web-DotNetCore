@@ -1,56 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LexinCorpApp.Models
+namespace LexincorpApp.Models
 {
     public class Client
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage ="El nombre del cliente es requerido")]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage ="El nombre del contacto es requerido")]
         public string Contact { get; set; }
-        [Required]
+        [EmailAddress(ErrorMessage ="El formato de correo es inválido")]
         public string ContactEmail { get; set; }
-        [Required]
+        [Phone(ErrorMessage = "El formato de teléfono del contacto es inválido")]
         public string ContactPhone { get; set; }
-        [Required]
         public string ContactJobName { get; set; }
-        [Required]
         public string Address { get; set; }
-        [Required]
         public string ReferredBy { get; set; }
-        [Required]
+        [Required(ErrorMessage ="La identificación tributaria del cliente es requerida")]
         public string TributaryId { get; set; }
-        [Required]
         [Phone]
         public string PhoneNumber { get; set; }
         public string Fax { get; set; }
+        [Phone]
         public string CellPhoneNumber { get; set; }
+        [EmailAddress(ErrorMessage ="El formato de correo del cliente es inválido")]
         public string Email { get; set; }
-        [Required]
         public int ClientTypeId { get; set; }
         public virtual ClientType ClientType { get; set; }
-        [Required]
         //Facturación en
         public bool BillingInEnglish { get; set; }
-        [Required]
         //Facturar en
         public int BillingModeId { get; set; }
         public virtual BillingMode BillingMode {get; set;}
-        [Required]
         //Enviar documentos vía
         public int DocumentDeliveryMethodId { get; set; }
         public virtual DocumentDeliveryMethod DocumentDeliveryMethod { get; set; }
         //For client origin
-        [Required]
         public bool IsInternational { get; set; }
-        [Required]
         public bool PayTaxes { get; set; }
-        [Required]
         public decimal? FixedCostPerHour { get; set; }
     }
 }

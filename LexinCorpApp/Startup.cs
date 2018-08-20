@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LexinCorpApp.Models;
+using LexincorpApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LexinCorpApp
+namespace LexincorpApp
 {
     public class Startup
     {
@@ -26,9 +26,18 @@ namespace LexinCorpApp
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration["Data:LexincorpAdmin:ConnectionString"]);
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration["Data:LexincorpAdmin:ConnectionString"]);
             });
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+            services.AddTransient<IClientTypeRepository, EFClientTypeRepository>();
+            services.AddTransient<IBillingModeRepository, EFBillingModeRepository>();
+            services.AddTransient<IDocumentDeliveryMethodRepository, EFDocumentDeliveryMethodRepository>();
+            services.AddTransient<IClientRepository, EFClientRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +49,7 @@ namespace LexinCorpApp
             }
             app.UseStatusCodePages();
             app.UseStaticFiles();
+            
             app.UseMvc(routes => 
             {
                 routes.MapRoute(
@@ -52,7 +62,7 @@ namespace LexinCorpApp
                     template: "{controller}/{action}/{id?}"
                     );
             });
-            
+            SeedData.EnsurePropulated(app);
 
         }
     }

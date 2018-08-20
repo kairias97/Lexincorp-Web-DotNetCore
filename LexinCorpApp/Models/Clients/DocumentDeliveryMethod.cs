@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LexinCorpApp.Models
+namespace LexincorpApp.Models
 {
     public class DocumentDeliveryMethod
     {

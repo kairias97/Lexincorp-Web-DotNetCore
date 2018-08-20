@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace LexincorpApp.Models
 {
-    public class BillingMode
+    public interface IClientTypeRepository
     {
-        public int BillingModeId { get; set; }
-        public string Name { get; set; }
+        
+        IQueryable<ClientType> ClientTypes { get;}
     }
 }

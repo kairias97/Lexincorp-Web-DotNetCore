@@ -9,6 +9,8 @@
     <link rel="stylesheet"
           asp-href-include="/lib/bootstrap/dist/**/*.min.css"
           asp-href-exclude="**/*-reboot*,**/*-grid" />
+    <script type="text/javascript" src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
 
 
 </head>
@@ -35,7 +37,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownClientes">
                         <a class="dropdown-item" asp-controller="Client" asp-action="New">Agregar nuevo</a>
-                        <a class="dropdown-item" href="#">Administrar</a>
+                        <a class="dropdown-item" asp-controller="Client" asp-action="Admin">Administrar</a>
                         <a class="dropdown-item" href="#">Registrar nuevo Retainer</a>
                         <a class="dropdown-item" href="#">Registrar nuevo Paquete</a>
                     </div>
