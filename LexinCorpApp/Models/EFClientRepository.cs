@@ -21,6 +21,9 @@ namespace LexincorpApp.Models
             if (client.Id == 0)
             {
                 context.Clients.Add(client);
+            } else
+            {
+                context.Entry(client).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             context.SaveChanges();
         }
@@ -28,6 +31,11 @@ namespace LexincorpApp.Models
         public bool VerifyTributaryId(string tributaryId)
         {
             return !context.Clients.Any(c => c.TributaryId == tributaryId);
+        }
+
+        public bool VerifyTributaryIdOwnership(int clientId, string tributaryId)
+        {
+            return context.Clients.Any(c => c.Id == clientId && c.TributaryId == tributaryId);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace LexincorpApp.Models
         IQueryable<Client> Clients { get; }
         void Save(Client client);
         bool VerifyTributaryId(string tributaryId);
+        bool VerifyTributaryIdOwnership(int clientId, string tributaryId);
     }
 }
