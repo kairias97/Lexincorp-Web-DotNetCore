@@ -1,0 +1,53 @@
+﻿@model AttorneyListViewModel
+<h2>Administración de usuarios</h2>
+<form asp-action="Admin" method="get" asp-controller="Client">
+    <label>Filtro de búsqueda:</label>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del abogado, correo electrónico o cédula" aria-label="Nombre del usuario, correo electrónico o cédula" aria-describedby="button-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
+        </div>
+    </div>
+    <br />
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre del abogado</th>
+                    <th>Cédula</th>
+                    <th>Nombre de usuario</th>
+                    <th>Tipo de usuario</th>
+                    <th>Código de notario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attorney in Model.Attorneys)
+                {
+                    <tr>
+                        <td>@attorney.Name</td>
+                        <td>@attorney.IdentificationNumber</td>
+                        <td>@attorney.User.Username</td>
+                        @if (attorney.User.IsAdmin)
+                        {
+                            @:<td>Administrador</td>
+                        }
+                        else
+                        {
+                            @:<td>Regular</td>
+                        }
+                        <td>@attorney.NotaryCode</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
+         page-class="btn" page-class-normal="btn-outline-info"
+         page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
+         page-number-url-key="pageNumber"
+         class="btn-group float-right m-1">
+
+    </div>
+</form>

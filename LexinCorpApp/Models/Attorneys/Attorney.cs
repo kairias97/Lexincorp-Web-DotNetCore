@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace LexincorpApp.Models
 {
@@ -36,5 +37,22 @@ namespace LexincorpApp.Models
         public virtual Department Department { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El formato del email es invalido")]
+        public string Email { get; set; }
+
+        /*protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            Attorney attorney = (Attorney)validationContext.ObjectInstance;
+            if(attorney.User.Username.Contains(" "))
+            {
+                return new ValidationResult(GetErrorMessage());
+            }
+            return ValidationResult.Success;
+        }
+        private string GetErrorMessage()
+        {
+            return $"El nombre de usuario ingresado contiene espacios en blanco, favor revisar.";
+        }*/
     }
 }
