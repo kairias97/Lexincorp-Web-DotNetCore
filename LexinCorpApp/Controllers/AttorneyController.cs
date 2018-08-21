@@ -42,7 +42,7 @@ namespace LexincorpApp.Controllers
         {
             if (!_usersRepo.VerifyUsername(attorney.User.Username))
             {
-                ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe está registrado");
+                ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }
             if(attorney.User.Username.Contains(" "))
             {
@@ -83,6 +83,47 @@ namespace LexincorpApp.Controllers
                 TotalItems = _attorneysRepo.Attorneys.Count(filterFunction)
             };
             return View(viewModel);
+        }
+        public IActionResult Edit(int id, bool? updated)
+        {
+            ViewBag.UpdatedAttorney = updated??false;
+            NewAttorneyViewModel viewModel = new NewAttorneyViewModel
+            {
+                Departments = _departmentsRepo.Departments.ToList()
+            };
+            viewModel.Attorney = _attorneysRepo.Attorneys.Where(a => a.AttorneyId == id).Include(a => a.User).Include(a => a.Department).First();
+            if (viewModel.Attorney == null)
+            {
+                return NotFound();
+            }
+            return View(viewModel);
+        }
+        [HttpPost]
+        public IActionResult Edit(Attorney attorney)
+        {
+            if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.AttorneyId,attorney.UserId))
+            {
+                ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
+            }
+            if (attorney.User.Username.Contains(" "))
+            {
+                ModelState.AddModelError("whiteSpacesUsername", "El nombre de usuario contiene espacios en blanco, favor no incluir espacios en blanco");
+            }
+            if (!ModelState.IsValid)
+            {
+                NewAttorneyViewModel viewModel = new NewAttorneyViewModel
+                {
+                    Departments = _departmentsRepo.Departments.ToList()
+                };
+                viewModel.Attorney = attorney;
+                return View(viewModel);
+            }
+            else
+            {
+                _attorneysRepo.Save(attorney);
+                _usersRepo.Save(attorney.User);
+                return RedirectToAction("Edit", new { updated = true, id = attorney.AttorneyId });
+            }
         }
     }
 }

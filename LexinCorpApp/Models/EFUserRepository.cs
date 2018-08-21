@@ -21,7 +21,8 @@ namespace LexincorpApp.Models
                 context.Users.Add(user);
             } else
             {
-                context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                //context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Attach(user).Context.Entry(user).Property(x => x.IsAdmin).IsModified = true;
             }
             context.SaveChanges();
         }
@@ -29,6 +30,11 @@ namespace LexincorpApp.Models
         public bool VerifyUsername(string username)
         {
             return !context.Users.Any(u => u.Username == username);
+        }
+
+        public bool VerifyAttorneyIDAndUsername(int attorneyID, int userID)
+        {
+            return context.Users.Any(u => u.Attorney.AttorneyId == attorneyID && u.UserId == userID);
         }
     }
 }

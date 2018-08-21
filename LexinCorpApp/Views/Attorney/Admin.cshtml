@@ -18,26 +18,30 @@
                     <th>Nombre de usuario</th>
                     <th>Tipo de usuario</th>
                     <th>Código de notario</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var attorney in Model.Attorneys)
                 {
-                    <tr>
-                        <td>@attorney.Name</td>
-                        <td>@attorney.IdentificationNumber</td>
-                        <td>@attorney.User.Username</td>
-                        @if (attorney.User.IsAdmin)
-                        {
-                            @:<td>Administrador</td>
-                        }
-                        else
-                        {
-                            @:<td>Regular</td>
-                        }
-                        <td>@attorney.NotaryCode</td>
+                <tr>
+                    <td>@attorney.Name</td>
+                    <td>@attorney.IdentificationNumber</td>
+                    <td>@attorney.User.Username</td>
+                    @if (attorney.User.IsAdmin)
+                    {
+                        @:<td>Administrador</td>
+                    }
+                    else
+                    {
+                        @:<td>Regular</td>
+                    }
+                    <td>@attorney.NotaryCode</td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="Attorney" asp-route-id="@attorney.AttorneyId"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                    </td>
 
-                    </tr>
+                </tr>
                 }
             </tbody>
         </table>
