@@ -9,9 +9,10 @@ namespace LexincorpApp.Models
     public class Attorney
     {
         public int AttorneyId { get; set; }
-        [Required]
+        [Required(ErrorMessage ="El nombre del abogado es requerido")]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage = "La fecha de admisión es requerida")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime AdmissionDate { get; set; }
         [Required]
         public string Address { get; set; }

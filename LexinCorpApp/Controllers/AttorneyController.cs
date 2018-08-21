@@ -31,10 +31,10 @@ namespace LexincorpApp.Controllers
         {
             NewAttorneyViewModel viewModel = new NewAttorneyViewModel
             {
-                Attorney = new Attorney(),
+                Attorney = new Attorney { User = new User() },
                 Departments = _departmentsRepo.Departments.ToList()
             };
-            ViewBag.AddedUser = added ?? false;
+            ViewBag.AddedAttorney = added ?? false;
             return View(viewModel);
         }
         [HttpPost]
@@ -51,7 +51,7 @@ namespace LexincorpApp.Controllers
                     Departments = _departmentsRepo.Departments.ToList()
                 };
                 viewModel.Attorney = attorney;
-                return View(attorney);
+                return View(viewModel);
             }
             else
             {

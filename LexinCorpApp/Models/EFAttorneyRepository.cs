@@ -18,6 +18,9 @@ namespace LexincorpApp.Models
             if (attorney.AttorneyId == 0)
             {
                 context.Attorneys.Add(attorney);
+            } else
+            {
+                context.Entry(attorney).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             context.SaveChanges();
         }

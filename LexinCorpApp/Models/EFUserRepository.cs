@@ -19,6 +19,9 @@ namespace LexincorpApp.Models
             if (user.UserId == 0)
             {
                 context.Users.Add(user);
+            } else
+            {
+                context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             context.SaveChanges();
         }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180820204705_Users")]
-    partial class Users
+    [Migration("20180821014705_UsersAttorneysDepartments")]
+    partial class UsersAttorneysDepartments
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace LexincorpApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("LexinCorpApp.Models.Attorney", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Attorney", b =>
                 {
                     b.Property<int>("AttorneyId")
                         .ValueGeneratedOnAdd()
@@ -67,7 +67,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Attorneys");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.BillingMode", b =>
+            modelBuilder.Entity("LexincorpApp.Models.BillingMode", b =>
                 {
                     b.Property<int>("BillingModeId")
                         .ValueGeneratedOnAdd()
@@ -80,14 +80,13 @@ namespace LexincorpApp.Migrations
                     b.ToTable("BillingModes");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.Client", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .IsRequired();
+                    b.Property<string>("Address");
 
                     b.Property<bool>("BillingInEnglish");
 
@@ -100,14 +99,11 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Contact")
                         .IsRequired();
 
-                    b.Property<string>("ContactEmail")
-                        .IsRequired();
+                    b.Property<string>("ContactEmail");
 
-                    b.Property<string>("ContactJobName")
-                        .IsRequired();
+                    b.Property<string>("ContactJobName");
 
-                    b.Property<string>("ContactPhone")
-                        .IsRequired();
+                    b.Property<string>("ContactPhone");
 
                     b.Property<int>("DocumentDeliveryMethodId");
 
@@ -115,8 +111,7 @@ namespace LexincorpApp.Migrations
 
                     b.Property<string>("Fax");
 
-                    b.Property<decimal?>("FixedCostPerHour")
-                        .IsRequired();
+                    b.Property<decimal?>("FixedCostPerHour");
 
                     b.Property<bool>("IsInternational");
 
@@ -125,11 +120,9 @@ namespace LexincorpApp.Migrations
 
                     b.Property<bool>("PayTaxes");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired();
+                    b.Property<string>("PhoneNumber");
 
-                    b.Property<string>("ReferredBy")
-                        .IsRequired();
+                    b.Property<string>("ReferredBy");
 
                     b.Property<string>("TributaryId")
                         .IsRequired();
@@ -148,7 +141,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.ClientType", b =>
+            modelBuilder.Entity("LexincorpApp.Models.ClientType", b =>
                 {
                     b.Property<int>("ClientTypeId")
                         .ValueGeneratedOnAdd()
@@ -161,7 +154,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("ClientTypes");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.Department", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Department", b =>
                 {
                     b.Property<int>("DepartmentId")
                         .ValueGeneratedOnAdd()
@@ -175,7 +168,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.DocumentDeliveryMethod", b =>
+            modelBuilder.Entity("LexincorpApp.Models.DocumentDeliveryMethod", b =>
                 {
                     b.Property<int>("DocumentDeliveryMethodId")
                         .ValueGeneratedOnAdd()
@@ -188,7 +181,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("DocumentDeliveryMethods");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.User", b =>
+            modelBuilder.Entity("LexincorpApp.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -196,8 +189,7 @@ namespace LexincorpApp.Migrations
 
                     b.Property<bool>("IsAdmin");
 
-                    b.Property<string>("Password")
-                        .IsRequired();
+                    b.Property<string>("Password");
 
                     b.Property<string>("Username")
                         .IsRequired();
@@ -210,32 +202,32 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.Attorney", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Attorney", b =>
                 {
-                    b.HasOne("LexinCorpApp.Models.Department", "Department")
+                    b.HasOne("LexincorpApp.Models.Department", "Department")
                         .WithMany("Attorneys")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("LexinCorpApp.Models.User", "User")
+                    b.HasOne("LexincorpApp.Models.User", "User")
                         .WithOne("Attorney")
-                        .HasForeignKey("LexinCorpApp.Models.Attorney", "UserId")
+                        .HasForeignKey("LexincorpApp.Models.Attorney", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("LexinCorpApp.Models.Client", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Client", b =>
                 {
-                    b.HasOne("LexinCorpApp.Models.BillingMode", "BillingMode")
+                    b.HasOne("LexincorpApp.Models.BillingMode", "BillingMode")
                         .WithMany()
                         .HasForeignKey("BillingModeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("LexinCorpApp.Models.ClientType", "ClientType")
+                    b.HasOne("LexincorpApp.Models.ClientType", "ClientType")
                         .WithMany("Clients")
                         .HasForeignKey("ClientTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("LexinCorpApp.Models.DocumentDeliveryMethod", "DocumentDeliveryMethod")
+                    b.HasOne("LexincorpApp.Models.DocumentDeliveryMethod", "DocumentDeliveryMethod")
                         .WithMany()
                         .HasForeignKey("DocumentDeliveryMethodId")
                         .OnDelete(DeleteBehavior.Cascade);

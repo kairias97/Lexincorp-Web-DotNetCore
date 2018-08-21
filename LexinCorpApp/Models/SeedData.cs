@@ -63,6 +63,7 @@ namespace LexincorpApp.Models
                         new Department{Name="Sector regulado"}
                     }
                 );
+                context.SaveChanges();
             }
         }
     }
