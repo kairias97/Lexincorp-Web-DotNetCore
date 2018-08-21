@@ -53,7 +53,7 @@ namespace LexincorpApp.Controllers
         }
         public ViewResult New(bool? added)
         {
-            NewClientViewModel viewModel = new NewClientViewModel
+            ClientFormViewModel viewModel = new ClientFormViewModel
             {
                 BillingModes = _billingModesRepo.BillingModes.ToList(),
                 ClientTypes = _clientTypesRepo.ClientTypes.ToList(),
@@ -72,7 +72,7 @@ namespace LexincorpApp.Controllers
             }
             if (!ModelState.IsValid)
             {
-                NewClientViewModel viewModel = new NewClientViewModel
+                ClientFormViewModel viewModel = new ClientFormViewModel
                 {
                     BillingModes = _billingModesRepo.BillingModes.ToList(),
                     ClientTypes = _clientTypesRepo.ClientTypes.ToList(),
@@ -89,6 +89,49 @@ namespace LexincorpApp.Controllers
             
         }
 
-        
+        public IActionResult Edit(int id, bool? updated)
+        {
+            ViewBag.UpdatedClient = updated;
+            ClientFormViewModel vm = new ClientFormViewModel
+            {
+                Client = _clientsRepo.Clients
+                    .Where(c => c.Id == id)
+                    .First(),
+                BillingModes = _billingModesRepo.BillingModes.ToList(),
+                ClientTypes = _clientTypesRepo.ClientTypes.ToList(),
+                DocumentDeliveryMethods = _documentDeliveryMethodsRepo.DocumentDeliveryMethods.ToList()
+            };
+            if (vm.Client == null)
+            {
+                return NotFound();
+            }
+            return View(vm);
+        }
+        [HttpPost]
+        public IActionResult Edit(Client client)
+        {
+            if (!_clientsRepo.VerifyTributaryId(client.TributaryId) && !_clientsRepo.VerifyTributaryIdOwnership(client.Id, client.TributaryId))
+            {
+                ModelState.AddModelError("uqTributaryId", "La identificación tributaria especificada ya está asociada a otro cliente registrado");
+            }
+            if (!ModelState.IsValid)
+            {
+                ClientFormViewModel viewModel = new ClientFormViewModel
+                {
+                    BillingModes = _billingModesRepo.BillingModes.ToList(),
+                    ClientTypes = _clientTypesRepo.ClientTypes.ToList(),
+                    DocumentDeliveryMethods = _documentDeliveryMethodsRepo.DocumentDeliveryMethods.ToList()
+                };
+                viewModel.Client = client;
+                return View(viewModel);
+            }
+            else
+            {
+                _clientsRepo.Save(client);
+                return RedirectToAction("Edit", new { updated = true, id = client.Id });
+            }
+            
+        }
+
     }
 }

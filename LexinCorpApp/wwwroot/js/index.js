@@ -1,8 +1,3 @@
-﻿$(document).ready(function () {
-
-    $("#sidebar").mCustomScrollbar({
-        theme: "minimal"
-    });
-    
-
-});
+﻿$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
