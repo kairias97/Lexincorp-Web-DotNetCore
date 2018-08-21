@@ -1,5 +1,82 @@
 ﻿@model NewAttorneyViewModel
-    <h4>Agregar nuevo usuario</h4>
-    <form asp-action="New" asp-controller="Attorney">
-        
-    </form>
+<h4>Agregar nuevo usuario</h4>
+<br />
+@if (ViewBag.AddedUser ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Usuario registrado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+<form asp-action="New" asp-controller="Attorney">
+    @if(ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.Name">Nombre del nuevo abogado:*</label>
+            <input type="text" asp-for="@Model.Attorney.Name" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.User.Username">Nombre de usuario:*</label>
+            <input type="text" asp-for="@Model.Attorney.User.Username" class="form-control" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.User.IsAdmin">Tipo de usuario:*</label>
+            <select class="form-control" asp-for="@Model.Attorney.User.IsAdmin">
+                <option value="true">Administrador</option>
+                <option value="false">Regular</option>
+            </select>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.AdmissionDate">Fecha de admisión:*</label>
+            <input type="date" asp-for="@Model.Attorney.AdmissionDate" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.Address">Dirección:*</label>
+            <input type="text" asp-for="@Model.Attorney.Address" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.IdentificationNumber">Número de identificación (cédula):*</label>
+            <input type="text" asp-for="@Model.Attorney.IdentificationNumber" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.AssignedPhoneNumber">Número de teléfono asignado:*</label>
+            <input type="number" asp-for="@Model.Attorney.AssignedPhoneNumber" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.PersonalPhoneNumber">Número de teléfono personal:*</label>
+            <input type="number" asp-for="@Model.Attorney.PersonalPhoneNumber" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.EmergencyContact">Contacto de emergencia:*</label>
+            <input type="text" asp-for="@Model.Attorney.EmergencyContact" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.EmergencyContactPhoneNumber">Número de teléfono del contacto de emergencia:*</label>
+            <input type="number" asp-for="@Model.Attorney.EmergencyContactPhoneNumber" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.NotaryCode">Código de notario:*</label>
+            <input type="number" asp-for="@Model.Attorney.NotaryCode" class="form-control" required/>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.DepartmentId">Departamento:*</label>
+            <select class="form-control" asp-for="@Model.Attorney.DepartmentId">
+                @foreach(var o in Model.Departments)
+                {
+                    @:<option value="@o.DepartmentId">@o.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+</form>

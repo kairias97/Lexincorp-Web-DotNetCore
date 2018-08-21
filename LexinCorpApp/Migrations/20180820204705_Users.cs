@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LexinCorpApp.Migrations
+namespace LexincorpApp.Migrations
 {
     public partial class Users : Migration
     {

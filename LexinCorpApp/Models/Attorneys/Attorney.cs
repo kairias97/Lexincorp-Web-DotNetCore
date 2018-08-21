@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace LexinCorpApp.Models
+namespace LexincorpApp.Models
 {
     public class Attorney
     {
