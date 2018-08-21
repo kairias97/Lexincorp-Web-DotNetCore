@@ -10,5 +10,6 @@ namespace LexincorpApp.Models
         IQueryable<User> Users { get; }
         void Save(User user);
         bool VerifyUsername(string username);
+        bool VerifyAttorneyIDAndUsername(int attorneyID, int userID);
     }
 }
