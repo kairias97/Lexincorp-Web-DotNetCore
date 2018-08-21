@@ -37,6 +37,9 @@ namespace LexincorpApp
             services.AddTransient<IBillingModeRepository, EFBillingModeRepository>();
             services.AddTransient<IDocumentDeliveryMethodRepository, EFDocumentDeliveryMethodRepository>();
             services.AddTransient<IClientRepository, EFClientRepository>();
+            services.AddTransient<IDepartmentRepository, EFDepartmentRepository>();
+            services.AddTransient<IUserRepository, EFUserRepository>();
+            services.AddTransient<IAttorneyRepository, EFAttorneyRepository>();
 
         }
 

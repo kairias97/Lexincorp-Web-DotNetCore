@@ -50,7 +50,21 @@ namespace LexincorpApp.Models
                 );
                 context.SaveChanges();
             }
-            
+            if (!context.Departments.Any())
+            {
+                context.Departments.AddRange(
+                    new Department[]
+                    {
+                        new Department{Name="Corporativo"},
+                        new Department{Name="Propiedad intelectual"},
+                        new Department{Name="Contabilidad"},
+                        new Department{Name="Litigio"},
+                        new Department{Name="Fiscal"},
+                        new Department{Name="Sector regulado"}
+                    }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }
