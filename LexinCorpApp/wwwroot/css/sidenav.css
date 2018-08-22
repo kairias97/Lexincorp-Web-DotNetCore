@@ -14,3 +14,14 @@
 .sidebar-li:hover{
     background-color: lightgray;
 }
+
+.transiton-div{
+
+}
+
+.transiton-div .fas {
+    transition: .3s transform ease;
+}
+.transiton-div .collapsed .fas {
+    transform: rotate(90deg);
+}
