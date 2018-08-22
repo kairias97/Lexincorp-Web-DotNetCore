@@ -82,20 +82,43 @@
     <div class="row">
             <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                 <div class="sidebar-sticky">
-                    <ul class="nav flex-column" style="padding-top:15px;">
+                    <ul class="nav flex-column centered" style="padding-top:15px;">
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-muted" href="#">
-                                <i class="fas fa-tachometer-alt"></i>
-                                Dashboard
+                                <i class="fas fa-tachometer-alt fa-fw" aria-hidden="true"></i>&nbsp; Dashboard
                             </a>
                         </li>
                         <li class="nav-item sidebar-li">
-                            <a class="nav-link text-muted" href="#">Link</a>
+                            <a class="nav-link text-muted" href="#">
+                                <i class="fas fa-clipboard fa-fw"></i>&nbsp; Reportes
+                            </a>
                         </li>
                         <li class="nav-item sidebar-li">
-                            <a class="nav-link text-muted" href="#">Link</a>
+                            <a class="nav-link text-muted" href="#">
+                                <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Vacaciones
+                            </a>
                         </li>
                     </ul>
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-black-50">
+                        <span>Actividades</span>
+                        <a class="text-muted" data-toggle="collapse" href="#collapseActivities" role="button" aria-expanded="false" aria-controls="collapseActivities">
+                            <i class="fas fa-arrow-circle-down"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="collapseActivities">
+                        <ul class="nav flex-column" style="padding-top:15px;">
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" href="#">
+                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" href="#">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
+                                </a>
+                            </li>
+                        </ul>
+                    </div>                    
                 </div>
             </nav>
             <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
