@@ -24,5 +24,26 @@ namespace LexincorpApp.Models
             }
             context.SaveChanges();
         }
+
+        public bool VerifyAttorneyIDAndEmailOwnership(int attorneyID, string email)
+        {
+            return context.Attorneys.Any(a => a.AttorneyId == attorneyID && a.Email == email);
+        }
+
+        public bool verifyAttorneyIDAndNotaryCodeOwnership(int attorneyID, string notaryCode)
+        {
+            return context.Attorneys.Any(a => a.AttorneyId == attorneyID && a.NotaryCode == notaryCode);
+        }
+
+        public bool VerifyEmail(string email)
+        {
+            return !context.Attorneys.Any(a => a.Email == email);
+        }
+
+        public bool VerifyNotaryCode(string notaryCode)
+        {
+            return !context.Attorneys.Any(a => a.NotaryCode == notaryCode);
+            
+        }
     }
 }

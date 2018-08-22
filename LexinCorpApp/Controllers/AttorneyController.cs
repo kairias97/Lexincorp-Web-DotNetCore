@@ -44,10 +44,10 @@ namespace LexincorpApp.Controllers
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }
-            if(attorney.User.Username.Contains(" "))
-            {
-                ModelState.AddModelError("whiteSpacesUsername", "El nombre de usuario contiene espacios en blanco, favor no incluir espacios en blanco");
-            }
+            //if(attorney.User.Username.Contains(" "))
+            //{
+            //    ModelState.AddModelError("whiteSpacesUsername", "El nombre de usuario contiene espacios en blanco, favor no incluir espacios en blanco");
+            //}
             if (!ModelState.IsValid)
             {
                 NewAttorneyViewModel viewModel = new NewAttorneyViewModel
@@ -105,9 +105,13 @@ namespace LexincorpApp.Controllers
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }
-            if (attorney.User.Username.Contains(" "))
+            if (!_attorneysRepo.VerifyEmail(attorney.Email) && !_attorneysRepo.VerifyAttorneyIDAndEmailOwnership(attorney.AttorneyId, attorney.Email))
             {
-                ModelState.AddModelError("whiteSpacesUsername", "El nombre de usuario contiene espacios en blanco, favor no incluir espacios en blanco");
+                ModelState.AddModelError("uqEmail", "El correo ingresado ya existe");
+            }
+            if (!_attorneysRepo.VerifyNotaryCode(attorney.NotaryCode) && !_attorneysRepo.verifyAttorneyIDAndNotaryCodeOwnership(attorney.AttorneyId, attorney.NotaryCode))
+            {
+                ModelState.AddModelError("uqNotaryCode", "El código de notario ingresado ya existe");
             }
             if (!ModelState.IsValid)
             {
