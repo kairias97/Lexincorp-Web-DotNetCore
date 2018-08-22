@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180821230658_Expenses")]
+    partial class Expenses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,12 +63,6 @@ namespace LexincorpApp.Migrations
                     b.HasKey("AttorneyId");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("NotaryCode")
-                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -188,7 +184,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("DocumentDeliveryMethods");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.Expense", b =>
+            modelBuilder.Entity("LexincorpApp.Models.Expenses.Expense", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -198,11 +194,9 @@ namespace LexincorpApp.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<string>("EnglishDescription")
-                        .IsRequired();
+                    b.Property<string>("EnglishDescription");
 
-                    b.Property<string>("SpanishDescription")
-                        .IsRequired();
+                    b.Property<string>("SpanishDescription");
 
                     b.HasKey("Id");
 

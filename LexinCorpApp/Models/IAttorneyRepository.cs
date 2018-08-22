@@ -9,5 +9,9 @@ namespace LexincorpApp.Models
     {
         IQueryable<Attorney> Attorneys { get; }
         void Save(Attorney attorney);
+        bool VerifyEmail(string email);
+        bool VerifyNotaryCode(string notaryCode);
+        bool VerifyAttorneyIDAndEmailOwnership(int attorneyID, string email);
+        bool verifyAttorneyIDAndNotaryCodeOwnership(int attorneyID, string notaryCode);
     }
 }

@@ -20,7 +20,7 @@ namespace LexincorpApp.Models
         public DbSet<Department> Departments { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Attorney> Attorneys { get; set; }
-
+        public DbSet<Expense> Expenses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>()
@@ -29,6 +29,12 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<User>()
                 .HasAlternateKey(u => u.Username)
                 .HasName("UQ_User_Username");
+            modelBuilder.Entity<Attorney>()
+                .HasIndex(a => a.Email)
+                .IsUnique();
+            modelBuilder.Entity<Attorney>()
+                .HasIndex(a => a.NotaryCode)
+                .IsUnique();
         }
     }
 }
