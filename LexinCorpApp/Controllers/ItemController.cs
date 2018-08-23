@@ -8,69 +8,74 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LexincorpApp.Controllers
 {
-    public class ExpenseController : Controller
+    public class ItemController : Controller
     {
-        private readonly IExpenseRepository _expensesRepo;
+        private readonly IItemRepository _itemsRepo;
         public int PageSize = 5;
-        
-        public ExpenseController(IExpenseRepository expensesRepository)
+        public ItemController(IItemRepository itemsRepository)
         {
-            this._expensesRepo = expensesRepository;
+            _itemsRepo = itemsRepository;
         }
+
         public IActionResult New(bool? added)
         {
-            ViewBag.AddedExpense = added;
-            return View(new Expense());
+            ViewBag.AddedItem = added;
+            return View(new Item());
         }
         [HttpPost]
-        public IActionResult New(Expense expense)
+        public IActionResult New(Item item)
         {
             if (!ModelState.IsValid)
             {
-                return View(expense);
+                return View(item);
             }
-            _expensesRepo.Save(expense);
+            _itemsRepo.Save(item);
             return RedirectToAction(nameof(New), new { added = true });
+
         }
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.Contains(filter) || e.EnglishDescription.Contains(filter);
-            ExpenseListViewModel vm = new ExpenseListViewModel
+            Func<Item, bool> filterFunction = i => String.IsNullOrEmpty(filter) || i.SpanishDescription.Contains(filter) || i.EnglishDescription.Contains(filter);
+            ItemListViewModel vm = new ItemListViewModel
             {
+
                 CurrentFilter = filter,
-                Expenses = _expensesRepo.Expenses.Where(filterFunction)
-                    .OrderBy(e => e.Id)
+                Items = _itemsRepo.Items
+                    .Where(filterFunction)
+                    .OrderBy(i => i.Id)
                     .Skip((pageNumber - 1) * PageSize)
                     .Take(PageSize),
                 PagingInfo = new PagingInfo
                 {
                     CurrentPage = pageNumber,
-                    ItemsPerPage = this.PageSize,
-                    TotalItems = _expensesRepo.Expenses.Count(filterFunction)
+                    ItemsPerPage = PageSize,
+                    TotalItems = _itemsRepo.Items.Count(filterFunction)
                 }
             };
             return View(vm);
         }
+
         public IActionResult Edit(int id, bool? updated)
         {
-            ViewBag.UpdatedExpense = updated;
-            Expense expense = _expensesRepo.Expenses.Where(e => e.Id == id).FirstOrDefault();
-            if (expense == null)
+            ViewBag.UpdatedItem = updated;
+            Item item = _itemsRepo.Items.Where(i => i.Id == id).FirstOrDefault();
+            if (item == null)
             {
                 return NotFound();
             }
-            return View(expense);
+            return View(item);
         }
         [HttpPost]
-        public IActionResult Edit(Expense expense)
+        public IActionResult Edit(Item item)
         {
             if (!ModelState.IsValid)
             {
-                return View(expense);
+                return View(item);
             }
-            _expensesRepo.Save(expense);
+            _itemsRepo.Save(item);
             return RedirectToAction(nameof(Edit), new { updated = true });
         }
+
     }
 }
