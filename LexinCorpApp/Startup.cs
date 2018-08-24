@@ -41,6 +41,7 @@ namespace LexincorpApp
             services.AddTransient<IUserRepository, EFUserRepository>();
             services.AddTransient<IAttorneyRepository, EFAttorneyRepository>();
             services.AddTransient<IExpenseRepository, EFExpenseRepository>();
+            services.AddTransient<IVacationsMovementRepository, EFVacationsMovementRepository>();
 
         }
 
