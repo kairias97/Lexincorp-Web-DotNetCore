@@ -40,6 +40,7 @@ namespace LexincorpApp.Models
         [Required(ErrorMessage = "El email es requerido")]
         [EmailAddress(ErrorMessage = "El formato del email es invalido")]
         public string Email { get; set; }
+        public decimal VacationCount { get; set; }
 
         /*protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

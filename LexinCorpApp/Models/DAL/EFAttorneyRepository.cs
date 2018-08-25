@@ -20,7 +20,10 @@ namespace LexincorpApp.Models
                 context.Attorneys.Add(attorney);
             } else
             {
-                context.Entry(attorney).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Update(attorney);
+                context.Entry<Attorney>(attorney).Property(x => x.VacationCount).IsModified = false;
+                //context.Attach(attorney).Context.Entry(attorney).Property(x => x.VacationCount).IsModified = false;
+                //context.Entry(attorney).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             context.SaveChanges();
         }

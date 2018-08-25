@@ -36,5 +36,10 @@ namespace LexincorpApp.Models
         {
             return context.Users.Any(u => u.Attorney.AttorneyId == attorneyID && u.UserId == userID);
         }
+
+        public User GetUserByUsername(string username)
+        {
+            return context.Users.Where(x => x.Username == username).FirstOrDefault();
+        }
     }
 }

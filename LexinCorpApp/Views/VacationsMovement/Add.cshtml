@@ -1,0 +1,72 @@
+﻿@model NewVacationsMovementViewModel
+<h4>Agregar nuevo movimiento de vacaciones</h4>
+<br />
+@if (ViewBag.AddedMovement ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Movimiento registrado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+@if (ViewBag.DaysInvalid ?? false)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <p>Los días ingresados para solicitar vacaciones, son mayores a los que tiene disponibles!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+    <form asp-action="Add" asp-controller="VacationsMovement" method="post">
+        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @Html.ValidationSummary(false, "Errores de validación:")
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="@Model.VacationsMovement.Reason">Razón del movimiento:*</label>
+                <input type="text" asp-for="@Model.VacationsMovement.Reason" class="form-control" required/>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="@Model.VacationsMovement.Quantity">Cantidad de días:*</label>
+                <input type="number" asp-for="@Model.VacationsMovement.Quantity" class="form-control" required/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="@Model.VacationsMovement.MovementType">Tipo de movimiento:*</label>
+                <select class="form-control" asp-for="@Model.VacationsMovement.MovementType" asp-items="Html.GetEnumSelectList<VacationMovementEnum>()" required>
+                </select>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="@Model.VacationsMovement.AttorneyId">Abogado:*</label>
+                <select class="form-control" asp-for="@Model.VacationsMovement.AttorneyId" required>
+                    @foreach(var o in Model.Attorneys)
+                    {
+                        if(Model.VacationsMovement.AttorneyId == o.AttorneyId)
+                        {
+                            @:<option value="@o.AttorneyId" selected>@o.Name</option>
+                        }
+                        else
+                        {
+                            @:<option value="@o.AttorneyId">@o.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <button type="submit" class="btn btn-primary">Realizar</button>
+            </div>
+        </div>
+    </form>

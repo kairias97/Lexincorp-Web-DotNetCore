@@ -6,6 +6,7 @@ using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
 namespace LexincorpApp.Controllers
 {
     public class ClientController : Controller
@@ -27,10 +28,12 @@ namespace LexincorpApp.Controllers
             this._billingModesRepo = _billingModesRepo;
             this._documentDeliveryMethodsRepo = _documentDeliveryMethodsRepo;
         }
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
+        [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.Contact.Contains(filter) || c.ContactEmail == filter;
@@ -51,6 +54,7 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
+        [Authorize]
         public ViewResult New(bool? added)
         {
             ClientFormViewModel viewModel = new ClientFormViewModel
@@ -63,6 +67,7 @@ namespace LexincorpApp.Controllers
             ViewBag.AddedClient = added ?? false;
             return View(viewModel);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult New(Client client)
         {
@@ -88,7 +93,7 @@ namespace LexincorpApp.Controllers
 
             
         }
-
+        [Authorize]
         public IActionResult Edit(int id, bool? updated)
         {
             ViewBag.UpdatedClient = updated;
@@ -107,6 +112,7 @@ namespace LexincorpApp.Controllers
             }
             return View(vm);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult Edit(Client client)
         {

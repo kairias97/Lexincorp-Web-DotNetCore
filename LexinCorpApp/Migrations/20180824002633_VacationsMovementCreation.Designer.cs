@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180824002633_VacationsMovementCreation")]
+    partial class VacationsMovementCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,27 +215,6 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Expenses");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<string>("EnglishDescription")
-                        .IsRequired();
-
-                    b.Property<string>("SpanishDescription")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Items");
-                });
-
             modelBuilder.Entity("LexincorpApp.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -261,8 +242,6 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AttorneyId");
-
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
@@ -276,9 +255,7 @@ namespace LexincorpApp.Migrations
 
                     b.HasKey("VacationsMovementId");
 
-                    b.HasIndex("AttorneyId");
-
-                    b.ToTable("VacationsMovements");
+                    b.ToTable("VacationsMovement");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.Attorney", b =>
@@ -309,14 +286,6 @@ namespace LexincorpApp.Migrations
                     b.HasOne("LexincorpApp.Models.DocumentDeliveryMethod", "DocumentDeliveryMethod")
                         .WithMany()
                         .HasForeignKey("DocumentDeliveryMethodId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.VacationsMovement", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.Attorney", "Attorney")
-                        .WithMany()
-                        .HasForeignKey("AttorneyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

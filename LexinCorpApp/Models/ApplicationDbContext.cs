@@ -21,6 +21,7 @@ namespace LexincorpApp.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Attorney> Attorneys { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<VacationsMovement> VacationsMovements { get; set; }
         public DbSet<Item> Items { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,12 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Attorney>()
                 .HasIndex(a => a.NotaryCode)
                 .IsUnique();
+            modelBuilder.Entity<Attorney>()
+                .Property(a => a.VacationCount)
+                .HasDefaultValue(0);
+            modelBuilder.Entity<VacationsMovement>()
+                .Property(v => v.Created)
+                .HasDefaultValueSql("getdate()");
         }
     }
 }

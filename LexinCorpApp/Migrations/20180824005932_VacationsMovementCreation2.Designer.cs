@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180824005932_VacationsMovementCreation2")]
+    partial class VacationsMovementCreation2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,27 +215,6 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Expenses");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<string>("EnglishDescription")
-                        .IsRequired();
-
-                    b.Property<string>("SpanishDescription")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Items");
-                });
-
             modelBuilder.Entity("LexincorpApp.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -278,7 +259,7 @@ namespace LexincorpApp.Migrations
 
                     b.HasIndex("AttorneyId");
 
-                    b.ToTable("VacationsMovements");
+                    b.ToTable("VacationsMovement");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.Attorney", b =>
