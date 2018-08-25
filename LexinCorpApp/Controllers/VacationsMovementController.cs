@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
 using System.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,10 +21,12 @@ namespace LexincorpApp.Controllers
             this._attorneysRepo = _attorneysRepo;
             this._vacationsMovementRepo = _vacationsMovementRepo;
         }
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
+        [Authorize]
         public IActionResult Add(bool? added)
         {
             NewVacationsMovementViewModel viewModel = new NewVacationsMovementViewModel
@@ -35,6 +38,7 @@ namespace LexincorpApp.Controllers
             ViewBag.DaysInvalid = false;
             return View(viewModel);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult Add(VacationsMovement vacationsMovement)
         {

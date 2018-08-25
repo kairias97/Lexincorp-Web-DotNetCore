@@ -11,6 +11,6 @@ namespace LexincorpApp.Models
         void Save(User user);
         bool VerifyUsername(string username);
         bool VerifyAttorneyIDAndUsername(int attorneyID, int userID);
-
+        User GetUserByUsername(string username);
     }
 }

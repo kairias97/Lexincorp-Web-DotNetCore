@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
 using System.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,17 +17,24 @@ namespace LexincorpApp.Controllers
         private readonly IDepartmentRepository _departmentsRepo;
         private readonly IAttorneyRepository _attorneysRepo;
         private readonly IUserRepository _usersRepo;
+        private readonly IGuidManager _guidManager;
+        private readonly ICryptoManager _cryptoManager;
         public int PageSize = 5;
-        public AttorneyController(IDepartmentRepository _departmentsRepo, IAttorneyRepository _attorneysRepo, IUserRepository _usersRepo)
+        public AttorneyController(IDepartmentRepository _departmentsRepo, IAttorneyRepository _attorneysRepo, IUserRepository _usersRepo,
+            IGuidManager _guidManager, ICryptoManager _cryptoManager)
         {
             this._departmentsRepo = _departmentsRepo;
             this._attorneysRepo = _attorneysRepo;
             this._usersRepo = _usersRepo;
+            this._guidManager = _guidManager;
+            this._cryptoManager = _cryptoManager;
         }
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
+        [Authorize]
         public ViewResult New(bool? added)
         {
             NewAttorneyViewModel viewModel = new NewAttorneyViewModel
@@ -37,6 +45,7 @@ namespace LexincorpApp.Controllers
             ViewBag.AddedAttorney = added ?? false;
             return View(viewModel);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult New(Attorney attorney)
         {
@@ -59,10 +68,16 @@ namespace LexincorpApp.Controllers
             }
             else
             {
+                string guidGenerated = _guidManager.GenerateGuid();
+                string passwordDefault = guidGenerated.Substring(guidGenerated.Length - 12, 12);
+                //falta enviar password sin hash al user
+                string passwordHashed = _cryptoManager.HashString(passwordDefault);
+                attorney.User.Password = passwordHashed;
                 _attorneysRepo.Save(attorney);
                 return RedirectToAction("New", new { added = true });
             }
         }
+        [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.IdentificationNumber.Contains(filter);
@@ -84,6 +99,7 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
+        [Authorize]
         public IActionResult Edit(int id, bool? updated)
         {
             ViewBag.UpdatedAttorney = updated??false;
@@ -98,6 +114,7 @@ namespace LexincorpApp.Controllers
             }
             return View(viewModel);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult Edit(Attorney attorney)
         {

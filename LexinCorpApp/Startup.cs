@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace LexincorpApp
 {
@@ -42,6 +43,9 @@ namespace LexincorpApp
             services.AddTransient<IAttorneyRepository, EFAttorneyRepository>();
             services.AddTransient<IExpenseRepository, EFExpenseRepository>();
             services.AddTransient<IVacationsMovementRepository, EFVacationsMovementRepository>();
+            services.AddSingleton<ICryptoManager, BCryptManager>();
+            services.AddSingleton<IGuidManager, BGuidManager>();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
         }
 
@@ -54,7 +58,9 @@ namespace LexincorpApp
             }
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            
+
+            app.UseAuthentication();
+
             app.UseMvc(routes => 
             {
                 routes.MapRoute(
@@ -68,7 +74,6 @@ namespace LexincorpApp
                     );
             });
             SeedData.EnsurePropulated(app);
-
         }
     }
 }

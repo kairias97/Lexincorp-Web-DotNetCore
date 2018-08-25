@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LexincorpApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LexincorpApp.Controllers
 {
@@ -15,11 +16,13 @@ namespace LexincorpApp.Controllers
         {
             this._expensesRepo = expensesRepository;
         }
+        [Authorize]
         public IActionResult New(bool? added)
         {
             ViewBag.AddedExpense = added;
             return View(new Expense());
         }
+        [Authorize]
         [HttpPost]
         public IActionResult New(Expense expense)
         {
