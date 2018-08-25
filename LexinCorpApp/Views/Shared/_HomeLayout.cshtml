@@ -55,8 +55,7 @@
                         Servicios
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownServicios">
-                        <a class="dropdown-item" href="#">Crear categoría</a>
-                        <a class="dropdown-item" href="#">Administrar categorías</a>
+
                         <a class="dropdown-item" href="#">Crear servicio</a>
                         <a class="dropdown-item" href="#">Administrar servicios</a>
                         <a class="dropdown-item" href="#">Crear ítems</a>
@@ -71,7 +70,16 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownGastos">
                         <a class="dropdown-item" asp-controller="Expense" asp-action="New">Crear nuevo tipo de gasto</a>
-                        <a class="dropdown-item" href="#">Administrar tipos de gastos</a>
+                        <a class="dropdown-item" asp-controller="Expense" asp-action="Admin">Administrar tipos de gastos</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownItems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ítems
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownItems">
+                        <a class="dropdown-item" asp-controller="Item" asp-action="New">Crear nuevo ítem</a>
+                        <a class="dropdown-item" asp-controller="Item" asp-action="Admin">Administrar</a>
                     </div>
                 </li>
 

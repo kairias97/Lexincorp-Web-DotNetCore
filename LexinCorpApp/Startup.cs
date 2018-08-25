@@ -46,6 +46,7 @@ namespace LexincorpApp
             services.AddSingleton<ICryptoManager, BCryptManager>();
             services.AddSingleton<IGuidManager, BGuidManager>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddTransient<IItemRepository, EFItemRepository>();
 
         }
 
