@@ -23,6 +23,7 @@ namespace LexincorpApp.Models
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<VacationsMovement> VacationsMovements { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<VacationsRequest> VacationsRequests { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>()
@@ -41,6 +42,9 @@ namespace LexincorpApp.Models
                 .Property(a => a.VacationCount)
                 .HasDefaultValue(0);
             modelBuilder.Entity<VacationsMovement>()
+                .Property(v => v.Created)
+                .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<VacationsRequest>()
                 .Property(v => v.Created)
                 .HasDefaultValueSql("getdate()");
         }
