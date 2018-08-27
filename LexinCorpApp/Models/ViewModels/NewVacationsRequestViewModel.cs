@@ -9,5 +9,6 @@ namespace LexincorpApp.Models
     {
         public decimal DaysAvailable { get; set; }
         public VacationsRequest VacationsRequest { get; set; }
+        public string AttorneyName { get; set; }
     }
 }

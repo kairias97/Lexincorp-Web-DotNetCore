@@ -101,11 +101,6 @@
                                 <i class="fas fa-clipboard fa-fw"></i>&nbsp; Reportes
                             </a>
                         </li>
-                        <li class="nav-item sidebar-li">
-                            <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
-                                <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Vacaciones
-                            </a>
-                        </li>
                     </ul>
                     <div class="transiton-div">
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="true" aria-controls="collapseVacations">
@@ -123,18 +118,18 @@
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
+                                    <i class="fas fa-bookmark fa-fw"></i>&nbsp; Administración de solicitudes
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="New">
-                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Agregar solicitud
+                                    <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Agregar solicitud
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="History">
                                     <i class="fas fa-archive fa-fw"></i>&nbsp; Historial de solicitudes
-                                </a>
-                            </li>
-                            <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
-                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Administración de solicitudes
                                 </a>
                             </li>
                         </ul>
