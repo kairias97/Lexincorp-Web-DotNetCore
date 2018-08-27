@@ -131,5 +131,39 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
+        [Authorize]
+        public IActionResult Edit(int id, bool? updated)
+        {
+            ViewBag.UpdatedVacationRequest = updated ?? false;
+            NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel();
+            var vacations = _vacationsRequestRepo.VacationsRequests().Include(v => v.Attorney).Where(v => v.VacationsRequestId == id).FirstOrDefault();
+            viewModel.VacationsRequest = vacations;
+            viewModel.AttorneyName = vacations.Attorney.Name;
+            if (viewModel.VacationsRequest == null)
+            {
+                return NotFound();
+            }
+            return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult Edit(VacationsRequest vacationsRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                var attorney = _attorneysRepo.Attorneys.Where(a => a.AttorneyId == vacationsRequest.AttorneyId).FirstOrDefault();
+                NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel()
+                {
+                    VacationsRequest = vacationsRequest,
+                    AttorneyName = attorney.Name
+                };
+                return View(viewModel);
+            }
+            else
+            {
+                _vacationsRequestRepo.Update(vacationsRequest);
+                return RedirectToAction("Admin");
+            }
+        }
     }
 }

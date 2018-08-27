@@ -14,6 +14,7 @@ namespace LexincorpApp.Models
         [Required(ErrorMessage = "Se debe indicar una razón para la solicitud")]
         public string Reason { get; set; }
         public bool? IsApproved { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime Created { get; set; }
         [Required(ErrorMessage = "Se debe indicar una fecha de inicio para la solicitud")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
