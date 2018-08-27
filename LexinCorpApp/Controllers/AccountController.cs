@@ -70,7 +70,7 @@ namespace LexincorpApp.Controllers
                         //bool saved = await SaveCookies(user);
                         var claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, user.Username),
+                            new Claim(ClaimTypes.Name, user.UserId.ToString()),
                             new Claim(ClaimTypes.Role, user.IsAdmin ? "Administrador" : "Regular")
                         };
 

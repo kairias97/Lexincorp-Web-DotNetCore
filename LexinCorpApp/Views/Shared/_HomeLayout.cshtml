@@ -108,6 +108,38 @@
                         </li>
                     </ul>
                     <div class="transiton-div">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="true" aria-controls="collapseVacations">
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-black-50">
+                                Vacaciones
+                                <i class="fas fa-arrow-circle-down"></i>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="collapse show" id="collapseVacations">
+                        <ul class="nav flex-column">
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
+                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar movimiento
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="New">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Agregar solicitud
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="History">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial de solicitudes
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Administración de solicitudes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="transiton-div">
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="true" aria-controls="collapseActivities">
                             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-black-50">
                                 Actividades
