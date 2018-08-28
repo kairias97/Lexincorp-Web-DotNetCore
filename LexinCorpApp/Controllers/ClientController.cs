@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 namespace LexincorpApp.Controllers
 {

@@ -16,7 +16,8 @@ namespace LexincorpApp.Models
                 .GetRequiredService<ApplicationDbContext>();
             var crypto = app.ApplicationServices.GetRequiredService<ICryptoManager>();
             var guid = app.ApplicationServices.GetRequiredService<IGuidManager>();
-            context.Database.Migrate();
+            
+            //context.Database.Migrate();
            if (!context.ClientTypes.Any())
            {
                 context.ClientTypes.AddRange(new ClientType[] 

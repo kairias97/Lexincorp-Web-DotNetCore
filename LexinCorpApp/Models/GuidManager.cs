@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LexincorpApp.Models
 {
-    public class BGuidManager: IGuidManager
+    public class GuidManager: IGuidManager
     {
         public string GenerateGuid()
         {
