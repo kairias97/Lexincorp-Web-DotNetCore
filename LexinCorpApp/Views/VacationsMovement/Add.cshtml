@@ -44,11 +44,14 @@
         <div class="form-row">
             <div class="form-group col-md-5">
                 <label for="@Model.VacationsMovement.MovementType">Tipo de movimiento:*</label>
-                <select class="form-control" asp-for="@Model.VacationsMovement.MovementType" asp-items="Html.GetEnumSelectList<VacationMovementEnum>()" required>
+
+                <select class="form-control" asp-for="@Model.VacationsMovement.MovementType" asp-items="@Html.GetEnumSelectList<VacationMovementEnum>()"  required>
+                   
                 </select>
             </div>
             <div class="form-group col-md-5">
                 <label for="@Model.VacationsMovement.AttorneyId">Abogado:*</label>
+
                 <select class="form-control" asp-for="@Model.VacationsMovement.AttorneyId" required>
                     @foreach(var o in Model.Attorneys)
                     {

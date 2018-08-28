@@ -14,6 +14,8 @@ namespace LexincorpApp.Models
         {
             ApplicationDbContext context = app.ApplicationServices
                 .GetRequiredService<ApplicationDbContext>();
+            var crypto = app.ApplicationServices.GetRequiredService<ICryptoManager>();
+            var guid = app.ApplicationServices.GetRequiredService<IGuidManager>();
             context.Database.Migrate();
            if (!context.ClientTypes.Any())
            {
@@ -63,6 +65,50 @@ namespace LexincorpApp.Models
                         new Department{Name="Sector regulado"}
                     }
                 );
+                context.SaveChanges();
+            }
+
+            if (!context.Retainers.Any())
+            {
+                context.Retainers.AddRange(
+                    new Retainer[]
+                    {
+                        new Retainer{Name="Retainer Representación Legal"},
+                        new Retainer{Name="Retainer Asesoría Legal"},
+                        new Retainer{Name="Retainer Recursos Humanos"},
+                        new Retainer{Name="Retainer Contabilidad"}
+                    }
+                );
+                context.SaveChanges();
+            }
+            if (!context.Users.Any(
+                ))
+            {
+                string generatedGuid = guid.GenerateGuid();
+                string generatedPassword = guid.GenerateGuid().Substring(generatedGuid.Length - 12, 12);
+                string cryptoPassword = crypto.HashString(generatedPassword);
+                User adminUser = new User
+                {
+                    IsAdmin = true,
+                    Username = "webAdmin",
+                    Password = cryptoPassword,
+                    Attorney = new Attorney
+                    {
+                        Address = "-",
+                        AdmissionDate = DateTime.Now,
+                        AssignedPhoneNumber = "-",
+                        DepartmentId = 1,
+                        Email = "-",
+                        EmergencyContact = "-",
+                        EmergencyContactPhoneNumber = "-",
+                        IdentificationNumber = "----",
+                        Name = "Administrador",
+                        NotaryCode = "-",
+                        PersonalPhoneNumber = "-",
+                        VacationCount = 0
+                    }
+                };
+                context.Users.Add(adminUser);
                 context.SaveChanges();
             }
         }

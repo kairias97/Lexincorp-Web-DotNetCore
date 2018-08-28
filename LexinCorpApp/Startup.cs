@@ -19,7 +19,21 @@ namespace LexincorpApp
 
         public Startup(IConfiguration configuration)
         {
+          //  var builder = new ConfigurationBuilder()
+          //.SetBasePath(env.ContentRootPath)
+          //.AddJsonFile("appsettings.json",
+          //             optional: false,
+          //             reloadOnChange: true)
+          //.AddEnvironmentVariables();
+
+          //  if (env.IsDevelopment())
+          //  {
+          //      builder.AddUserSecrets<Startup>();
+          //  }
+
+          //  Configuration = builder.Build();
             this.Configuration = configuration;
+
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -28,7 +42,7 @@ namespace LexincorpApp
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration["Data:LexincorpAdmin:ConnectionString"]);
+                    .UseSqlServer(Configuration["LexincorpAdmin:ConnectionString"]);
             });
             services.AddMvc()
                 .AddJsonOptions(
@@ -48,7 +62,9 @@ namespace LexincorpApp
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddTransient<IItemRepository, EFItemRepository>();
             services.AddTransient<IVacationsRequestRepository, EFVacationsRequestRepository>();
-
+            services.AddTransient<ICategoryRepository, EFCategoryRepository>();
+            services.AddTransient<IServiceRepository, EFServiceRepository>();
+            services.AddTransient<IRetainerRepository, EFRetainerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,7 +79,7 @@ namespace LexincorpApp
 
             app.UseAuthentication();
 
-            app.UseMvc(routes => 
+            app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: null,
