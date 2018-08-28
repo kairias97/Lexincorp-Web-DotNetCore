@@ -9,13 +9,13 @@ namespace LexincorpApp.Models
     public class Service
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El nombre del servicio es requerido")]
         public string Name { get; set;}
-        [Required]
+        [Required(ErrorMessage = "La descripción en inglés para plantilla es requerido")]
         public string EnglishDescription { get; set; }
-        [Required]
+        [Required(ErrorMessage = "La descripción en español para plantilla es requerido")]
         public string SpanishDescription { get; set; }
-        [Required]
+        [Required(ErrorMessage = "La categoría es requerida")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
         public bool? Active { get; set; }

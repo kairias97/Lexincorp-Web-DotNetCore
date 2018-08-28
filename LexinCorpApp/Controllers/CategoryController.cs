@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LexincorpApp.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrador")]
     public class CategoryController : Controller
     {
         private readonly  ICategoryRepository _categoriesRepo;
@@ -16,9 +16,9 @@ namespace LexincorpApp.Controllers
         {
             _categoriesRepo = repo;
         }
-        public IActionResult New(bool? added)
+        public IActionResult New()
         {
-            ViewBag.AddedCategory = ViewData["added"];
+            ViewBag.AddedCategory = TempData["added"];
             return View(new Category());
         }
         [HttpPost]
@@ -29,7 +29,7 @@ namespace LexincorpApp.Controllers
                 return View(category);
             }
             _categoriesRepo.Save(category);
-            ViewData["added"] = true;
+            TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
     }

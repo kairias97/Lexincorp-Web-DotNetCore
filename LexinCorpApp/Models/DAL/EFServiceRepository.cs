@@ -16,6 +16,7 @@ namespace LexincorpApp.Models
 
         public void Save(Service service)
         {
+            
             if (service.Id == 0)
             {
                 context.Services.Add(service);
