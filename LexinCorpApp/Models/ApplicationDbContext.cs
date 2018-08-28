@@ -24,6 +24,9 @@ namespace LexincorpApp.Models
         public DbSet<VacationsMovement> VacationsMovements { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<VacationsRequest> VacationsRequests { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Retainer> Retainers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>()
@@ -47,6 +50,15 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<VacationsRequest>()
                 .Property(v => v.Created)
                 .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Category>()
+                .Property(c => c.Active)
+                .HasDefaultValue(true);
+            modelBuilder.Entity<Service>()
+                .Property(c => c.Active)
+                .HasDefaultValue(true);
+            modelBuilder.Entity<Retainer>()
+                .Property(c => c.Active)
+                .HasDefaultValue(true);
         }
     }
 }
