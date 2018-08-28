@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewData["Title"] = "Add";
+}
+@model NewServiceViewModel
+<h4>Agregar nuevo servicio</h4>
+<br />
+@if (ViewBag.AddedService ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Servicio registrado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
+<form asp-action="New" asp-controller="Service" role="alert">
+    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    {
+        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+        </div>
+    }
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Service_Name">Nombre del servicio*:</label>
+            <input type="text" step="0.01" min="0" class="form-control" asp-for="@Model.Service.Name" />
+        </div>
+        <div class="form-group offset-md-1 col-md-5">
+            <label for="Service_CategoryId">Categoría*:</label>
+            <select class="form-control" asp-for="@Model.Service.CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "Name", Model.Service.CategoryId))" required>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Service_SpanishDescription">Descripción en Español*:</label>
+            <input type="text" class="form-control" asp-for="@Model.Service.SpanishDescription" required />
+        </div>
+        <div class="form-group offset-md-1 col-md-5">
+            <label for="Service_EnglishDescription">Descripción en Inglés*:</label>
+            <input type="text" class="form-control" asp-for="@Model.Service.EnglishDescription" required />
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">Agregar</button>
+
+    <br />
+</form>
+<br />
+
+
