@@ -27,14 +27,14 @@ namespace LexincorpApp.Controllers
             return View();
         }
         [Authorize]
-        public IActionResult Add(bool? added)
+        public IActionResult Add()
         {
             NewVacationsMovementViewModel viewModel = new NewVacationsMovementViewModel
             {
                 Attorneys = _attorneysRepo.Attorneys,
                 VacationsMovement = new VacationsMovement()
             };
-            ViewBag.AddedMovement = added ?? false;
+            ViewBag.AddedMovement = TempData["added"];
             ViewBag.DaysInvalid = false;
             return View(viewModel);
         }
@@ -57,7 +57,8 @@ namespace LexincorpApp.Controllers
                 {
                     _vacationsMovementRepo.Save(vacationsMovement);
                     ViewBag.DaysInvalid = false;
-                    return RedirectToAction("Add", new { added = true });
+                    TempData["added"] = true;
+                    return RedirectToAction("Add");
                 }
                 else
                 {

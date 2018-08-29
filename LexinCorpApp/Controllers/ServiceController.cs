@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ServiceController : Controller
     {
         private readonly IServiceRepository _servicesRepo;

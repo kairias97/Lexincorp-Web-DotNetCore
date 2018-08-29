@@ -10,6 +10,7 @@ using LexincorpApp.Infrastructure;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ExpenseController : Controller
     {
         private readonly IExpenseRepository _expensesRepo;
@@ -20,9 +21,9 @@ namespace LexincorpApp.Controllers
             this._expensesRepo = expensesRepository;
         }
         [Authorize]
-        public IActionResult New(bool? added)
+        public IActionResult New()
         {
-            ViewBag.AddedExpense = added;
+            ViewBag.AddedExpense = TempData["added"];
             return View(new Expense());
         }
         [Authorize]
@@ -56,9 +57,9 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedExpense = updated;
+            ViewBag.UpdatedExpense = TempData["updated"];
             Expense expense = _expensesRepo.Expenses.Where(e => e.Id == id).FirstOrDefault();
             if (expense == null)
             {
@@ -74,7 +75,8 @@ namespace LexincorpApp.Controllers
                 return View(expense);
             }
             _expensesRepo.Save(expense);
-            return RedirectToAction(nameof(Edit), new { updated = true });
+            TempData["updated"] = true;
+            return RedirectToAction(nameof(Edit));
         }
     }
 }

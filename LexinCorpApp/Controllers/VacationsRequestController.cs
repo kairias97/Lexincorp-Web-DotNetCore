@@ -29,7 +29,7 @@ namespace LexincorpApp.Controllers
             return View();
         }
         [Authorize]
-        public IActionResult New(bool? added)
+        public IActionResult New()
         {
             var user = HttpContext.User;
             var id = user.Identity.Name;
@@ -39,7 +39,7 @@ namespace LexincorpApp.Controllers
                 DaysAvailable = attorney.VacationCount,
                 VacationsRequest = new VacationsRequest()
             };
-            ViewBag.AddedRequest = added ?? false;
+            ViewBag.AddedRequest = TempData["added"];
             ViewBag.DaysInvalid = false;
             return View(viewModel);
         }
@@ -70,10 +70,12 @@ namespace LexincorpApp.Controllers
                     //vacationsRequest.AttorneyId = attorney.AttorneyId;
                     _vacationsRequestRepo.Save(vacationsRequest);
                     ViewBag.DaysInvalid = false;
-                    return RedirectToAction("New", new { added = true });
+                    TempData["added"] = true;
+                    return RedirectToAction("New");
                 }
                 else
                 {
+                    //Refactorizar acá para agregar manualmente el error al model view state
                     ViewBag.DaysInvalid = true;
                     NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel
                     {
@@ -133,9 +135,9 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize]
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedVacationRequest = updated ?? false;
+            ViewBag.UpdatedVacationRequest = TempData["updated"];
             NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel();
             var vacations = _vacationsRequestRepo.VacationsRequests().Include(v => v.Attorney).Where(v => v.VacationsRequestId == id).FirstOrDefault();
             viewModel.VacationsRequest = vacations;

@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ItemController : Controller
     {
         private readonly IItemRepository _itemsRepo;
@@ -20,7 +22,7 @@ namespace LexincorpApp.Controllers
 
         public IActionResult New(bool? added)
         {
-            ViewBag.AddedItem = added;
+            ViewBag.AddedItem = TempData["added"];
             return View(new Item());
         }
         [HttpPost]
@@ -31,7 +33,8 @@ namespace LexincorpApp.Controllers
                 return View(item);
             }
             _itemsRepo.Save(item);
-            return RedirectToAction(nameof(New), new { added = true });
+            TempData["added"] = true;
+            return RedirectToAction(nameof(New));
 
         }
 
@@ -59,7 +62,7 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Edit(int id, bool? updated)
         {
-            ViewBag.UpdatedItem = updated;
+            ViewBag.UpdatedItem = TempData["updated"];
             Item item = _itemsRepo.Items.Where(i => i.Id == id).FirstOrDefault();
             if (item == null)
             {
@@ -75,7 +78,8 @@ namespace LexincorpApp.Controllers
                 return View(item);
             }
             _itemsRepo.Save(item);
-            return RedirectToAction(nameof(Edit), new { updated = true });
+            TempData["updated"] = true;
+            return RedirectToAction(nameof(Edit));
         }
 
     }

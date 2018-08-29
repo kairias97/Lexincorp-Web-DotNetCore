@@ -57,7 +57,7 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize]
-        public ViewResult New(bool? added)
+        public ViewResult New()
         {
             ClientFormViewModel viewModel = new ClientFormViewModel
             {
@@ -66,7 +66,7 @@ namespace LexincorpApp.Controllers
                 DocumentDeliveryMethods = _documentDeliveryMethodsRepo.DocumentDeliveryMethods.ToList(),
                 Client = new Client()
             };
-            ViewBag.AddedClient = added ?? false;
+            ViewBag.AddedClient = TempData["added"];
             return View(viewModel);
         }
         [Authorize]
@@ -90,15 +90,16 @@ namespace LexincorpApp.Controllers
             } else
             {
                 _clientsRepo.Save(client);
-                return RedirectToAction("New", new { added = true});
+                TempData["added"] = true;
+                return RedirectToAction("New");
             }
 
             
         }
         [Authorize]
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedClient = updated;
+            ViewBag.UpdatedClient = TempData["updated"];
             ClientFormViewModel vm = new ClientFormViewModel
             {
                 Client = _clientsRepo.Clients
@@ -136,7 +137,8 @@ namespace LexincorpApp.Controllers
             else
             {
                 _clientsRepo.Save(client);
-                return RedirectToAction("Edit", new { updated = true, id = client.Id });
+                TempData["updated"] = true;
+                return RedirectToAction("Edit", new { id = client.Id });
             }
             
         }

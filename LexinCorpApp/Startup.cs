@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using LexincorpApp.Models.ExternalServices;
 
 namespace LexincorpApp
 {
@@ -70,6 +71,7 @@ namespace LexincorpApp
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();
             services.AddTransient<IServiceRepository, EFServiceRepository>();
             services.AddTransient<IRetainerRepository, EFRetainerRepository>();
+            services.AddSingleton<IMailSender, SendGridMailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
