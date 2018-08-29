@@ -26,7 +26,7 @@ namespace LexincorpApp.Models.ExternalServices
             var toEmailAddress = new EmailAddress(to);
             var msg = MailHelper.CreateSingleEmail(_fromAddress, toEmailAddress, subject, body, htmlBody);
             var response = await client.SendEmailAsync(msg);
-            return response.StatusCode == System.Net.HttpStatusCode.Accepted || response.StatusCode == System.Net.HttpStatusCode.OK;
+            return response.StatusCode == System.Net.HttpStatusCode.Accepted;
 
         }
 
