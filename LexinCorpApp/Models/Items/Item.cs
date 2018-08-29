@@ -10,6 +10,8 @@ namespace LexincorpApp.Models
     public class Item
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "El nombre del ítem es requerido")]
+        public string Name { get; set; }
         [Required(ErrorMessage = "La descripción en español es requerida")]
         public string SpanishDescription { get; set; }
         [Required(ErrorMessage = "La descripción en inglés es requerida")]

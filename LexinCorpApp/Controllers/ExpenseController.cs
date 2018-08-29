@@ -6,9 +6,11 @@ using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ExpenseController : Controller
     {
         private readonly IExpenseRepository _expensesRepo;
@@ -19,9 +21,9 @@ namespace LexincorpApp.Controllers
             this._expensesRepo = expensesRepository;
         }
         [Authorize]
-        public IActionResult New(bool? added)
+        public IActionResult New()
         {
-            ViewBag.AddedExpense = added;
+            ViewBag.AddedExpense = TempData["added"];
             return View(new Expense());
         }
         [Authorize]
@@ -38,7 +40,7 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.Contains(filter) || e.EnglishDescription.Contains(filter);
+            Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.CaseInsensitiveContains(filter) || e.EnglishDescription.CaseInsensitiveContains(filter);
             ExpenseListViewModel vm = new ExpenseListViewModel
             {
                 CurrentFilter = filter,
@@ -55,9 +57,9 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedExpense = updated;
+            ViewBag.UpdatedExpense = TempData["updated"];
             Expense expense = _expensesRepo.Expenses.Where(e => e.Id == id).FirstOrDefault();
             if (expense == null)
             {
@@ -73,7 +75,8 @@ namespace LexincorpApp.Controllers
                 return View(expense);
             }
             _expensesRepo.Save(expense);
-            return RedirectToAction(nameof(Edit), new { updated = true });
+            TempData["updated"] = true;
+            return RedirectToAction(nameof(Edit));
         }
     }
 }

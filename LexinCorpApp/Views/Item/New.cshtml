@@ -29,15 +29,20 @@
 
         </div>
     }
-
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Name">Nombre del ítem*:</label>
+            <input type="text" class="form-control" asp-for="Name" required />
+        </div>
+    </div>
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="SpanishDescription">Descripción en Español*:</label>
-            <input type="text" class="form-control" asp-for="SpanishDescription" required />
+            <input type="text" class="form-control" asp-for="SpanishDescription" required spellcheck="true" lang="es"/>
         </div>
         <div class="form-group offset-md-1 col-md-5">
             <label for="EnglishDescription">Descripción en Inglés*:</label>
-            <input type="text" class="form-control" asp-for="EnglishDescription" required />
+            <input type="text" class="form-control" asp-for="EnglishDescription" required spellcheck="true" lang="en"/>
         </div>
 
     </div>
@@ -54,7 +59,7 @@
                     Activo
                 </label>
             </div>
-            
+
         </div>
 
     </div>

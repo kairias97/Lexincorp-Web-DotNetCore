@@ -3,12 +3,13 @@
     ViewData["Title"] = "Admin";
 }
 
-@model ItemListViewModel
-<h2>Administración de catálogo de ítems</h2>
-<form asp-action="Admin" method="get" asp-controller="Item">
+
+@model ServiceListViewModel
+<h2>Administración de catálogo de servicios</h2>
+<form asp-action="Admin" method="get" asp-controller="Service">
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Descripción en español o inglés del ítem" aria-label="Descripción en español o inglés del gasto" aria-describedby="button-addon2">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre de la categoría" aria-label="Nombre de la categoría" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
         </div>
@@ -20,22 +21,20 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Monto USD</th>
+                <th>Categoría</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Items)
+            @foreach (var item in Model.Services)
             {
                 <tr>
                     <td>@item.Name</td>
-                    <td>@item.DisplayName</td>
-                    <td>@item.Amount</td>
-                    <td>@(item.Active ? "Activo" : "Inactivo")</td>
+                    <td>@item.Category?.Name</td>
+                    <td>@(item.Active ?? false ? "Activo" : "Inactivo")</td>
                     <td>
-                        <a asp-action="Edit" asp-controller="Item" asp-route-id="@item.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                        <a asp-action="Edit" asp-controller="Service" asp-route-id="@item.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
                     </td>
                 </tr>
             }

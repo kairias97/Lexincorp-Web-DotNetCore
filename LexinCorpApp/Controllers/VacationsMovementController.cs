@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,14 +27,14 @@ namespace LexincorpApp.Controllers
             return View();
         }
         [Authorize]
-        public IActionResult Add(bool? added)
+        public IActionResult Add()
         {
             NewVacationsMovementViewModel viewModel = new NewVacationsMovementViewModel
             {
                 Attorneys = _attorneysRepo.Attorneys,
                 VacationsMovement = new VacationsMovement()
             };
-            ViewBag.AddedMovement = added ?? false;
+            ViewBag.AddedMovement = TempData["added"];
             ViewBag.DaysInvalid = false;
             return View(viewModel);
         }
@@ -57,7 +57,8 @@ namespace LexincorpApp.Controllers
                 {
                     _vacationsMovementRepo.Save(vacationsMovement);
                     ViewBag.DaysInvalid = false;
-                    return RedirectToAction("Add", new { added = true });
+                    TempData["added"] = true;
+                    return RedirectToAction("Add");
                 }
                 else
                 {

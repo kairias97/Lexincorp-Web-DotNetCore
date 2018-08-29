@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
+using LexincorpApp.Models.ExternalServices;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,15 +21,17 @@ namespace LexincorpApp.Controllers
         private readonly IUserRepository _usersRepo;
         private readonly IGuidManager _guidManager;
         private readonly ICryptoManager _cryptoManager;
+        private readonly IMailSender _mailSender;
         public int PageSize = 5;
-        public AttorneyController(IDepartmentRepository _departmentsRepo, IAttorneyRepository _attorneysRepo, IUserRepository _usersRepo,
-            IGuidManager _guidManager, ICryptoManager _cryptoManager)
+        public AttorneyController(IDepartmentRepository departmentsRepo, IAttorneyRepository attorneysRepo, IUserRepository usersRepo,
+            IGuidManager guidManager, ICryptoManager cryptoManager, IMailSender sender)
         {
-            this._departmentsRepo = _departmentsRepo;
-            this._attorneysRepo = _attorneysRepo;
-            this._usersRepo = _usersRepo;
-            this._guidManager = _guidManager;
-            this._cryptoManager = _cryptoManager;
+            this._departmentsRepo = departmentsRepo;
+            this._attorneysRepo = attorneysRepo;
+            this._usersRepo = usersRepo;
+            this._guidManager = guidManager;
+            this._cryptoManager = cryptoManager;
+            this._mailSender = sender;
         }
         [Authorize]
         public IActionResult Index()
@@ -35,14 +39,14 @@ namespace LexincorpApp.Controllers
             return View();
         }
         [Authorize]
-        public ViewResult New(bool? added)
+        public ViewResult New()
         {
             NewAttorneyViewModel viewModel = new NewAttorneyViewModel
             {
                 Attorney = new Attorney { User = new User() },
                 Departments = _departmentsRepo.Departments.ToList()
             };
-            ViewBag.AddedAttorney = added ?? false;
+            ViewBag.AddedAttorney = TempData["added"];
             return View(viewModel);
         }
         [Authorize]
@@ -70,17 +74,21 @@ namespace LexincorpApp.Controllers
             {
                 string guidGenerated = _guidManager.GenerateGuid();
                 string passwordDefault = guidGenerated.Substring(guidGenerated.Length - 12, 12);
-                //falta enviar password sin hash al user
                 string passwordHashed = _cryptoManager.HashString(passwordDefault);
                 attorney.User.Password = passwordHashed;
                 _attorneysRepo.Save(attorney);
-                return RedirectToAction("New", new { added = true });
+                //Envío de password sin hash al usuario
+                string emailBody = $@"Se le ha creado un acceso a la aplicación Lexincorp Nicaragua Web, su usuario es {attorney.User.Username} 
+                    y su clave de acceso es {passwordDefault}";
+                _mailSender.SendMail(attorney.Email, "Usuario web creado para aplicación Lexincorp Nicaragua Web", emailBody);
+                TempData["added"] = true;
+                return RedirectToAction("New");
             }
         }
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.IdentificationNumber.Contains(filter);
+            Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.IdentificationNumber.CaseInsensitiveContains(filter);
 
             AttorneyListViewModel viewModel = new AttorneyListViewModel();
             viewModel.CurrentFilter = filter;
@@ -100,9 +108,9 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize]
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedAttorney = updated??false;
+            ViewBag.UpdatedAttorney = TempData["updated"];
             NewAttorneyViewModel viewModel = new NewAttorneyViewModel
             {
                 Departments = _departmentsRepo.Departments.ToList()
@@ -143,7 +151,8 @@ namespace LexincorpApp.Controllers
             {
                 _attorneysRepo.Save(attorney);
                 _usersRepo.Save(attorney.User);
-                return RedirectToAction("Edit", new { updated = true, id = attorney.AttorneyId });
+                TempData["updated"] = true;
+                return RedirectToAction("Edit", new { id = attorney.AttorneyId });
             }
         }
     }

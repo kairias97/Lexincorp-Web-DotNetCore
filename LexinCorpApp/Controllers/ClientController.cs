@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
+
 namespace LexincorpApp.Controllers
 {
     public class ClientController : Controller
@@ -36,7 +38,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.Contact.Contains(filter) || c.ContactEmail == filter;
+            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.Contact.CaseInsensitiveContains(filter) || c.ContactEmail == filter;
 
             ClientsListViewModel viewModel = new ClientsListViewModel();
             viewModel.CurrentFilter = filter;
@@ -55,7 +57,7 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize]
-        public ViewResult New(bool? added)
+        public ViewResult New()
         {
             ClientFormViewModel viewModel = new ClientFormViewModel
             {
@@ -64,7 +66,7 @@ namespace LexincorpApp.Controllers
                 DocumentDeliveryMethods = _documentDeliveryMethodsRepo.DocumentDeliveryMethods.ToList(),
                 Client = new Client()
             };
-            ViewBag.AddedClient = added ?? false;
+            ViewBag.AddedClient = TempData["added"];
             return View(viewModel);
         }
         [Authorize]
@@ -88,15 +90,16 @@ namespace LexincorpApp.Controllers
             } else
             {
                 _clientsRepo.Save(client);
-                return RedirectToAction("New", new { added = true});
+                TempData["added"] = true;
+                return RedirectToAction("New");
             }
 
             
         }
         [Authorize]
-        public IActionResult Edit(int id, bool? updated)
+        public IActionResult Edit(int id)
         {
-            ViewBag.UpdatedClient = updated;
+            ViewBag.UpdatedClient = TempData["updated"];
             ClientFormViewModel vm = new ClientFormViewModel
             {
                 Client = _clientsRepo.Clients
@@ -134,7 +137,8 @@ namespace LexincorpApp.Controllers
             else
             {
                 _clientsRepo.Save(client);
-                return RedirectToAction("Edit", new { updated = true, id = client.Id });
+                TempData["updated"] = true;
+                return RedirectToAction("Edit", new { id = client.Id });
             }
             
         }

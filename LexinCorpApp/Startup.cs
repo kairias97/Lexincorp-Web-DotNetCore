@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using LexincorpApp.Models.ExternalServices;
 
 namespace LexincorpApp
 {
@@ -48,6 +49,11 @@ namespace LexincorpApp
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+            services.Configure<IISOptions>(options =>
+            {
+                options.ForwardClientCertificate = false;
+                options.AutomaticAuthentication = false;
+            });
             services.AddTransient<IClientTypeRepository, EFClientTypeRepository>();
             services.AddTransient<IBillingModeRepository, EFBillingModeRepository>();
             services.AddTransient<IDocumentDeliveryMethodRepository, EFDocumentDeliveryMethodRepository>();
@@ -58,13 +64,14 @@ namespace LexincorpApp
             services.AddTransient<IExpenseRepository, EFExpenseRepository>();
             services.AddTransient<IVacationsMovementRepository, EFVacationsMovementRepository>();
             services.AddSingleton<ICryptoManager, BCryptManager>();
-            services.AddSingleton<IGuidManager, BGuidManager>();
+            services.AddSingleton<IGuidManager, GuidManager>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddTransient<IItemRepository, EFItemRepository>();
             services.AddTransient<IVacationsRequestRepository, EFVacationsRequestRepository>();
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();
             services.AddTransient<IServiceRepository, EFServiceRepository>();
             services.AddTransient<IRetainerRepository, EFRetainerRepository>();
+            services.AddSingleton<IMailSender, SendGridMailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

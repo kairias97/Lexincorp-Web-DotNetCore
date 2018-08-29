@@ -42,11 +42,11 @@
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="Service_SpanishDescription">Descripción en Español*:</label>
-            <input type="text" class="form-control" asp-for="@Model.Service.SpanishDescription" required />
+            <input type="text" class="form-control" asp-for="@Model.Service.SpanishDescription" required spellcheck="true"  lang="es"/>
         </div>
         <div class="form-group offset-md-1 col-md-5">
             <label for="Service_EnglishDescription">Descripción en Inglés*:</label>
-            <input type="text" class="form-control" asp-for="@Model.Service.EnglishDescription" required />
+            <input type="text" class="form-control" asp-for="@Model.Service.EnglishDescription" required spellcheck="true" lang="en"/>
         </div>
 
     </div>
