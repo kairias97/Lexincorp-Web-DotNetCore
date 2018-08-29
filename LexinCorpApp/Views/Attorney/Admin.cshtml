@@ -1,7 +1,7 @@
 ﻿@model AttorneyListViewModel
 <h2>Administración de usuarios</h2>
 <form asp-action="Admin" method="get" asp-controller="Client">
-    <label>Filtro de búsqueda:</label>
+    <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
         <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del abogado, correo electrónico o cédula" aria-label="Nombre del usuario, correo electrónico o cédula" aria-describedby="button-addon2">
         <div class="input-group-append">

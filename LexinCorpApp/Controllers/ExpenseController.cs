@@ -6,6 +6,7 @@ using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
 
 namespace LexincorpApp.Controllers
 {
@@ -38,7 +39,7 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.Contains(filter) || e.EnglishDescription.Contains(filter);
+            Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.CaseInsensitiveContains(filter) || e.EnglishDescription.CaseInsensitiveContains(filter);
             ExpenseListViewModel vm = new ExpenseListViewModel
             {
                 CurrentFilter = filter,

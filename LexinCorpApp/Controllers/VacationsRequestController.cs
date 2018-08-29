@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
+using LexincorpApp.Infrastructure;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -92,7 +93,7 @@ namespace LexincorpApp.Controllers
 
             Func<VacationsRequest, bool> filterFunction = c => c.IsApproved == filter;
 
-            Func<VacationsRequest, bool> filterFunctionText = c => String.IsNullOrEmpty(filterText) || c.Reason.Contains(filterText) || c.StartDate.ToString("dd/MM/yyyy").Contains(filterText);
+            Func<VacationsRequest, bool> filterFunctionText = c => String.IsNullOrEmpty(filterText) || c.Reason.CaseInsensitiveContains(filterText) || c.StartDate.ToString("dd/MM/yyyy").Contains(filterText);
             VacationsRequestListViewModel viewModel = new VacationsRequestListViewModel();
             viewModel.CurrentFilter = filter;
             viewModel.CurrentFilterText = filterText;
@@ -113,7 +114,7 @@ namespace LexincorpApp.Controllers
         public IActionResult Admin(bool? filter, string filterText, int pageNumber = 1)
         {
             Func<VacationsRequest, bool> filterFunction = c => c.IsApproved == filter;
-            Func<VacationsRequest, bool> filterFunctionText = c => String.IsNullOrEmpty(filterText)  || c.Attorney.Name.Contains(filterText) || c.StartDate.ToString("dd/MM/yyyy").Contains(filterText);
+            Func<VacationsRequest, bool> filterFunctionText = c => String.IsNullOrEmpty(filterText)  || c.Attorney.Name.CaseInsensitiveContains(filterText) || c.StartDate.ToString("dd/MM/yyyy").Contains(filterText);
             VacationsRequestListViewModel viewModel = new VacationsRequestListViewModel();
             viewModel.CurrentFilter = filter;
             viewModel.CurrentFilterText = filterText;

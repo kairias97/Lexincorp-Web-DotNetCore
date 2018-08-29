@@ -7,6 +7,8 @@ using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
+
 namespace LexincorpApp.Controllers
 {
     public class ClientController : Controller
@@ -36,7 +38,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.Contact.Contains(filter) || c.ContactEmail == filter;
+            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.Contact.CaseInsensitiveContains(filter) || c.ContactEmail == filter;
 
             ClientsListViewModel viewModel = new ClientsListViewModel();
             viewModel.CurrentFilter = filter;

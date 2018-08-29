@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Item, bool> filterFunction = i => String.IsNullOrEmpty(filter) || i.SpanishDescription.Contains(filter) || i.EnglishDescription.Contains(filter);
+            Func<Item, bool> filterFunction = i => String.IsNullOrEmpty(filter) || i.SpanishDescription.CaseInsensitiveContains(filter) || i.EnglishDescription.CaseInsensitiveContains(filter);
             ItemListViewModel vm = new ItemListViewModel
             {
 

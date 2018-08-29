@@ -7,6 +7,7 @@ using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using LexincorpApp.Infrastructure;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -80,7 +81,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.Contains(filter) || c.IdentificationNumber.Contains(filter);
+            Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.IdentificationNumber.CaseInsensitiveContains(filter);
 
             AttorneyListViewModel viewModel = new AttorneyListViewModel();
             viewModel.CurrentFilter = filter;
