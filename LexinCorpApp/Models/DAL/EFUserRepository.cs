@@ -16,7 +16,7 @@ namespace LexincorpApp.Models
 
         public void Save(User user)
         {
-            if (user.UserId == 0)
+            if (user.Id == 0)
             {
                 context.Users.Add(user);
             } else
@@ -34,12 +34,12 @@ namespace LexincorpApp.Models
 
         public bool VerifyAttorneyIDAndUsername(int attorneyID, int userID)
         {
-            return context.Users.Any(u => u.Attorney.AttorneyId == attorneyID && u.UserId == userID);
+            return context.Users.Any(u => u.Attorney.Id == attorneyID && u.Id == userID);
         }
 
         public User GetUserByUsername(string username)
         {
-            return context.Users.Where(x => x.Username == username).FirstOrDefault();
+            return context.Users.Where(x => x.Username == username && (bool)x.Active).FirstOrDefault();
         }
     }
 }

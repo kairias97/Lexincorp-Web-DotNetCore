@@ -29,7 +29,7 @@
             {
                 <tr>
                     <td>@item.Name</td>
-                    <td>@(item.Active ?? false ? "Activo" : "Inactivo")</td>
+                    <td>@(item.Active? "Activo" : "Inactivo")</td>
                     <td>
                         <a asp-action="Edit" asp-controller="Category" asp-route-id="@item.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
                     </td>

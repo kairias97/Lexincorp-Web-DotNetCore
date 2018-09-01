@@ -14,7 +14,7 @@ namespace LexincorpApp.Models
         }
         public bool ValidateRequest(VacationsRequest vacationsRequest)
         {
-            var attorney = context.Attorneys.Where(a => a.AttorneyId == vacationsRequest.AttorneyId).FirstOrDefault();
+            var attorney = context.Attorneys.Where(a => a.Id == vacationsRequest.AttorneyId).FirstOrDefault();
             if (attorney.VacationCount >= vacationsRequest.Quantity)
             {
                 return true;
@@ -33,7 +33,7 @@ namespace LexincorpApp.Models
         {
             context.Update(vacationsRequest);
             context.SaveChanges();
-            var attorney = context.Attorneys.Where(a => a.AttorneyId == vacationsRequest.AttorneyId).FirstOrDefault();
+            var attorney = context.Attorneys.Where(a => a.Id == vacationsRequest.AttorneyId).FirstOrDefault();
             if(vacationsRequest.IsApproved == true && attorney.VacationCount >= vacationsRequest.Quantity)
             {
                 attorney.VacationCount -= vacationsRequest.Quantity;

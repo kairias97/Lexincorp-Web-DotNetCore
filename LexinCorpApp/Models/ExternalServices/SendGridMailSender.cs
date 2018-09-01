@@ -30,5 +30,13 @@ namespace LexincorpApp.Models.ExternalServices
 
         }
 
+        public async Task<bool> SendMail(IEnumerable<string> toList, string subject, string body, string htmlBody = "")
+        {
+            var client = new SendGridClient(_apiKey);
+            var tos = toList.Select(email => new EmailAddress(email)).ToList();
+            var msg = MailHelper.CreateSingleEmailToMultipleRecipients(_fromAddress, tos, subject, body, htmlBody);
+            var response = await client.SendEmailAsync(msg);
+            return response.StatusCode == System.Net.HttpStatusCode.Accepted;
+        }
     }
 }

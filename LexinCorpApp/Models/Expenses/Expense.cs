@@ -20,7 +20,6 @@ namespace LexincorpApp.Models
         public decimal Amount { get; set; }
         [NotMapped]
         public string DisplayName { get { return $"{EnglishDescription} / {SpanishDescription}"; } }
-        [Required(ErrorMessage = "Es requerido indicar el estado del tipo de gasto")]
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
     }
 }

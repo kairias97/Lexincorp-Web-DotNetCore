@@ -142,6 +142,17 @@ namespace LexincorpApp.Controllers
             }
             
         }
+        [Authorize]
+        public JsonResult Search(string term)
+        {
+            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(term) || c.Name.CaseInsensitiveContains(term);
+
+            var list = _clientsRepo.Clients.Where(filterFunction)
+                .OrderBy(c => c.Name)
+                .Take(10)
+                .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish });
+            return Json(list);
+        }
 
     }
 }

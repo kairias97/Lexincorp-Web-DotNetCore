@@ -86,7 +86,7 @@ namespace LexincorpApp.Models
                 ))
             {
                 string generatedGuid = guid.GenerateGuid();
-                string generatedPassword = guid.GenerateGuid().Substring(generatedGuid.Length - 12, 12);
+                string generatedPassword = generatedGuid.Substring(generatedGuid.Length - 12, 12);
                 string cryptoPassword = crypto.HashString(generatedPassword);
                 User adminUser = new User
                 {

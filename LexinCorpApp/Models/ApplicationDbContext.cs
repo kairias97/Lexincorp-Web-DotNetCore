@@ -27,6 +27,8 @@ namespace LexincorpApp.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Retainer> Retainers { get; set; }
+        public DbSet<Package> Packages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>()
@@ -35,6 +37,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<User>()
                 .HasAlternateKey(u => u.Username)
                 .HasName("UQ_User_Username");
+            modelBuilder.Entity<User>()
+                .Property(u => u.Active)
+                .HasDefaultValue(true);
             modelBuilder.Entity<Attorney>()
                 .HasIndex(a => a.Email)
                 .IsUnique();
@@ -57,6 +62,12 @@ namespace LexincorpApp.Models
                 .Property(c => c.Active)
                 .HasDefaultValue(true);
             modelBuilder.Entity<Retainer>()
+                .Property(c => c.Active)
+                .HasDefaultValue(true);
+            modelBuilder.Entity<Package>()
+                .Property(p => p.IsFinished)
+                .HasDefaultValue(false);
+            modelBuilder.Entity<Client>()
                 .Property(c => c.Active)
                 .HasDefaultValue(true);
         }
