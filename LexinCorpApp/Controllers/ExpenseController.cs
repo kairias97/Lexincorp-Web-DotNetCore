@@ -35,7 +35,8 @@ namespace LexincorpApp.Controllers
                 return View(expense);
             }
             _expensesRepo.Save(expense);
-            return RedirectToAction(nameof(New), new { added = true });
+            TempData["added"] = true;
+            return RedirectToAction(nameof(New));
         }
 
         public IActionResult Admin(string filter, int pageNumber = 1)

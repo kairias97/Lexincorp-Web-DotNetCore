@@ -8,6 +8,7 @@ using LexincorpApp.Models.ViewModels;
 using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using LexincorpApp.Infrastructure;
+using System.Security.Claims;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -64,7 +65,7 @@ namespace LexincorpApp.Controllers
                 var user = HttpContext.User;
                 var id = user.Identity.Name;
                 var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
-                vacationsRequest.AttorneyId = attorney.AttorneyId;
+                vacationsRequest.AttorneyId = attorney.Id;
                 if (_vacationsRequestRepo.ValidateRequest(vacationsRequest))
                 {
                     //vacationsRequest.AttorneyId = attorney.AttorneyId;
@@ -90,7 +91,7 @@ namespace LexincorpApp.Controllers
         public IActionResult History(bool? filter, string filterText, int pageNumber = 1)
         {
             var user = HttpContext.User;
-            var id = user.Identity.Name;
+            var id = user.Claims.Where(claim => claim.Type == ClaimTypes.NameIdentifier).First();
             var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
 
             Func<VacationsRequest, bool> filterFunction = c => c.IsApproved == filter;
@@ -99,7 +100,7 @@ namespace LexincorpApp.Controllers
             VacationsRequestListViewModel viewModel = new VacationsRequestListViewModel();
             viewModel.CurrentFilter = filter;
             viewModel.CurrentFilterText = filterText;
-            viewModel.VacationsRequests = _vacationsRequestRepo.GetVacationsRequests(attorney.AttorneyId)
+            viewModel.VacationsRequests = _vacationsRequestRepo.GetVacationsRequests(attorney.Id)
                 .Where(filterFunction)
                 .Where(filterFunctionText)
                 .Skip((pageNumber - 1) * PageSize)
@@ -108,7 +109,7 @@ namespace LexincorpApp.Controllers
             {
                 CurrentPage = pageNumber,
                 ItemsPerPage = PageSize,
-                TotalItems = _vacationsRequestRepo.GetVacationsRequests(attorney.AttorneyId).Count(filterFunction)
+                TotalItems = _vacationsRequestRepo.GetVacationsRequests(attorney.Id).Count(filterFunction)
             };
             return View(viewModel);
         }
@@ -154,7 +155,7 @@ namespace LexincorpApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var attorney = _attorneysRepo.Attorneys.Where(a => a.AttorneyId == vacationsRequest.AttorneyId).FirstOrDefault();
+                var attorney = _attorneysRepo.Attorneys.Where(a => a.Id == vacationsRequest.AttorneyId).FirstOrDefault();
                 NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel()
                 {
                     VacationsRequest = vacationsRequest,

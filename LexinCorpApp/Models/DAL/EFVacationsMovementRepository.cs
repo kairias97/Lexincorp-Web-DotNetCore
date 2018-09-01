@@ -16,7 +16,7 @@ namespace LexincorpApp.Models
         public void Save(VacationsMovement vacationsMovement)
         {
             context.VacationsMovements.Add(vacationsMovement);
-            var attorney = context.Attorneys.Where(a => a.AttorneyId == vacationsMovement.AttorneyId).FirstOrDefault();
+            var attorney = context.Attorneys.Where(a => a.Id == vacationsMovement.AttorneyId).FirstOrDefault();
             if (vacationsMovement.MovementType == VacationMovementEnum.Credit)
             {
                 attorney.VacationCount += vacationsMovement.Quantity;
@@ -35,7 +35,7 @@ namespace LexincorpApp.Models
             }
             else
             {
-                var attorney = context.Attorneys.Where(a => a.AttorneyId == vacationsMovement.AttorneyId).FirstOrDefault();
+                var attorney = context.Attorneys.Where(a => a.Id == vacationsMovement.AttorneyId).FirstOrDefault();
                 if(attorney.VacationCount >= vacationsMovement.Quantity)
                 {
                     return true;

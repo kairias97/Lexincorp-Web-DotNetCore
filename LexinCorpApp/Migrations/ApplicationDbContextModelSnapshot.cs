@@ -21,7 +21,7 @@ namespace LexincorpApp.Migrations
 
             modelBuilder.Entity("LexincorpApp.Models.Attorney", b =>
                 {
-                    b.Property<int>("AttorneyId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -62,7 +62,7 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(0m);
 
-                    b.HasKey("AttorneyId");
+                    b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
 
@@ -97,7 +97,7 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool?>("Active")
+                    b.Property<bool>("Active")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(true);
 
@@ -114,6 +114,10 @@ namespace LexincorpApp.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Address");
 
@@ -258,6 +262,42 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("LexincorpApp.Models.Package", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("ClientId");
+
+                    b.Property<int?>("CreatorId");
+
+                    b.Property<int>("CreatorUserId");
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<bool>("IsFinished")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("RealizationDate")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Packages");
+                });
+
             modelBuilder.Entity("LexincorpApp.Models.Retainer", b =>
                 {
                     b.Property<int>("Id")
@@ -282,7 +322,7 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool?>("Active")
+                    b.Property<bool>("Active")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(true);
 
@@ -306,9 +346,13 @@ namespace LexincorpApp.Migrations
 
             modelBuilder.Entity("LexincorpApp.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsAdmin");
 
@@ -317,7 +361,7 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Username")
                         .IsRequired();
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.HasAlternateKey("Username")
                         .HasName("UQ_User_Username");
@@ -408,6 +452,18 @@ namespace LexincorpApp.Migrations
                         .WithMany()
                         .HasForeignKey("DocumentDeliveryMethodId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("LexincorpApp.Models.Package", b =>
+                {
+                    b.HasOne("LexincorpApp.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LexincorpApp.Models.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.Service", b =>

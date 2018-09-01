@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewData["Title"] = "New";
+}
+@model NewPackageViewModel
+<script type="text/javascript">
+    $(function ()
+    {
+        //Para setear idioma inicial
+        $("#Package_Description").prop("lang", $("#IsEnglish").value ? "en" : "es");
+
+        $("#clientFilter").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Client/Search",
+                    type: "GET",
+                    data:request,
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                value: item.name,
+                                label: item.name,
+                                clientName: item.name,
+                                clientId: item.id,
+                                isEnglish: item.billingInEnglish
+                            }
+                        }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message)
+                        // console.log("Ajax Error!");
+                    }
+                })
+             },
+            minLength: 1,
+            select: function (event, ui) {
+                $("#Package_ClientId").val(ui.item.clientId);
+                $("#ClientName").val(ui.item.clientName);
+                $("#IsEnglish").prop('checked', ui.item.isEnglish);
+                $("#IsClientSelected").prop('checked', true);
+                $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
+
+                $("#Package_Description").prop("lang", ui.item.isEnglish ? "en" : "es");
+
+
+            }
+
+        });
+
+    });
+</script>
+<h2>Creación de nuevo paquete</h2>
+<br />
+@if (ViewBag.AddedPackage ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Paquete registrado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
+<form asp-action="New" asp-controller="Package" role="alert">
+    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    {
+        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+        </div>
+    }
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="clientFilter">Búsqueda de cliente:</label>
+            <input type="text" class="form-control" id="clientFilter" placeholder="Nombre del cliente" aria-label="Búsqueda de cliente">
+
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <input type="number" hidden asp-for="@Model.Package.ClientId" />
+            <label for="ClientName">Nombre del cliente:</label>
+            <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente">
+
+        </div>
+        <div class="form-group offset-md-1 col-md-5">
+            <input type="checkbox" hidden asp-for="@Model.IsEnglish" />
+            <input type="checkbox" hidden asp-for="@Model.IsClientSelected" />
+
+            <label for="clientName">Idioma de facturación:</label>
+            <input type="text" readonly class="form-control" id="clientLanguage" value="@(Model.IsClientSelected? ((Model.IsEnglish) ? "Inglés" : "Español"): "" )" aria-label="Idioma de facturación">
+
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Package_Name">Título del paquete para la lista*:</label>
+            <input type="text" class="form-control" asp-for="@Model.Package.Name" required />
+        </div>
+        <div class="form-group offset-md-1 col-md-5">
+            <label for="Package_Description">Descripción*:</label>
+            <textarea class="form-control" asp-for="@Model.Package.Description" required spellcheck="true"></textarea>
+        </div>
+
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Package_Amount">Honorario Acordado (USD)*:</label>
+            <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Package.Amount" />
+        </div>
+        <div class="form-group offset-md-1 col-md-5">
+            <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
+            <input type="text" class="form-control" asp-for="@Model.Package.RealizationDate" required />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="OnlyAdminNotification">Notificar de creación a:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="@Model.OnlyAdminNotification" value="true" }>
+                <label class="form-check-label" for="NotifyOnlyAdmin">
+                    Administradores
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="@Model.OnlyAdminNotification" value="false" }>
+                <label class="form-check-label" for="OnlyAdminNotification">
+                    Todos los abogados
+                </label>
+            </div>
+
+
+
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+
+    <br />
+</form>
+<br />
+
+
+
+
+

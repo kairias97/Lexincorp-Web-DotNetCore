@@ -42,5 +42,7 @@ namespace LexincorpApp.Models
         public bool IsInternational { get; set; }
         public bool PayTaxes { get; set; }
         public decimal? FixedCostPerHour { get; set; }
+        public bool Active { get; set; } = true;
+
     }
 }

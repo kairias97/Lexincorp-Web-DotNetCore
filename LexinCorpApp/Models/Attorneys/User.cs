@@ -9,7 +9,7 @@ namespace LexincorpApp.Models
 {
     public class User
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
         [Required]
         [NoWhiteSpace(ErrorMessage ="El nombre de usuario no puede contener espacios en blanco")]
         public string Username { get; set; }
@@ -17,5 +17,6 @@ namespace LexincorpApp.Models
         [Required]
         public bool IsAdmin { get; set; }
         public virtual Attorney Attorney { get; set; }
+        public bool Active { get; set; } = true;
     }
 }

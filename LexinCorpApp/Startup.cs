@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using LexincorpApp.Models.ExternalServices;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace LexincorpApp
 {
@@ -20,19 +22,19 @@ namespace LexincorpApp
 
         public Startup(IConfiguration configuration)
         {
-          //  var builder = new ConfigurationBuilder()
-          //.SetBasePath(env.ContentRootPath)
-          //.AddJsonFile("appsettings.json",
-          //             optional: false,
-          //             reloadOnChange: true)
-          //.AddEnvironmentVariables();
+            //  var builder = new ConfigurationBuilder()
+            //.SetBasePath(env.ContentRootPath)
+            //.AddJsonFile("appsettings.json",
+            //             optional: false,
+            //             reloadOnChange: true)
+            //.AddEnvironmentVariables();
 
-          //  if (env.IsDevelopment())
-          //  {
-          //      builder.AddUserSecrets<Startup>();
-          //  }
+            //  if (env.IsDevelopment())
+            //  {
+            //      builder.AddUserSecrets<Startup>();
+            //  }
 
-          //  Configuration = builder.Build();
+            //  Configuration = builder.Build();
             this.Configuration = configuration;
 
         }
@@ -47,8 +49,12 @@ namespace LexincorpApp
             });
             services.AddMvc()
                 .AddJsonOptions(
-                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                );
+                    options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                        //options.SerializerSettings.DateFormatString = "dd/MM/yyyy";
+                    }
+                     );
             services.Configure<IISOptions>(options =>
             {
                 options.ForwardClientCertificate = false;
@@ -72,6 +78,7 @@ namespace LexincorpApp
             services.AddTransient<IServiceRepository, EFServiceRepository>();
             services.AddTransient<IRetainerRepository, EFRetainerRepository>();
             services.AddSingleton<IMailSender, SendGridMailSender>();
+            services.AddTransient<IPackageRepository, EFPackageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,7 +92,26 @@ namespace LexincorpApp
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            //Setup of culture of the app
+            var defaultDateCulture = "es-NI";
+            var ci = new CultureInfo(defaultDateCulture);
+            ci.NumberFormat.NumberDecimalSeparator = ".";
+            ci.NumberFormat.NumberGroupSeparator = ",";
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
 
+            // Configure the Localization middleware
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(ci),
+                SupportedCultures = new List<CultureInfo>
+                {
+                    ci,
+                },
+                SupportedUICultures = new List<CultureInfo>
+                {
+                    ci,
+                }
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

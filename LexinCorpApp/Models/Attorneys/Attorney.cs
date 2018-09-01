@@ -9,7 +9,7 @@ namespace LexincorpApp.Models
 {
     public class Attorney
     {
-        public int AttorneyId { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage ="El nombre del abogado es requerido")]
         public string Name { get; set; }
         [Required(ErrorMessage = "La fecha de admisión es requerida")]

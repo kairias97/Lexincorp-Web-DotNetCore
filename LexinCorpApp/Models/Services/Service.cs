@@ -18,6 +18,6 @@ namespace LexincorpApp.Models
         [Required(ErrorMessage = "La categoría es requerida")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
-        public bool? Active { get; set; }
+        public bool Active { get; set; } = true;
     }
 }

@@ -96,7 +96,7 @@ namespace LexincorpApp.Controllers
                 .Include(a => a.Department)
                 .Include(a => a.User)
                 .Where(filterFunction)
-                .OrderBy(a => a.AttorneyId)
+                .OrderBy(a => a.Id)
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize);
             viewModel.PagingInfo = new PagingInfo
@@ -115,7 +115,7 @@ namespace LexincorpApp.Controllers
             {
                 Departments = _departmentsRepo.Departments.ToList()
             };
-            viewModel.Attorney = _attorneysRepo.Attorneys.Where(a => a.AttorneyId == id).Include(a => a.User).Include(a => a.Department).First();
+            viewModel.Attorney = _attorneysRepo.Attorneys.Where(a => a.Id == id).Include(a => a.User).Include(a => a.Department).First();
             if (viewModel.Attorney == null)
             {
                 return NotFound();
@@ -126,15 +126,15 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Attorney attorney)
         {
-            if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.AttorneyId,attorney.UserId))
+            if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.Id,attorney.UserId))
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }
-            if (!_attorneysRepo.VerifyEmail(attorney.Email) && !_attorneysRepo.VerifyAttorneyIDAndEmailOwnership(attorney.AttorneyId, attorney.Email))
+            if (!_attorneysRepo.VerifyEmail(attorney.Email) && !_attorneysRepo.VerifyAttorneyIDAndEmailOwnership(attorney.Id, attorney.Email))
             {
                 ModelState.AddModelError("uqEmail", "El correo ingresado ya existe");
             }
-            if (!_attorneysRepo.VerifyNotaryCode(attorney.NotaryCode) && !_attorneysRepo.verifyAttorneyIDAndNotaryCodeOwnership(attorney.AttorneyId, attorney.NotaryCode))
+            if (!_attorneysRepo.VerifyNotaryCode(attorney.NotaryCode) && !_attorneysRepo.verifyAttorneyIDAndNotaryCodeOwnership(attorney.Id, attorney.NotaryCode))
             {
                 ModelState.AddModelError("uqNotaryCode", "El código de notario ingresado ya existe");
             }
@@ -152,7 +152,7 @@ namespace LexincorpApp.Controllers
                 _attorneysRepo.Save(attorney);
                 _usersRepo.Save(attorney.User);
                 TempData["updated"] = true;
-                return RedirectToAction("Edit", new { id = attorney.AttorneyId });
+                return RedirectToAction("Edit", new { id = attorney.Id });
             }
         }
     }

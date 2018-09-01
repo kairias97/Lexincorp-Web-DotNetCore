@@ -55,13 +55,13 @@
                 <select class="form-control" asp-for="@Model.VacationsMovement.AttorneyId" required>
                     @foreach(var o in Model.Attorneys)
                     {
-                        if(Model.VacationsMovement.AttorneyId == o.AttorneyId)
+                        if(Model.VacationsMovement.AttorneyId == o.Id)
                         {
-                            @:<option value="@o.AttorneyId" selected>@o.Name</option>
+                            @:<option value="@o.Id" selected>@o.Name</option>
                         }
                         else
                         {
-                            @:<option value="@o.AttorneyId">@o.Name</option>
+                            @:<option value="@o.Id">@o.Name</option>
                         }
                     }
                 </select>

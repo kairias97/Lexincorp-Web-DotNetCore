@@ -15,7 +15,7 @@ namespace LexincorpApp.Models
         public IQueryable<Attorney> Attorneys { get => context.Attorneys; }
         public void Save(Attorney attorney)
         {
-            if (attorney.AttorneyId == 0)
+            if (attorney.Id == 0)
             {
                 context.Attorneys.Add(attorney);
             } else
@@ -30,12 +30,12 @@ namespace LexincorpApp.Models
 
         public bool VerifyAttorneyIDAndEmailOwnership(int attorneyID, string email)
         {
-            return context.Attorneys.Any(a => a.AttorneyId == attorneyID && a.Email == email);
+            return context.Attorneys.Any(a => a.Id == attorneyID && a.Email == email);
         }
 
         public bool verifyAttorneyIDAndNotaryCodeOwnership(int attorneyID, string notaryCode)
         {
-            return context.Attorneys.Any(a => a.AttorneyId == attorneyID && a.NotaryCode == notaryCode);
+            return context.Attorneys.Any(a => a.Id == attorneyID && a.NotaryCode == notaryCode);
         }
 
         public bool VerifyEmail(string email)

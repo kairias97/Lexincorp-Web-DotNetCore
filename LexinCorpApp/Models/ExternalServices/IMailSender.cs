@@ -8,5 +8,7 @@ namespace LexincorpApp.Models.ExternalServices
     public interface IMailSender
     {
         Task<bool> SendMail(string to, string subject, string body, string htmlBody = "");
+        Task<bool> SendMail(IEnumerable<string> toList, string subject, string body, string htmlBody = "");
+
     }
 }
