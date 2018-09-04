@@ -90,7 +90,8 @@
 
         </div>
     </nav>
-    <div class="row">
+    <div class="container-fluid">
+        <div class="row">
             <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column centered" style="padding-top:15px;">
@@ -106,14 +107,14 @@
                         </li>
                     </ul>
                     <div class="transiton-div">
-                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="true" aria-controls="collapseVacations">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-black-50">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="false" aria-controls="collapseVacations">
+                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
                                 Vacaciones
-                                <i class="fas fa-arrow-circle-down"></i>
+                                <i class="fas fa-arrow-circle-left fa-fw"></i>
                             </h6>
                         </a>
                     </div>
-                    <div class="collapse show" id="collapseVacations">
+                    <div class="collapse" id="collapseVacations">
                         <ul class="nav flex-column">
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
@@ -138,14 +139,14 @@
                         </ul>
                     </div>
                     <div class="transiton-div">
-                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="true" aria-controls="collapseActivities">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-black-50">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="false" aria-controls="collapseActivities">
+                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
                                 Actividades
-                                <i class="fas fa-arrow-circle-down"></i>
+                                <i class="fas fa-arrow-circle-left"></i>
                             </h6>
                         </a>
                     </div>
-                    <div class="collapse show" id="collapseActivities">
+                    <div class="collapse" id="collapseActivities">
                         <ul class="nav flex-column">
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" href="#">
@@ -173,6 +174,7 @@
                     @RenderBody()
                 </div>
             </main>
-    </div>   
+        </div>
+    </div>     
 </body>
 </html>
