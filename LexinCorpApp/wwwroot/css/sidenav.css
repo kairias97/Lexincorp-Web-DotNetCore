@@ -23,5 +23,5 @@
     transition: .3s transform ease;
 }
 .transiton-div .collapsed .fas {
-    transform: rotate(90deg);
+    transform: rotate(270deg);
 }
