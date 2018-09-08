@@ -74,10 +74,10 @@ namespace LexincorpApp.Models
                 context.Retainers.AddRange(
                     new Retainer[]
                     {
-                        new Retainer{Name="Retainer Representación Legal"},
-                        new Retainer{Name="Retainer Asesoría Legal"},
-                        new Retainer{Name="Retainer Recursos Humanos"},
-                        new Retainer{Name="Retainer Contabilidad"}
+                        new Retainer{SpanishName="Retainer Representación Legal"},
+                        new Retainer{SpanishName="Retainer Asesoría Legal"},
+                        new Retainer{SpanishName="Retainer Recursos Humanos"},
+                        new Retainer{SpanishName="Retainer Contabilidad"}
                     }
                 );
                 context.SaveChanges();

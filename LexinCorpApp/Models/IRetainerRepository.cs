@@ -8,6 +8,6 @@ namespace LexincorpApp.Models
     public interface IRetainerRepository
     {
         IQueryable<Retainer> Retainers { get;}
-
+        void Save(Retainer retainer);
     }
 }

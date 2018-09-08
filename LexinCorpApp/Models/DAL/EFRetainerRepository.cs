@@ -13,5 +13,17 @@ namespace LexincorpApp.Models
             context = ctx;
         }
         public IQueryable<Retainer> Retainers => context.Retainers;
+
+        public void Save(Retainer retainer)
+        {
+            if (retainer.Id == 0)
+            {
+                context.Retainers.Add(retainer);
+            } else
+            {
+                context.Entry(retainer).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            context.SaveChanges();
+        }
     }
 }
