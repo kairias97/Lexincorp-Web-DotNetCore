@@ -10,8 +10,9 @@ namespace LexincorpApp.Models
     {
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
-        public bool? Active { get; set; }
-
+        public string SpanishName { get; set; }
+        public string EnglishName { get; set; }
+        public bool Active { get; set; } = true;
+        public virtual ICollection<RetainerSubscription> RetainerSubscriptions { get; set; }
     }
 }

@@ -43,6 +43,8 @@ namespace LexincorpApp.Models
         public bool PayTaxes { get; set; }
         public decimal? FixedCostPerHour { get; set; }
         public bool Active { get; set; } = true;
+        public virtual ICollection<Package> Packages { get; set; }
+        public virtual ICollection<RetainerSubscription> RetainerSubscriptions { get; set; }
 
     }
 }

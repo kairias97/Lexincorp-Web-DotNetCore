@@ -22,7 +22,11 @@ namespace LexincorpApp.Models
                 context.Packages.Add(package);
             } else
             {
-                context.Entry(package).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Packages.Attach(package);
+                context.Entry(package).Property(p => p.Amount).IsModified = true;
+                context.Entry(package).Property(p => p.Name).IsModified = true;
+                context.Entry(package).Property(p => p.Description).IsModified = true;
+                context.Entry(package).Property(p => p.RealizationDate).IsModified = true;
             }
             context.SaveChanges();
         }

@@ -10,7 +10,7 @@ namespace LexincorpApp.Models
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
-           
+
         }
 
         public DbSet<BillingMode> BillingModes { get; set; }
@@ -28,6 +28,7 @@ namespace LexincorpApp.Models
         public DbSet<Service> Services { get; set; }
         public DbSet<Retainer> Retainers { get; set; }
         public DbSet<Package> Packages { get; set; }
+        public DbSet<RetainerSubscription> RetainerSubscriptions {get; set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

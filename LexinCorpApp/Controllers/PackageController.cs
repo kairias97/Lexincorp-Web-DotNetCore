@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ExternalServices;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LexincorpApp.Controllers
 {
@@ -17,6 +19,8 @@ namespace LexincorpApp.Controllers
         private readonly IAttorneyRepository _attorneysRepo;
         private readonly IPackageRepository _packagesRepo;
         private readonly IMailSender _mailSender;
+        public int PageSize = 10;
+
         public PackageController(IAttorneyRepository attorneysRepo,
             IPackageRepository packagesRepo,
             IMailSender mailSender)
@@ -67,6 +71,53 @@ namespace LexincorpApp.Controllers
             _mailSender.SendMail(emails, "Creación de paquete", msg);
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
+        }
+
+        public IActionResult Admin(string filter, int pageNumber = 1)
+        {
+            Func<Package, bool> filterFunction = package => String.IsNullOrEmpty(filter) || package.Name.CaseInsensitiveContains(filter)
+                || package.Client.Name.CaseInsensitiveContains(filter);
+            PackageListViewModel vm = new PackageListViewModel
+            {
+                CurrentFilter = filter,
+                Packages = _packagesRepo.Packages
+                    .Include(p => p.Client)
+                    .Where(filterFunction)
+                    .OrderBy(r => r.Name)
+                    .Skip((pageNumber - 1) * PageSize)
+                    .Take(PageSize),
+
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = pageNumber,
+                    ItemsPerPage = PageSize,
+                    TotalItems = _packagesRepo.Packages.Count(filterFunction)
+                }
+            };
+            return View(vm);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var package = _packagesRepo.Packages.Include(p=> p.Client).Where(p => p.Id == id).FirstOrDefault();
+            if (package == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.UpdatedPackage = TempData["updated"];
+            return View(package);
+        }
+        [HttpPost]
+        public IActionResult Edit(Package package)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(package);
+            }
+            _packagesRepo.Save(package);
+            TempData["updated"] = true;
+            return RedirectToAction(nameof(Edit), new { id = package.Id});
         }
     }
 }

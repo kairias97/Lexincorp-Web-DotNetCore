@@ -79,6 +79,7 @@ namespace LexincorpApp
             services.AddTransient<IRetainerRepository, EFRetainerRepository>();
             services.AddSingleton<IMailSender, SendGridMailSender>();
             services.AddTransient<IPackageRepository, EFPackageRepository>();
+            services.AddTransient<IRetainerSubscriptionRepository, EFRetainerSubscriptionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
