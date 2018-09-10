@@ -64,6 +64,7 @@
                         alert(err.Message);
                     }
                 });
+                $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 //$("#Package_Description").prop("lang", ui.item.isEnglish ? "en" : "es");
 
 
@@ -144,7 +145,7 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="itemsQuantity">Cantidad:</label>
-                                <input type="number" class="form-control" id="itemsQuantity" />
+                                <input type="number" class="form-control" id="itemsQuantity"/>
                             </div>
                         </div>
                         <div class="form-row">

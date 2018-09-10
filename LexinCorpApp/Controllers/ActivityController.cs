@@ -34,7 +34,6 @@ namespace LexincorpApp.Controllers
             this._retainerRepo = _retainerRepo;
             this._clientRepo = _clientRepo;
         }
-        // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
