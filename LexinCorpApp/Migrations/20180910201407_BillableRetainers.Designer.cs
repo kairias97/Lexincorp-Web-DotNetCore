@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180910201407_BillableRetainers")]
+    partial class BillableRetainers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,13 +100,9 @@ namespace LexincorpApp.Migrations
 
                     b.Property<bool>("IsBilled");
 
-                    b.Property<int>("Month");
-
                     b.Property<string>("Name");
 
                     b.Property<int>("RetainerId");
-
-                    b.Property<int>("Year");
 
                     b.HasKey("Id");
 
