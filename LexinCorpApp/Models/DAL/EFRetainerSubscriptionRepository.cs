@@ -14,7 +14,7 @@ namespace LexincorpApp.Models
             context = ctx;
         }
 
-        public IQueryable<RetainerSubscription> Subscriptions { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IQueryable<RetainerSubscription> Subscriptions { get => context.RetainerSubscriptions; }
 
         public void Delete(int subscriptionId)
         {
@@ -30,7 +30,8 @@ namespace LexincorpApp.Models
                 context.RetainerSubscriptions.Add(subscription);
             } else
             {
-                context.Entry(subscription).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
+                context.Entry(subscription).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Entry(subscription).Property(rs => rs.CreatorId).IsModified = false;
             }
             context.SaveChanges();
         }

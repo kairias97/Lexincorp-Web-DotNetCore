@@ -14,5 +14,6 @@ namespace LexincorpApp.Models
         public string EnglishName { get; set; }
         public bool Active { get; set; } = true;
         public virtual ICollection<RetainerSubscription> RetainerSubscriptions { get; set; }
+        public virtual ICollection<BillableRetainer> BillableRetainers { get; set; }
     }
 }

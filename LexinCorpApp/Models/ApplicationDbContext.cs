@@ -29,6 +29,7 @@ namespace LexincorpApp.Models
         public DbSet<Retainer> Retainers { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<RetainerSubscription> RetainerSubscriptions {get; set;}
+        public DbSet<BillableRetainer> BillableRetainers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
