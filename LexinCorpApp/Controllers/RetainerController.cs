@@ -6,6 +6,7 @@ using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LexincorpApp.Controllers
 {
@@ -17,11 +18,13 @@ namespace LexincorpApp.Controllers
         {
             _retainersRepo = retainerRepo;
         }
+        [Authorize]
         public IActionResult New()
         {
             ViewBag.AddedRetainer = TempData["added"];
             return View(new Retainer());
         }
+        [Authorize]
         [HttpPost]
         public IActionResult New(Retainer retainer)
         {
@@ -33,6 +36,7 @@ namespace LexincorpApp.Controllers
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
+        [Authorize]
         public IActionResult Edit(int id)
         {
             var retainer = _retainersRepo.Retainers.Where(r => r.Id == id).FirstOrDefault();
@@ -44,6 +48,7 @@ namespace LexincorpApp.Controllers
             ViewBag.UpdatedRetainer = TempData["updated"];
             return View(retainer);
         }
+        [Authorize]
         [HttpPost]
         public IActionResult Edit(Retainer retainer)
         {
@@ -55,10 +60,10 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction(nameof(Edit), new { id = retainer.Id});
         }
-
+        [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
-            Func<Retainer, bool> filterFunction = r => String.IsNullOrEmpty(filter) || r.SpanishName.CaseInsensitiveContains(filter) 
+            Func<Retainer, bool> filterFunction = r => String.IsNullOrEmpty(filter) || r.SpanishName.CaseInsensitiveContains(filter)
                 || r.EnglishName.CaseInsensitiveContains(filter);
             RetainerListViewModel vm = new RetainerListViewModel
             {
@@ -78,7 +83,5 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
-
-
     }
 }

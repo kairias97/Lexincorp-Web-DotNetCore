@@ -109,5 +109,13 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction(nameof(Edit), new { id = service.Id });
         }
+
+        public JsonResult GetByCategory(int categoryId)
+        {
+            var list = _servicesRepo.Services.Where(s => s.CategoryId == categoryId)
+                .OrderBy(s => s.Name)
+                .Select(s => new { Id = s.Id, Name = s.Name, EnglishDescription = s.EnglishDescription, SpanishDescription = s.SpanishDescription });
+            return Json(list);
+        }
     }
 }
