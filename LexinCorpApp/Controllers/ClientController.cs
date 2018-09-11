@@ -147,10 +147,11 @@ namespace LexincorpApp.Controllers
         {
             Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(term) || c.Name.CaseInsensitiveContains(term);
 
-            var list = _clientsRepo.Clients.Where(filterFunction)
+            var list = _clientsRepo.Clients.Include(c => c.Packages).Where(filterFunction)
                 .OrderBy(c => c.Name)
                 .Take(10)
-                .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish });
+                .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish,
+                FeePerHour = c.FixedCostPerHour, Packages = c.Packages.Where(p => p.IsFinished == false)});
             return Json(list);
         }
 

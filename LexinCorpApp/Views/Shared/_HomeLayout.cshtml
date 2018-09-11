@@ -166,7 +166,7 @@
                     <div class="collapse" id="collapseActivities">
                         <ul class="nav flex-column">
                             <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" href="#">
+                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="Register">
                                     <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar
                                 </a>
                             </li>
@@ -186,8 +186,8 @@
                     </ul>
                 </div>
             </nav>
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
-                <div class="container">
+            <main class="col-md-10 ml-auto ml-0 px-4" role="main">
+                <div class="container-fluid">
                     @RenderBody()
                 </div>
             </main>

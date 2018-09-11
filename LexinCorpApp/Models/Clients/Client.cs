@@ -46,6 +46,5 @@ namespace LexincorpApp.Models
         public virtual ICollection<Package> Packages { get; set; }
         public virtual ICollection<RetainerSubscription> RetainerSubscriptions { get; set; }
         public virtual ICollection<BillableRetainer> BillableRetainers { get; set; }
-
     }
 }
