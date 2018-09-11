@@ -15,7 +15,7 @@
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         response($.map(data, function (item) {
                             return {
                                 value: item.name,
@@ -42,6 +42,7 @@
                 $("#IsEnglish").prop('checked', ui.item.isEnglish);
                 $("#IsClientSelected").prop('checked', true);
                 $("#FeePerHour").val(ui.item.feePerHour);
+                $("#FeePerHour").prop("disabled", false);
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
@@ -57,6 +58,26 @@
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
                         });
+                        //console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+                $.ajax({
+                    url: "/RetainerSubscription/GetByClient",
+                    type: "GET",
+                    data: { clientId: ui.item.clientId },
+                    contentType: "application/json; charset=utf-8",  
+                    dataType: "json",
+                    success: function (data) {
+                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $.each(data, function (i, item) {
+                            var name = ui.item.isEnglish ? item.retainerType.englishName : item.retainerType.spanishName;
+                            var options = "<option value='" + item.id + "'>" + name + "</option>";
+                            $("#retainers").append(options);
+                        });
                         console.log(data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -65,19 +86,140 @@
                     }
                 });
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
+                $("#Packages").prop("disabled", false);
+                $("#retainers").prop("disabled", false);
+                $("#items").prop("disabled", false);
                 //$("#Package_Description").prop("lang", ui.item.isEnglish ? "en" : "es");
 
 
             }
 
         });
+        $("#Packages").change(function () {
+            if ($("#Packages").val() === "") {
+                $("#retainers").prop("disabled", false);
+                $("#items").prop("disabled", false);
+            }
+            else {
+                $("#retainers").prop("disabled", true);
+                $("#items").prop("disabled", true);
+            }
+        });
+        $("#retainers").change(function () {
+            if ($("#retainers").val() === "") {
+                $("#Packages").prop("disabled", false);
+                $("#items").prop("disabled", false);
+            }
+            else {
+                $("#Packages").prop("disabled", true);
+                $("#items").prop("disabled", true);
+            }
+        });
+        $("#items").change(function () {
+            if ($("#items").val() === "") {
+                $("#Packages").prop("disabled", false);
+                $("#retainers").prop("disabled", false);
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+            }
+            else {
+                $("#Packages").prop("disabled", true);
+                $("#retainers").prop("disabled", true);
+                $("#itemsPrice").prop("disabled", false);
+                $("#itemsQuantity").prop("disabled", false);
+                var price = $("#items").find(":selected").attr("data-price");
+                $("#itemsPrice").val(price);
+            }
+        });
+        $("#categories").change(function () {
+            if ($("#categories").val() === "") {
+                $("#services").empty();
+                $("#description").val("");
+                $("#services").prop("disabled", true);
+                $("#description").prop("disabled", true);
+            }
+            else {
+                $.ajax({
+                    url: "/Service/GetByCategory",
+                    type: "GET",
+                    data: { categoryId: $("#categories").val() },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#services").empty().append("<option value=''>Seleccionar servicioo</option>").val('null');
+                        $.each(data, function (i, item) {
+                            var isEnglish = $("#isEnglish").val();
+                            var description = isEnglish ? item.englishDescription : item.spanishDescription;
+                            var options = "<option value='" + item.id + "' data-description='" + description + "'>" + item.name + "</option>";
+                            $("#services").append(options);
+                        });
+                        $("#services").prop("disabled", false);
+                    }
+                });
+            }
+        });
+        $("#services").change(function () {
+            if ($("#services").val() === "") {
+                $("#description").val("");
+                $("#description").prop("disabled", true);
+            }
+            else {
+                var description = $("#services").find(":selected").attr("data-description");
+                $("#description").val(description);
+                $("#description").prop("disabled", false);
+            }
+        });
+        $("#expenses").change(function () {
+            if ($("#expenses").val() === "") {
+                $("#expensesQuantity").val("");
+                $("#expensesPrice").val("");
+                $("#expensesQuantity").prop("disabled", true);
+                $("#expensesPrice").prop("disabled", true);
+            }
+            else {
+                var price = $("#expenses").find(":selected").attr("data-amount");
+                $("#expensesPrice").val(price);
+                $("#expensesPrice").prop("disabled", false);
+                $("#expensesQuantity").prop("disabled", false);
+            }
+        });
+        $("#btnAddExpense").click(function () {
+            var expense = $("#expenses").find(":selected").text();
+            var id = $("#expenses").val();
+            var amount = $("#expensesPrice").val();
+            var quantity = $("#expensesQuantity").val();
+            var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>"+
+                "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
+            $("#tableData").append(row);
+            $("#expenses").val("");
+            $("#expensesPrice").val("");
+            $("#expensesQuantity").val("");
+            $("#expensesQuantity").prop("disabled", true);
+            $("#expensesPrice").prop("disabled", true);
+            calculateTotalExpenses();
+        });
 
     });
+    function deleteRow(button) {
+        $(button).closest("tr").remove();
+        calculateTotalExpenses();
+    }
+    function calculateTotalExpenses() {
+        //To get the total sum of the <td> that contains each subtotal
+        var total = $('tbody tr td:nth-last-child(2)')
+            .map(function () { return parseFloat($(this).html()); })
+            .get()
+            .reduce(function (total, currentValue) { return total + currentValue; });
+        //To set the html content of <td> that contains total
+        $('tfoot tr td:last-child').html(total);
+    }
 </script>
 
 <div class="container-fluid" style="width:100%">
     <form>
-        <input type="checkbox" hidden asp-for="@Model.IsEnglish" />
+        <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" />
         <div class="row">
             <div class="offset-md-1 col-md-10">
@@ -116,36 +258,33 @@
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
                                 <label for="Packages">Paquetes disponibles:</label>
-                                <select class="form-control" id="Packages">
+                                <select class="form-control" id="Packages" disabled>
                                 </select>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="retainers">Retainers:</label>
-                                <select id="retainers" class="form-control">
-                                    @foreach (var r in Model.Retainers)
-                                    {
-                                        <option value="@r.Id">@r.SpanishName</option>
-                                    }
+                                <select id="retainers" class="form-control" disabled>
                                 </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label for="items">Items:</label>
-                                <select id="items" class="form-control">
+                                <select id="items" class="form-control" disabled>
+                                    <option value="" data-price="">Seleccionar Item</option>
                                     @foreach (var i in Model.Items)
                                     {
-                                        <option value="@i.Id">@i.Name</option>
+                                        <option value="@i.Id" data-price="@i.Amount">@i.Name</option>
                                     }
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="itemsPrice">Precio: </label>
-                                <input type="number" class="form-control" id="itemsPrice" />
+                                <input type="text" class="form-control" id="itemsPrice" disabled />
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="itemsQuantity">Cantidad:</label>
-                                <input type="number" class="form-control" id="itemsQuantity"/>
+                                <input type="number" class="form-control" id="itemsQuantity" disabled/>
                             </div>
                         </div>
                         <div class="form-row">
@@ -155,7 +294,7 @@
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="FeePerHour">Precio por hora:</label>
-                                <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" />
+                                <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" disabled />
                             </div>
                         </div>
                     </div>
@@ -169,6 +308,7 @@
                             <div class="form-group col-md-5">
                                 <label for="categories">Categoría:</label>
                                 <select id="categories" class="form-control">
+                                    <option value="">Seleccionar Categoría</option>
                                     @foreach (var c in Model.Categories)
                                     {
                                         <option value="@c.Id">@c.Name</option>
@@ -177,18 +317,14 @@
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="services">Servicios:</label>
-                                <select id="services" class="form-control">
-                                    @foreach (var s in Model.Services)
-                                    {
-                                        <option value="@s.Id">@s.Name</option>
-                                    }
+                                <select id="services" class="form-control" disabled>
                                 </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-10">
                                 <label for="description">Descripción:</label>
-                                <input type="text" class="form-control" />
+                                <textarea id="description" class="form-control" disabled></textarea>
                             </div>
                         </div>
                     </div>
@@ -202,45 +338,50 @@
                             <div class="form-group col-md-5">
                                 <label for="expenses">Gastos:</label>
                                 <select id="expenses" class="form-control">
+                                    <option data-amount="" value="">Seleccionar gasto</option>
                                     @foreach (var e in Model.Expenses)
                                     {
-                                        <option value="@e.Id">@e.Name</option>
+                                        <option data-amount="@e.Amount" value="@e.Id">@e.Name</option>
                                     }
                                 </select>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="expensesQuantity">Cantidad:</label>
-                                <input type="number" class="form-control" />
+                                <input type="number" class="form-control" id="expensesQuantity" disabled/>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-5">
                                 <label for="expensesPrice">Monto:</label>
-                                <input type="number" class="form-control" />
+                                <input type="text" class="form-control" id="expensesPrice" disabled/>
                             </div>
                             <div class="form-group col-md-5 offset-md-1">
-                                <button class="btn btn-primary" style="margin-top:30px">Agregar</button>
+                                <button class="btn btn-primary" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
                             </div>
                         </div>
                         <div class="form-row table-responsive" style="margin-bottom:20px">
                             <table class="table table-stribed table-bordered">
                                 <thead>
                                     <tr>
+                                        <th hidden>ID</th>
                                         <th>Gasto</th>
                                         <th>Cantidad</th>
                                         <th>Monto</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Es comida</td>
-                                        <td>Para tu</td>
-                                        <td>Animalito</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">Cyyyyyyyy</td>
-                                    </tr>
+                                <tbody id="tableData">
+
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-right">Total:</td>
+                                        <td class="text-right">
+
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>

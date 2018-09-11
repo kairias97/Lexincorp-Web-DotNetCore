@@ -67,7 +67,7 @@ namespace LexincorpApp.Controllers
                 .Where(rs => rs.ClientId == clientId)
                 .Select(rs => new {
                     id = rs.Id,
-                    retainerType = new {id = rs.Retainer.Id, spanishName= rs.Retainer.SpanishName},
+                    retainerType = new {id = rs.Retainer.Id, spanishName= rs.Retainer.SpanishName, englishName = rs.Retainer.EnglishName},
                     agreedFee = rs.AgreedFee,
                     agreedHours = rs.AgreedHours,
                     additionalFeePerHour = rs.AdditionalFeePerHour,
