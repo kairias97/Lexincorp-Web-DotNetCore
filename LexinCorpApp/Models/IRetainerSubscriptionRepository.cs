@@ -7,7 +7,7 @@ namespace LexincorpApp.Models
 {
     public interface IRetainerSubscriptionRepository
     {
-        IQueryable<RetainerSubscription> Subscriptions { get; set; }
+        IQueryable<RetainerSubscription> Subscriptions { get;}
         void Save(RetainerSubscription subscription);
         void Delete(int subscriptionId);
     }
