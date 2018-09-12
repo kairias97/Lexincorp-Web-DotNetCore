@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewData["Title"] = "Administración de suscripciones";
+}
+<script type="text/javascript">
+    $(function () {
+        $('a[data-target="#deleteModal"]').on('click', function () {
+            var targetId = $(this).data("id");
+            var clientName = $(this).data("clientname");
+            console.log($(this).data())
+            var subscriptionName = $(this).data("subscription");
+            var confirmationMessage = '¿Está seguro que desea eliminar la suscripción de <strong>' + subscriptionName + '</strong> '
+                + 'para el cliente <strong>' + clientName + '</strong>?';
+            $('input[name="retainerSubscriptionId"]').val(targetId);
+            $('.modal-body').html(confirmationMessage);
+
+        });
+
+    });
+</script>
+@model RetainerSubscriptionListViewModel
+<h2>Administración de suscripciones activas de retainers</h2>
+@if (ViewBag.Deleted ?? false)
+{
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Suscripción de retainer eliminada exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
+<form asp-action="Admin" method="get" asp-controller="RetainerSubscription">
+    <label for="filter">Filtro de búsqueda:</label>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
+        </div>
+    </div>
+</form>
+<br />
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre del cliente</th>
+                <th>Nombre en español del retainer</th>
+                <th>Honorario acordado USD</th>
+                <th>Horas acordadas</th>
+                <th>Tarifa adicional por hora</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscription in Model.Subscriptions)
+            {
+                <tr>
+                    <td>@subscription.Client?.Name</td>
+                    <td>@subscription.Retainer?.SpanishName</td>
+                    <td>@subscription.AgreedFee</td>
+                    <td>@subscription.AgreedHours</td>
+                    <td>@subscription.AdditionalFeePerHour</td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="RetainerSubscription" asp-route-id="@subscription.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                        <a data-toggle="modal" href="#" data-id="@subscription.Id" data-clientname="@subscription.Client?.Name" data-subscription="@subscription.Retainer?.SpanishName" data-target="#deleteModal"><i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Eliminar"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
+     page-class="btn" page-class-normal="btn-outline-info"
+     page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
+     page-number-url-key="pageNumber"
+     class="btn-group float-right m-1">
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar suscripción</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <form asp-action="Delete" method="post">
+                    <input type="number" name="retainerSubscriptionId" value="" hidden />
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

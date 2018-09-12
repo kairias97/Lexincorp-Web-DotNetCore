@@ -19,6 +19,7 @@ namespace LexincorpApp.Models
         public void Delete(int subscriptionId)
         {
             var subscription = new RetainerSubscription { Id = subscriptionId };
+            context.RetainerSubscriptions.Attach(subscription);
             context.RetainerSubscriptions.Remove(subscription);
             context.SaveChanges();
         }
@@ -32,8 +33,11 @@ namespace LexincorpApp.Models
             {
                 context.Entry(subscription).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 context.Entry(subscription).Property(rs => rs.CreatorId).IsModified = false;
+                context.Entry(subscription).Property(rs => rs.ClientId).IsModified = false;
+                context.Entry(subscription).Property(rs => rs.RetainerId).IsModified = false;
             }
             context.SaveChanges();
         }
+        
     }
 }
