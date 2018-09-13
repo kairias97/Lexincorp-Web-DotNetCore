@@ -30,82 +30,87 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarToggle">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Usuarios
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownUsuarios">
-                        <a class="dropdown-item" asp-controller="Attorney" asp-action="New">Crear</a>
-                        <a class="dropdown-item" asp-controller="Attorney" asp-action="Admin">Administrar</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Clientes
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownClientes">
-                        <a class="dropdown-item" asp-controller="Client" asp-action="New">Agregar nuevo</a>
-                        <a class="dropdown-item" asp-controller="Client" asp-action="Admin">Administrar</a>
-                    </div>
-                </li>
+        @if (User.IsInRole("Administrador"))
+        {
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Usuarios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownUsuarios">
+                            <a class="dropdown-item" asp-controller="Attorney" asp-action="New">Crear</a>
+                            <a class="dropdown-item" asp-controller="Attorney" asp-action="Admin">Administrar</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownClientes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Clientes
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownClientes">
+                            <a class="dropdown-item" asp-controller="Client" asp-action="New">Agregar nuevo</a>
+                            <a class="dropdown-item" asp-controller="Client" asp-action="Admin">Administrar</a>
+                        </div>
+                    </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownServicios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Servicios
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownServicios">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownServicios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Servicios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownServicios">
 
-                        <a class="dropdown-item" asp-action="New" asp-controller="Category">Crear categoría</a>
-                        <a class="dropdown-item" asp-action="Admin" asp-controller="Category">Administrar categorías</a>
-                        <a class="dropdown-item" asp-action="New" asp-controller="Service">Crear servicio</a>
-                        <a class="dropdown-item" asp-action="Admin" asp-controller="Service">Administrar servicios</a>
+                            <a class="dropdown-item" asp-action="New" asp-controller="Category">Crear categoría</a>
+                            <a class="dropdown-item" asp-action="Admin" asp-controller="Category">Administrar categorías</a>
+                            <a class="dropdown-item" asp-action="New" asp-controller="Service">Crear servicio</a>
+                            <a class="dropdown-item" asp-action="Admin" asp-controller="Service">Administrar servicios</a>
 
-                    </div>
-                </li>
+                        </div>
+                    </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownGastos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Gastos
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownGastos">
-                        <a class="dropdown-item" asp-controller="Expense" asp-action="New">Crear nuevo tipo de gasto</a>
-                        <a class="dropdown-item" asp-controller="Expense" asp-action="Admin">Administrar tipos de gastos</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownItems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Ítems
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownItems">
-                        <a class="dropdown-item" asp-controller="Item" asp-action="New">Crear nuevo ítem</a>
-                        <a class="dropdown-item" asp-controller="Item" asp-action="Admin">Administrar</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownRetainers" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Retainers
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownRetainers">
-                        <a class="dropdown-item" asp-controller="Retainer" asp-action="New">Crear nuevo tipo de retainer</a>
-                        <a class="dropdown-item" asp-controller="Retainer" asp-action="Admin">Administrar tipos de retainers</a>
-                        <a class="dropdown-item" asp-controller="RetainerSubscription" asp-action="New">Crear nueva suscripción de retainer</a>
-                        <a class="dropdown-item" asp-controller="RetainerSubscription" asp-action="Admin">Administrar suscripciones activas</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownPackages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Paquetes
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownPackages">
-                        <a class="dropdown-item" asp-controller="Package" asp-action="New">Registrar nuevo Paquete</a>
-                        <a class="dropdown-item" asp-controller="Package" asp-action="Admin">Administrar paquetes</a>
-                    </div>
-                </li>
-            </ul>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownGastos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Gastos
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownGastos">
+                            <a class="dropdown-item" asp-controller="Expense" asp-action="New">Crear nuevo tipo de gasto</a>
+                            <a class="dropdown-item" asp-controller="Expense" asp-action="Admin">Administrar tipos de gastos</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownItems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ítems
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownItems">
+                            <a class="dropdown-item" asp-controller="Item" asp-action="New">Crear nuevo ítem</a>
+                            <a class="dropdown-item" asp-controller="Item" asp-action="Admin">Administrar</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownRetainers" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Retainers
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownRetainers">
+                            <a class="dropdown-item" asp-controller="Retainer" asp-action="New">Crear nuevo tipo de retainer</a>
+                            <a class="dropdown-item" asp-controller="Retainer" asp-action="Admin">Administrar tipos de retainers</a>
+                            <a class="dropdown-item" asp-controller="RetainerSubscription" asp-action="New">Crear nueva suscripción de retainer</a>
+                            <a class="dropdown-item" asp-controller="RetainerSubscription" asp-action="Admin">Administrar suscripciones activas</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownPackages" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Paquetes
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownPackages">
+                            <a class="dropdown-item" asp-controller="Package" asp-action="New">Registrar nuevo Paquete</a>
+                            <a class="dropdown-item" asp-controller="Package" asp-action="Admin">Administrar paquetes</a>
+                        </div>
+                    </li>
+                </ul>
 
-        </div>
+            </div>
+
+        }
+
     </nav>
     <div class="container-fluid">
         <div class="row">
@@ -127,30 +132,35 @@
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="false" aria-controls="collapseVacations">
                             <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
                                 Vacaciones
-                                <i class="fas fa-arrow-circle-left fa-fw"></i>
+                                <i class="fas fa-arrow-circle-down fa-fw"></i>
                             </h6>
                         </a>
                     </div>
                     <div class="collapse" id="collapseVacations">
                         <ul class="nav flex-column">
-                            <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
-                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar movimiento
-                                </a>
-                            </li>
-                            <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
-                                    <i class="fas fa-bookmark fa-fw"></i>&nbsp; Administración de solicitudes
-                                </a>
-                            </li>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item sidebar-li">
+                                    <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
+                                        <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar movimiento
+                                    </a>
+                                </li>
+                                <li class="nav-item sidebar-li">
+                                    <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
+                                        <i class="fas fa-bookmark fa-fw"></i>&nbsp; Administración de solicitudes
+                                    </a>
+                                </li>
+
+                            }
+
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="New">
-                                    <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Agregar solicitud
+                                    <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Nueva solicitud
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="History">
-                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial de solicitudes
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Mi historial de solicitudes
                                 </a>
                             </li>
                         </ul>
@@ -159,7 +169,7 @@
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="false" aria-controls="collapseActivities">
                             <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
                                 Actividades
-                                <i class="fas fa-arrow-circle-left"></i>
+                                <i class="fas fa-arrow-circle-down"></i>
                             </h6>
                         </a>
                     </div>
@@ -178,12 +188,21 @@
                         </ul>
                     </div>
                     <ul class="nav flex-column centered" style="padding-top:15px;">
+                        
+                        <li class="nav-item sidebar-li">
+                            <a class="nav-link text-muted" asp-action="Pending" asp-controller="Notification">
+                                <i class="fas fa-bell fa-fw"></i>&nbsp; Notificaciones&nbsp;
+                                @await Component.InvokeAsync("NotificationBadge")
+                            </a>
+                            
+                        </li>
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
                                 <i class="fas fa-sign-out-alt fa-fw" aria-hidden="true"></i>&nbsp; Cerrar sesión
                             </a>
                         </li>
                     </ul>
+       
                 </div>
             </nav>
             <main class="col-md-10 ml-auto ml-0 px-4" role="main">
