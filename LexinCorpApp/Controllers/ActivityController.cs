@@ -53,5 +53,11 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
+        [Authorize]
+        [HttpPost]
+        public JsonResult New(NewActivityRequest body)
+        {
+            return Json(new { message = "Ingresado", success = true });
+        }
     }
 }

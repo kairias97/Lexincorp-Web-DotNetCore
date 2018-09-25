@@ -120,7 +120,7 @@ namespace LexincorpApp.Controllers
             return RedirectToAction(nameof(Edit), new { id = package.Id});
         }
         [Authorize]
-        public JsonResult Search([FromQuery]int clientId)
+        public JsonResult Search(int clientId)
         {
             var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == false)
                 .OrderBy(p => p.Name)

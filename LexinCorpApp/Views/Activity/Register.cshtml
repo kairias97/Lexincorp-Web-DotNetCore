@@ -9,7 +9,7 @@
         $("#clientFilter").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/Client/Search",
+                    url: "@Url.Action("Search","Client")",
                     type: "GET",
                     data: request,
                     dataType: "json",
@@ -38,6 +38,7 @@
             minLength: 1,
             select: function (event, ui) {
                 //$("#Package_ClientId").val(ui.item.clientId);
+                $("#ClientId").val(ui.item.clientId);
                 $("#ClientName").val(ui.item.clientName);
                 $("#IsEnglish").prop('checked', ui.item.isEnglish);
                 $("#IsClientSelected").prop('checked', true);
@@ -47,9 +48,9 @@
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
-                    url: "/Package/Search?clientId=" + ui.item.clientId,
+                    url: "@Url.Action("Search","Package")",
                     type: "GET",
-                    data: clientId,
+                    data: { clientId: ui.item.clientId },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
@@ -66,7 +67,7 @@
                     }
                 });
                 $.ajax({
-                    url: "/RetainerSubscription/GetByClient",
+                    url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
                     contentType: "application/json; charset=utf-8",  
@@ -78,7 +79,6 @@
                             var options = "<option value='" + item.id + "'>" + name + "</option>";
                             $("#retainers").append(options);
                         });
-                        console.log(data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -142,13 +142,13 @@
             }
             else {
                 $.ajax({
-                    url: "/Service/GetByCategory",
+                    url: "@Url.Action("GetByCategory","Service")",
                     type: "GET",
                     data: { categoryId: $("#categories").val() },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
-                        $("#services").empty().append("<option value=''>Seleccionar servicioo</option>").val('null');
+                        $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
                         $.each(data, function (i, item) {
                             var isEnglish = $("#isEnglish").val();
                             var description = isEnglish ? item.englishDescription : item.spanishDescription;
@@ -186,20 +186,122 @@
             }
         });
         $("#btnAddExpense").click(function () {
-            var expense = $("#expenses").find(":selected").text();
-            var id = $("#expenses").val();
-            var amount = $("#expensesPrice").val();
-            var quantity = $("#expensesQuantity").val();
-            var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>"+
-                "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
-            $("#tableData").append(row);
-            $("#expenses").val("");
-            $("#expensesPrice").val("");
-            $("#expensesQuantity").val("");
-            $("#expensesQuantity").prop("disabled", true);
-            $("#expensesPrice").prop("disabled", true);
-            calculateTotalExpenses();
+            if ($("#expenses").val() !== "") {
+                var expense = $("#expenses").find(":selected").text();
+                var id = $("#expenses").val();
+                var amount = $("#expensesPrice").val();
+                var quantity = $("#expensesQuantity").val();
+                var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
+                    "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
+                $("#tableData").append(row);
+                $("#expenses").val("");
+                $("#expensesPrice").val("");
+                $("#expensesQuantity").val("");
+                $("#expensesQuantity").prop("disabled", true);
+                $("#expensesPrice").prop("disabled", true);
+                calculateTotalExpenses();
+            }            
         });
+        $("#btnSubmit").click(function () {
+            var body = {}
+            body.ClientId = $("#ClientId").val();
+            body.ActivityDate = $("#activityDate").val();
+            body.Description = $("#description").val();
+            body.ServiceId = $("#services").val();
+            body.HoursWorked = $("#hours").val();
+            body.HourlyRate = $("#FeePerHour").val();
+            if ($("#Packages").val() !== "") {
+                body.PackageId = $("#Packages").val();
+                body.ActivityType = 2;
+            }
+            else if ($("#retainers").val() !== "") {
+                body.BillableRetainerId = $("#retainers").val();
+                body.ActivityType = 3;
+            }
+            else if ($("#items").val() !== "") {
+                body.ItemId = $("#items").val();
+                body.ItemUnitPrice = $("#itemsPrice").val();
+                body.ItemQuantity = $("#itemsQuantity").val();
+                body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
+                body.ActivityType = 4;
+            }
+            else {
+                body.ActivityType = 1;
+                body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+            }
+            var expenses = [];
+            $('tbody tr').each(function () {
+                var newExpense = {};
+                var cells = $(this).find("td");
+                newExpense.ExpenseId = cells[0].innerHTML;
+                newExpense.Quantity = cells[2].innerHTML;
+                newExpense.UnitCost = cells[3].innerHTML;
+                newExpense.SubTotal = cells[4].innerHTML;
+                expenses.push(newExpense);
+            });
+            console.log(expenses);
+            body.Expenses = expenses;
+            $.ajax({
+                url: "@Url.Action("New","Activity")",
+                type: "POST",
+                data: { body: body },
+                dataType: "json",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    var err = eval("(" + XMLHttpRequest.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        });
+        $("#activityDate").change(function () {
+            if ($("#IsClientSelected").is(":checked")) {
+                var clientId = $("#ClientId").val()
+                $.ajax({
+                     url: "@Url.Action("Search","Package")",
+                    type: "GET",
+                    data: { clientId: ui.item.clientId },
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+                        $.each(data, function (i, item) {
+                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                            $("#Packages").append(options);
+                        });
+                        //console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+                $.ajax({
+                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                    type: "GET",
+                    data: { clientId: clientId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $.each(data, function (i, item) {
+                            var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
+                            var options = "<option value='" + item.id + "'>" + name + "</option>";
+                            $("#retainers").append(options);
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+                $("#Packages").prop("disabled", false);
+                $("#retainers").prop("disabled", false);
+                $("#items").prop("disabled", false);
+            }            
+        })
 
     });
     function deleteRow(button) {
@@ -219,8 +321,9 @@
 
 <div class="container-fluid" style="width:100%">
     <form>
+        <input type="number" hidden asp-for="@Model.ClientId" id="ClientId"/>
         <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
-        <input type="checkbox" hidden asp-for="@Model.IsClientSelected" />
+        <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected"/>
         <div class="row">
             <div class="offset-md-1 col-md-10">
                 <div class="row bg-light rounded" style="margin-top:20px">
@@ -359,7 +462,7 @@
                                 <button class="btn btn-primary" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
                             </div>
                         </div>
-                        <div class="form-row table-responsive" style="margin-bottom:20px">
+                        <div class="form-row table-responsive">
                             <table class="table table-stribed table-bordered">
                                 <thead>
                                     <tr>
@@ -383,6 +486,11 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                        </div>
+                        <div class="form-row" style="margin-bottom:20px">
+                            <div class="form-group col-md-5">
+                                <button class="btn btn-primary" id="btnSubmit" type="button">Guardar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
