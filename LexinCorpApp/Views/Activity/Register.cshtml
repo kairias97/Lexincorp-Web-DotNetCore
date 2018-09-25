@@ -186,7 +186,7 @@
             }
         });
         $("#btnAddExpense").click(function () {
-            if ($("#expenses").val() !== "") {
+            if ($("#expenses").val() !== "" && $("#expensesPrice").val() !== "" && $("#expensesQuantity").val() !== "") {
                 var expense = $("#expenses").find(":selected").text();
                 var id = $("#expenses").val();
                 var amount = $("#expensesPrice").val();
@@ -203,59 +203,79 @@
             }            
         });
         $("#btnSubmit").click(function () {
-            var body = {}
-            body.ClientId = $("#ClientId").val();
-            body.ActivityDate = $("#activityDate").val();
-            body.Description = $("#description").val();
-            body.ServiceId = $("#services").val();
-            body.HoursWorked = $("#hours").val();
-            body.HourlyRate = $("#FeePerHour").val();
-            if ($("#Packages").val() !== "") {
-                body.PackageId = $("#Packages").val();
-                body.ActivityType = 2;
-            }
-            else if ($("#retainers").val() !== "") {
-                body.BillableRetainerId = $("#retainers").val();
-                body.ActivityType = 3;
-            }
-            else if ($("#items").val() !== "") {
-                body.ItemId = $("#items").val();
-                body.ItemUnitPrice = $("#itemsPrice").val();
-                body.ItemQuantity = $("#itemsQuantity").val();
-                body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
-                body.ActivityType = 4;
+            if (validateData()) {
+                var body = {}
+                body.ClientId = $("#ClientId").val();
+                body.ActivityDate = $("#activityDate").val();
+                body.Description = $("#description").val();
+                body.ServiceId = $("#services").val();
+                body.HoursWorked = $("#hours").val();
+                body.HourlyRate = $("#FeePerHour").val();
+                if ($("#Packages").val() !== "") {
+                    body.PackageId = $("#Packages").val();
+                    body.ActivityType = 2;
+                }
+                else if ($("#retainers").val() !== "") {
+                    body.BillableRetainerId = $("#retainers").val();
+                    body.ActivityType = 3;
+                }
+                else if ($("#items").val() !== "") {
+                    body.ItemId = $("#items").val();
+                    body.ItemUnitPrice = $("#itemsPrice").val();
+                    body.ItemQuantity = $("#itemsQuantity").val();
+                    body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
+                    body.ActivityType = 4;
+                }
+                else {
+                    body.ActivityType = 1;
+                    body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+                }
+                var expenses = [];
+                $('tbody tr').each(function () {
+                    var newExpense = {};
+                    var cells = $(this).find("td");
+                    newExpense.ExpenseId = cells[0].innerHTML;
+                    newExpense.Quantity = cells[2].innerHTML;
+                    newExpense.UnitCost = cells[3].innerHTML;
+                    newExpense.SubTotal = cells[4].innerHTML;
+                    expenses.push(newExpense);
+                });
+                console.log(expenses);
+                body.Expenses = expenses;
+                $.ajax({
+                    url: "@Url.Action("New","Activity")",
+                    type: "POST",
+                    data: { body: body },
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            showSuccess(data.message);
+                            clean();
+                        }
+                        else {
+                            showError(data.message);
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
             }
             else {
-                body.ActivityType = 1;
-                body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+                showError("Debe ingresar los campos requeridos (*)");
             }
-            var expenses = [];
-            $('tbody tr').each(function () {
-                var newExpense = {};
-                var cells = $(this).find("td");
-                newExpense.ExpenseId = cells[0].innerHTML;
-                newExpense.Quantity = cells[2].innerHTML;
-                newExpense.UnitCost = cells[3].innerHTML;
-                newExpense.SubTotal = cells[4].innerHTML;
-                expenses.push(newExpense);
-            });
-            console.log(expenses);
-            body.Expenses = expenses;
-            $.ajax({
-                url: "@Url.Action("New","Activity")",
-                type: "POST",
-                data: { body: body },
-                dataType: "json",
-                dataFilter: function (data) { return data; },
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    var err = eval("(" + XMLHttpRequest.responseText + ")");
-                    alert(err.Message);
-                }
-            });
         });
+        function showSuccess(message) {
+            $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        }
+        function showError(message) {
+            $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        }
         $("#activityDate").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                 var clientId = $("#ClientId").val()
@@ -316,14 +336,60 @@
         //To set the html content of <td> that contains total
         $('tfoot tr td:last-child').html(total);
     }
+    function validateData() {
+        if ($("#IsClientSelected").is(":checked") && $("#ClientId").val() !== "" && $("#activityDate").val() !== ""
+            && $("#description").val() !== "" && $("#services").val() !== "" && $("#hours").val() !== "" && $("#FeePerHour").val() !== "") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function clean() {
+        $("#ClientId").val("");
+        $("#isEnglish").prop("checked", false);
+        $("#IsClientSelected").prop("checked", false);
+        $("#activityDate").val("");
+        $("#clientFilter").val("");
+        $("#ClientName").val("");
+        $("#clientLanguage").val("")
+        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+        $("#items").val("");
+        $("#itemsPrice").val("");
+        $("#itemsQuantity").val("");
+        $("#hours").val("");
+        $("#FeePerHour").val("");
+        $("#categories").val("");
+        $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
+        $("#description").val("");
+        $("#expenses").val("");
+        $("#expensesQuantity").val("");
+        $("#expensesPrice").val("");
+        $('tbody tr').each(function () {
+            $(this).remove();
+        });
+        $('tfoot tr td:last-child').html("");
+        $("#Packages").prop("disabled", true);
+        $("#retainers").prop("disabled", true);
+        $("#items").prop("disabled", true);
+        $("#itemsPrice").prop("disabled", true);
+        $("#itemsQuantity").prop("disabled", true);
+        
+    }
 </script>
 
 <div class="container-fluid" style="width:100%">
     <form>
-<<<<<<< HEAD
-        <input type="number" hidden asp-for="@Model.ClientId" id="ClientId"/>
+        <input type="number" hidden asp-for="@Model.ClientId" id="ClientId" />
         <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
-        <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected"/>
+        <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
+        <div id="placeholderSuccess">
+
+        </div>
+        <div id="placeholderError">
+
+        </div>
         <div class="row">
             <div class="offset-md-1 col-md-10">
                 <div class="row bg-light rounded" style="margin-top:20px">
@@ -343,7 +409,7 @@
                         </div>
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
-                                <label for="ClientName">Nombre del cliente</label>
+                                <label for="ClientName">Nombre del cliente:</label>
                                 <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente" />
                             </div>
                             <div class="form-group col-md-5">
@@ -361,13 +427,11 @@
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
                                 <label for="Packages">Paquetes disponibles:</label>
-                                <select class="form-control" id="Packages" disabled>
-                                </select>
+                                <select class="form-control" id="Packages" disabled></select>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="retainers">Retainers:</label>
-                                <select id="retainers" class="form-control" disabled>
-                                </select>
+                                <select id="retainers" class="form-control" disabled></select>
                             </div>
                         </div>
                         <div class="form-row">
@@ -387,16 +451,16 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="itemsQuantity">Cantidad:</label>
-                                <input type="number" class="form-control" id="itemsQuantity" disabled/>
+                                <input type="number" class="form-control" id="itemsQuantity" disabled />
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-5">
-                                <label for="hours">Horas:</label>
+                                <label for="hours">Horas:*</label>
                                 <input type="number" class="form-control" id="hours" />
                             </div>
                             <div class="form-group col-md-5">
-                                <label for="FeePerHour">Precio por hora:</label>
+                                <label for="FeePerHour">Precio por hora:*</label>
                                 <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" disabled />
                             </div>
                         </div>
@@ -409,7 +473,7 @@
                         </div>
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
-                                <label for="categories">Categoría:</label>
+                                <label for="categories">Categoría:*</label>
                                 <select id="categories" class="form-control">
                                     <option value="">Seleccionar Categoría</option>
                                     @foreach (var c in Model.Categories)
@@ -419,14 +483,13 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-5">
-                                <label for="services">Servicios:</label>
-                                <select id="services" class="form-control" disabled>
-                                </select>
+                                <label for="services">Servicios:*</label>
+                                <select id="services" class="form-control" disabled></select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-10">
-                                <label for="description">Descripción:</label>
+                                <label for="description">Descripción:*</label>
                                 <textarea id="description" class="form-control" disabled></textarea>
                             </div>
                         </div>
@@ -439,7 +502,7 @@
                         </div>
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
-                                <label for="expenses">Gastos:</label>
+                                <label for="expenses">Gastos:*</label>
                                 <select id="expenses" class="form-control">
                                     <option data-amount="" value="">Seleccionar gasto</option>
                                     @foreach (var e in Model.Expenses)
@@ -449,14 +512,14 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-5">
-                                <label for="expensesQuantity">Cantidad:</label>
-                                <input type="number" class="form-control" id="expensesQuantity" disabled/>
+                                <label for="expensesQuantity">Cantidad:*</label>
+                                <input type="number" class="form-control" id="expensesQuantity" disabled />
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-5">
-                                <label for="expensesPrice">Monto:</label>
-                                <input type="text" class="form-control" id="expensesPrice" disabled/>
+                                <label for="expensesPrice">Monto:*</label>
+                                <input type="text" class="form-control" id="expensesPrice" disabled />
                             </div>
                             <div class="form-group col-md-5 offset-md-1">
                                 <button class="btn btn-primary" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
@@ -474,15 +537,11 @@
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableData">
-
-                                </tbody>
+                                <tbody id="tableData"></tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="4" class="text-right">Total:</td>
-                                        <td class="text-right">
-
-                                        </td>
+                                        <td class="text-right"></td>
                                     </tr>
                                 </tfoot>
                             </table>
