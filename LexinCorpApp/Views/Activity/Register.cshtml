@@ -302,7 +302,6 @@
                 $("#items").prop("disabled", false);
             }            
         })
-
     });
     function deleteRow(button) {
         $(button).closest("tr").remove();
@@ -321,6 +320,7 @@
 
 <div class="container-fluid" style="width:100%">
     <form>
+<<<<<<< HEAD
         <input type="number" hidden asp-for="@Model.ClientId" id="ClientId"/>
         <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected"/>
