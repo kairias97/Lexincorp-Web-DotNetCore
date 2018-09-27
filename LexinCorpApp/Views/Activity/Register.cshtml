@@ -5,36 +5,72 @@
         //Para setear idioma inicial
         //$("#Package_Description").prop("lang", $("#IsEnglish").value ? "en" : "es");
         $("div.container-fluid").css("background-color", "lightgrey");
+        $("#activityDate").datepicker();
+        $("#activityDate").datepicker("option", "dateFormat", "dd/mm/yy");
+
+
+        @if (!User.IsInRole("Administrador"))
+        {
+            <text>
+                var date = new Date();
+                if (date.getDate() <= 10) {
+                    var firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                    var lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    $("#activityDate").datepicker("option", {
+                        minDate: firstDay,
+                        maxDate: lastDay
+                    });
+                }
+                else {
+                    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                    var lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    $("#activityDate").datepicker("option", {
+                        minDate: firstDay,
+                        maxDate: lastDay
+                    });
+                }
+            </text>
+        }
+        else {
+            <text>
+                var date = new Date();
+                var lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                $("#activityDate").datepicker("option", {
+                    maxDate: lastDay
+                });
+            </text>
+        }
+
 
         $("#clientFilter").autocomplete({
-            source: function (request, response) {
+                source: function (request, response) {
                 $.ajax({
-                    url: "@Url.Action("Search","Client")",
+                        url: "@Url.Action("Search","Client")",
                     type: "GET",
                     data: request,
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                        //console.log(data);
-                        response($.map(data, function (item) {
-                            return {
-                                value: item.name,
+                                //console.log(data);
+                                response($.map(data, function (item) {
+                                    return {
+                                    value: item.name,
                                 label: item.name,
                                 clientName: item.name,
                                 clientId: item.id,
                                 isEnglish: item.billingInEnglish,
                                 feePerHour: item.feePerHour,
                                 packages: item.packages
-                            }
-                        }))
+                                    }
+                                }))
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message)
+                                var err = eval("(" + XMLHttpRequest.responseText + ")");
+                                alert(err.Message)
                         // console.log("Ajax Error!");
                     }
-                });
-             },
+                        });
+                    },
             minLength: 1,
             select: function (event, ui) {
                 //$("#Package_ClientId").val(ui.item.clientId);
@@ -48,7 +84,7 @@
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
-                    url: "@Url.Action("Search","Package")",
+                url: "@Url.Action("Search","Package")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
                     dataType: "json",
@@ -67,22 +103,23 @@
                     }
                 });
                 $.ajax({
-                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
-                    contentType: "application/json; charset=utf-8",  
+                    contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
+                        console.log(data);
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
                         $.each(data, function (i, item) {
-                            var name = ui.item.isEnglish ? item.retainerType.englishName : item.retainerType.spanishName;
-                            var options = "<option value='" + item.id + "'>" + name + "</option>";
+                            //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
+                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
                         });
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message);
+                        //var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        //alert(err.Message);
                     }
                 });
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
@@ -94,52 +131,52 @@
 
             }
 
-        });
+            });
         $("#Packages").change(function () {
-            if ($("#Packages").val() === "") {
+                if ($("#Packages").val() === "") {
                 $("#retainers").prop("disabled", false);
                 $("#items").prop("disabled", false);
-            }
+                }
             else {
                 $("#retainers").prop("disabled", true);
                 $("#items").prop("disabled", true);
-            }
-        });
+                }
+            });
         $("#retainers").change(function () {
-            if ($("#retainers").val() === "") {
+                if ($("#retainers").val() === "") {
                 $("#Packages").prop("disabled", false);
                 $("#items").prop("disabled", false);
-            }
+                }
             else {
                 $("#Packages").prop("disabled", true);
                 $("#items").prop("disabled", true);
-            }
-        });
+                }
+            });
         $("#items").change(function () {
-            if ($("#items").val() === "") {
+                if ($("#items").val() === "") {
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
                 $("#itemsPrice").prop("disabled", true);
                 $("#itemsQuantity").prop("disabled", true);
                 $("#itemsPrice").val("");
                 $("#itemsQuantity").val("");
-            }
+                }
             else {
                 $("#Packages").prop("disabled", true);
                 $("#retainers").prop("disabled", true);
                 $("#itemsPrice").prop("disabled", false);
                 $("#itemsQuantity").prop("disabled", false);
-                var price = $("#items").find(":selected").attr("data-price");
+                    var price = $("#items").find(":selected").attr("data-price");
                 $("#itemsPrice").val(price);
-            }
-        });
+                }
+            });
         $("#categories").change(function () {
-            if ($("#categories").val() === "") {
+                if ($("#categories").val() === "") {
                 $("#services").empty();
                 $("#description").val("");
                 $("#services").prop("disabled", true);
                 $("#description").prop("disabled", true);
-            }
+                }
             else {
                 $.ajax({
                     url: "@Url.Action("GetByCategory","Service")",
@@ -150,98 +187,98 @@
                     success: function (data) {
                         $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
                         $.each(data, function (i, item) {
-                            var isEnglish = $("#isEnglish").val();
-                            var description = isEnglish ? item.englishDescription : item.spanishDescription;
-                            var options = "<option value='" + item.id + "' data-description='" + description + "'>" + item.name + "</option>";
+                                var isEnglish = $("#isEnglish").val();
+                                var description = isEnglish ? item.englishDescription : item.spanishDescription;
+                                var options = "<option value='" + item.id + "' data-description='" + description + "'>" + item.name + "</option>";
                             $("#services").append(options);
-                        });
+                            });
                         $("#services").prop("disabled", false);
-                    }
-                });
-            }
-        });
+                        }
+                    });
+                }
+            });
         $("#services").change(function () {
-            if ($("#services").val() === "") {
+                if ($("#services").val() === "") {
                 $("#description").val("");
                 $("#description").prop("disabled", true);
-            }
+                }
             else {
-                var description = $("#services").find(":selected").attr("data-description");
+                    var description = $("#services").find(":selected").attr("data-description");
                 $("#description").val(description);
                 $("#description").prop("disabled", false);
-            }
-        });
+                }
+            });
         $("#expenses").change(function () {
-            if ($("#expenses").val() === "") {
+                if ($("#expenses").val() === "") {
                 $("#expensesQuantity").val("");
                 $("#expensesPrice").val("");
                 $("#expensesQuantity").prop("disabled", true);
                 $("#expensesPrice").prop("disabled", true);
-            }
+                }
             else {
-                var price = $("#expenses").find(":selected").attr("data-amount");
+                    var price = $("#expenses").find(":selected").attr("data-amount");
                 $("#expensesPrice").val(price);
                 $("#expensesPrice").prop("disabled", false);
                 $("#expensesQuantity").prop("disabled", false);
-            }
-        });
+                }
+            });
         $("#btnAddExpense").click(function () {
-            if ($("#expenses").val() !== "" && $("#expensesPrice").val() !== "" && $("#expensesQuantity").val() !== "") {
-                var expense = $("#expenses").find(":selected").text();
-                var id = $("#expenses").val();
-                var amount = $("#expensesPrice").val();
-                var quantity = $("#expensesQuantity").val();
-                var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
-                    "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
+                if ($("#expenses").val() !== "" && $("#expensesPrice").val() !== "" && $("#expensesQuantity").val() !== "") {
+                    var expense = $("#expenses").find(":selected").text();
+                    var id = $("#expenses").val();
+                    var amount = $("#expensesPrice").val();
+                    var quantity = $("#expensesQuantity").val();
+                    var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
+                        "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
                 $("#tableData").append(row);
                 $("#expenses").val("");
                 $("#expensesPrice").val("");
                 $("#expensesQuantity").val("");
                 $("#expensesQuantity").prop("disabled", true);
                 $("#expensesPrice").prop("disabled", true);
-                calculateTotalExpenses();
-            }            
-        });
+                    calculateTotalExpenses();
+                }
+            });
         $("#btnSubmit").click(function () {
-            if (validateData()) {
-                var body = {}
-                body.ClientId = $("#ClientId").val();
-                body.ActivityDate = $("#activityDate").val();
-                body.Description = $("#description").val();
-                body.ServiceId = $("#services").val();
-                body.HoursWorked = $("#hours").val();
-                body.HourlyRate = $("#FeePerHour").val();
-                if ($("#Packages").val() !== "") {
-                    body.PackageId = $("#Packages").val();
-                    body.ActivityType = 2;
-                }
+                if (validateData()) {
+                    var body = {}
+                    body.ClientId = $("#ClientId").val();
+                    body.ActivityDate = $("#activityDate").val();
+                    body.Description = $("#description").val();
+                    body.ServiceId = $("#services").val();
+                    body.HoursWorked = $("#hours").val();
+                    body.HourlyRate = $("#FeePerHour").val();
+                    if ($("#Packages").val() !== "") {
+                        body.PackageId = $("#Packages").val();
+                        body.ActivityType = 2;
+                    }
                 else if ($("#retainers").val() !== "") {
-                    body.BillableRetainerId = $("#retainers").val();
-                    body.ActivityType = 3;
-                }
+                        body.BillableRetainerId = $("#retainers").val();
+                        body.ActivityType = 3;
+                    }
                 else if ($("#items").val() !== "") {
-                    body.ItemId = $("#items").val();
-                    body.ItemUnitPrice = $("#itemsPrice").val();
-                    body.ItemQuantity = $("#itemsQuantity").val();
-                    body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
-                    body.ActivityType = 4;
-                }
+                        body.ItemId = $("#items").val();
+                        body.ItemUnitPrice = $("#itemsPrice").val();
+                        body.ItemQuantity = $("#itemsQuantity").val();
+                        body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
+                        body.ActivityType = 4;
+                    }
                 else {
-                    body.ActivityType = 1;
-                    body.HourSubtotal = body.HoursWorked * body.HourlyRate;
-                }
-                var expenses = [];
+                        body.ActivityType = 1;
+                        body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+                    }
+                    var expenses = [];
                 $('tbody tr').each(function () {
-                    var newExpense = {};
-                    var cells = $(this).find("td");
-                    newExpense.ExpenseId = cells[0].innerHTML;
-                    newExpense.Quantity = cells[2].innerHTML;
-                    newExpense.UnitCost = cells[3].innerHTML;
-                    newExpense.SubTotal = cells[4].innerHTML;
-                    expenses.push(newExpense);
-                });
-                console.log(expenses);
-                body.Expenses = expenses;
+                        var newExpense = {};
+                        var cells = $(this).find("td");
+                        newExpense.ExpenseId = cells[0].innerHTML;
+                        newExpense.Quantity = cells[2].innerHTML;
+                        newExpense.UnitCost = cells[3].innerHTML;
+                        newExpense.SubTotal = cells[4].innerHTML;
+                        expenses.push(newExpense);
+                    });
+                    console.log(expenses);
+                    body.Expenses = expenses;
                 $.ajax({
                     url: "@Url.Action("New","Activity")",
                     type: "POST",
@@ -249,38 +286,38 @@
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                        console.log(data);
-                        if (data.success) {
-                            showSuccess(data.message);
-                            clean();
-                        }
-                        else {
-                            showError(data.message);
-                        }
-                    },
+                            console.log(data);
+                            if (data.success) {
+                                showSuccess(data.message);
+                                clean();
+                            }
+                            else {
+                                showError(data.message);
+                            }
+                        },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
-            }
-            else {
-                showError("Debe ingresar los campos requeridos (*)");
-            }
-        });
+                            var err = eval("(" + XMLHttpRequest.responseText + ")");
+                            alert(err.Message);
+                        }
+                    });
+                }
+                else {
+                    showError("Debe ingresar los campos requeridos (*)");
+                }
+            });
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
-        function showError(message) {
+            }
+            function showError(message) {
             $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
+            }
         $("#activityDate").change(function () {
-            if ($("#IsClientSelected").is(":checked")) {
-                var clientId = $("#ClientId").val()
-                $.ajax({
-                     url: "@Url.Action("Search","Package")",
+                if ($("#IsClientSelected").is(":checked")) {
+                    var clientId = $("#ClientId").val()
+                    $.ajax({
+                    url: "@Url.Action("Search","Package")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
                     dataType: "json",
@@ -288,16 +325,16 @@
                     success: function (data) {
                         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
                         $.each(data, function (i, item) {
-                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
-                        });
-                        //console.log(data);
-                    },
+                            });
+                            //console.log(data);
+                        },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
+                            var err = eval("(" + XMLHttpRequest.responseText + ")");
+                            alert(err.Message);
+                        }
+                    });
                 $.ajax({
                     url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
@@ -307,21 +344,20 @@
                     success: function (data) {
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
                         $.each(data, function (i, item) {
-                            var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
-                            var options = "<option value='" + item.id + "'>" + name + "</option>";
+                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                        });
-                    },
+                            });
+                        },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
+                            var err = eval("(" + XMLHttpRequest.responseText + ")");
+                            alert(err.Message);
+                        }
+                    });
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
                 $("#items").prop("disabled", false);
-            }            
-        })
+                }
+            })
     });
     function deleteRow(button) {
         $(button).closest("tr").remove();
@@ -384,6 +420,7 @@
         <input type="number" hidden asp-for="@Model.ClientId" id="ClientId" />
         <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
+        <input type="checkbox" hidden id="IsAdmin" />
         <div id="placeholderSuccess">
 
         </div>

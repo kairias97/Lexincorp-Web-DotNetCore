@@ -23,6 +23,7 @@ namespace LexincorpApp.Models
             activity.ServiceId = newActivityRequest.ServiceId;
             if(newActivityRequest.ActivityType == ActivityTypeEnum.Package)
             {
+                activity.PackageId = newActivityRequest.PackageId;
                 activity.BillableQuantity = 0;
                 activity.BillableRate = 0;
                 activity.Subtotal = 0;
@@ -37,6 +38,7 @@ namespace LexincorpApp.Models
                     activity.BillableRate = retainer.AdditionalFeePerHour;
                     activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
                     retainer.ConsumedHours = retainer.AgreedHours;
+                    activity.BillableRetainerId = newActivityRequest.BillableRetainerId;
                 }
                 else
                 {
@@ -44,6 +46,7 @@ namespace LexincorpApp.Models
                     activity.BillableRate = 0;
                     activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
                     retainer.ConsumedHours += newActivityRequest.HoursWorked;
+                    activity.BillableRetainerId = newActivityRequest.BillableRetainerId;
                 }
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.Item)
@@ -51,6 +54,7 @@ namespace LexincorpApp.Models
                 activity.BillableQuantity = Convert.ToDecimal(newActivityRequest.ItemQuantity);
                 activity.BillableRate = Convert.ToDecimal(newActivityRequest.ItemUnitPrice);
                 activity.Subtotal = Convert.ToDecimal(newActivityRequest.ItemSubTotal);
+                activity.ItemId = newActivityRequest.ItemId;
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.Hourly)
             {

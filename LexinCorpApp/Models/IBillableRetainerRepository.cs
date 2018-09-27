@@ -7,6 +7,6 @@ namespace LexincorpApp.Models
 {
     public interface IBillableRetainerRepository
     {
-        IQueryable<BillableRetainer> BillableRetainers { get; set; }
+        IQueryable<BillableRetainer> BillableRetainers { get; }
     }
 }
