@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using LexincorpApp.Infrastructure;
 using LexincorpApp.Models.ExternalServices;
-
+using System.Security.Claims;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LexincorpApp.Controllers
@@ -23,8 +23,10 @@ namespace LexincorpApp.Controllers
         private readonly IPackageRepository _packageRepo;
         private readonly IRetainerRepository _retainerRepo;
         private readonly IClientRepository _clientRepo;
+        private readonly IActivityRepository _activityRepo;
         public ActivityController(IItemRepository _itemsRepo, IExpenseRepository _expenseRepo, ICategoryRepository _categoryRepo,
-            IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo)
+            IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo,
+            IActivityRepository _activityRepo)
         {
             this._itemsRepo = _itemsRepo;
             this._expenseRepo = _expenseRepo;
@@ -33,6 +35,7 @@ namespace LexincorpApp.Controllers
             this._packageRepo = _packageRepo;
             this._retainerRepo = _retainerRepo;
             this._clientRepo = _clientRepo;
+            this._activityRepo = _activityRepo;
         }
         public IActionResult Index()
         {
@@ -52,6 +55,15 @@ namespace LexincorpApp.Controllers
                 Retainers = _retainerRepo.Retainers,
             };
             return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public JsonResult New(NewActivityRequest body)
+        {
+            var user = HttpContext.User;
+            var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            _activityRepo.Save(body, Convert.ToInt32(id));
+            return Json(new { message = "Ingresado", success = true });
         }
     }
 }

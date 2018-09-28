@@ -33,7 +33,7 @@ namespace LexincorpApp.Controllers
         public IActionResult New()
         {
             var user = HttpContext.User;
-            var id = user.Identity.Name;
+            var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
             NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel
             {
@@ -51,7 +51,7 @@ namespace LexincorpApp.Controllers
             if (!ModelState.IsValid)
             {
                 var user = HttpContext.User;
-                var id = user.Identity.Name;
+                var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
                 var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
                 NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel
                 {
@@ -63,7 +63,7 @@ namespace LexincorpApp.Controllers
             else
             {
                 var user = HttpContext.User;
-                var id = user.Identity.Name;
+                var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
                 var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
                 vacationsRequest.AttorneyId = attorney.Id;
                 if (_vacationsRequestRepo.ValidateRequest(vacationsRequest))

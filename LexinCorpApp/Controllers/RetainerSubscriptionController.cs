@@ -16,12 +16,15 @@ namespace LexincorpApp.Controllers
         public int PageSize = 10;
         private readonly IRetainerRepository _retainerRepository;
         private readonly IRetainerSubscriptionRepository _retainerSubscriptionRepository;
+        private readonly IBillableRetainerRepository _billableRetainerRepo;
 
         public RetainerSubscriptionController(IRetainerRepository retainerRepository,
-            IRetainerSubscriptionRepository retainerSubscriptionRepository)
+            IRetainerSubscriptionRepository retainerSubscriptionRepository,
+            IBillableRetainerRepository _billableRetainerRepo)
         {
             _retainerRepository = retainerRepository;
             _retainerSubscriptionRepository = retainerSubscriptionRepository;
+            this._billableRetainerRepo = _billableRetainerRepo;
         }
         public IActionResult New()
         {
@@ -63,7 +66,15 @@ namespace LexincorpApp.Controllers
         }
         public JsonResult GetByClient(int clientId)
         {
-            var results = _retainerSubscriptionRepository.Subscriptions
+            var results = _billableRetainerRepo.BillableRetainers
+                .Where(b => b.ClientId == clientId)
+                .Select(b => new
+                {
+                    id = b.Id,
+                    name = b.Name
+                });
+            return Json(results);
+            /*var results = _retainerSubscriptionRepository.Subscriptions
                 .Include(s => s.Retainer)
                 .Where(rs => rs.ClientId == clientId)
                 .Select(rs => new {
@@ -74,7 +85,7 @@ namespace LexincorpApp.Controllers
                     additionalFeePerHour = rs.AdditionalFeePerHour,
                     clientId = rs.ClientId
                 });
-            return Json(results);
+            return Json(results);*/
         }
 
         public IActionResult Admin(string filter, int pageNumber = 1)

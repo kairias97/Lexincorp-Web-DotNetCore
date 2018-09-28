@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace LexincorpApp.Models
 {
-    public interface IBillableRetainerRepository
+    public enum ActivityTypeEnum: int
     {
-        IQueryable<BillableRetainer> BillableRetainers { get; }
+        Hourly = 1,
+        Package = 2,
+        Retainer = 3,
+        Item = 4
     }
 }

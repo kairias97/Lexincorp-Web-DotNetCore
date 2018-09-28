@@ -17,6 +17,7 @@ namespace LexincorpApp.Models
         public decimal AgreedFee { get; set; }
         public decimal AgreedHours { get; set; }
         public decimal AdditionalFeePerHour { get; set; }
+        public decimal ConsumedHours { get; set; }
         public int CreatorId { get; set; }
         public virtual User Creator { get; set; }
         public bool IsBilled { get; set; } = false;

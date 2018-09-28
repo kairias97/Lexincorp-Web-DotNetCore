@@ -18,5 +18,6 @@ namespace LexincorpApp.Models.ViewModels
         public decimal? FeePerHour { get; set; }
         public IEnumerable<Package> Packages { get; set; }
         public IEnumerable<Retainer> Retainers { get; set; }
+        public int ClientId { get; set; }
     }
 }

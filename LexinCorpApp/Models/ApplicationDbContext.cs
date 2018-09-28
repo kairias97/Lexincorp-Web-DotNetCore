@@ -30,6 +30,8 @@ namespace LexincorpApp.Models
         public DbSet<Package> Packages { get; set; }
         public DbSet<RetainerSubscription> RetainerSubscriptions {get; set;}
         public DbSet<BillableRetainer> BillableRetainers { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<ActivityExpense> ActivityExpenses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,6 +74,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Client>()
                 .Property(c => c.Active)
                 .HasDefaultValue(true);
+            modelBuilder.Entity<BillableRetainer>()
+                .Property(b => b.ConsumedHours)
+                .HasDefaultValue(0);
         }
     }
 }

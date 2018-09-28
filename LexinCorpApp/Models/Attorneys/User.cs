@@ -18,5 +18,6 @@ namespace LexincorpApp.Models
         public bool IsAdmin { get; set; }
         public virtual Attorney Attorney { get; set; }
         public bool Active { get; set; } = true;
+        public virtual ICollection<Activity> Activities { get; set; }
     }
 }

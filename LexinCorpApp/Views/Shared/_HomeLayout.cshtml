@@ -118,10 +118,34 @@
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column centered" style="padding-top:15px;">
                         <li class="nav-item sidebar-li">
-                            <a class="nav-link text-muted" href="#">
+                            <a class="nav-link text-muted" asp-controller="Home" asp-action="Index">
                                 <i class="fas fa-tachometer-alt fa-fw" aria-hidden="true"></i>&nbsp; Dashboard
                             </a>
                         </li>
+                    </ul>
+                    <div class="transiton-div">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="false" aria-controls="collapseActivities">
+                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+                                Actividades
+                                <i class="fas fa-arrow-circle-down"></i>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="collapse" id="collapseActivities">
+                        <ul class="nav flex-column">
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="Register">
+                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" href="#">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="nav flex-column centered">
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-muted" href="#">
                                 <i class="fas fa-clipboard fa-fw"></i>&nbsp; Reportes
@@ -165,36 +189,14 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="transiton-div">
-                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="false" aria-controls="collapseActivities">
-                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
-                                Actividades
-                                <i class="fas fa-arrow-circle-down"></i>
-                            </h6>
-                        </a>
-                    </div>
-                    <div class="collapse" id="collapseActivities">
-                        <ul class="nav flex-column">
-                            <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="Register">
-                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar
-                                </a>
-                            </li>
-                            <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" href="#">
-                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                     <ul class="nav flex-column centered" style="padding-top:15px;">
-                        
+
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-muted" asp-action="Pending" asp-controller="Notification">
                                 <i class="fas fa-bell fa-fw"></i>&nbsp; Notificaciones&nbsp;
                                 @await Component.InvokeAsync("NotificationBadge")
                             </a>
-                            
+
                         </li>
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
@@ -202,11 +204,11 @@
                             </a>
                         </li>
                     </ul>
-       
+
                 </div>
             </nav>
             <main class="col-md-10 ml-auto ml-0 px-4" role="main">
-                <div class="container-fluid">
+                <div class="container-fluid" style="height:100%">
                     @RenderBody()
                 </div>
             </main>
