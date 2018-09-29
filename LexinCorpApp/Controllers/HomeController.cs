@@ -28,7 +28,7 @@ namespace LexincorpApp.Controllers
             var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var list = _activityRepo.Activities.OrderByDescending(a => a.RealizationDate).Where(a => a.CreatorId == Convert.ToInt32(id)).Take(5).ToList();
             var vacations = _attorneyRepo.Attorneys.Where(a => a.UserId == Convert.ToInt32(id)).FirstOrDefault().VacationCount;
-            var listHours = _activityRepo.Activities.Where(a => a.RealizationDate.Year == DateTime.Now.Year && a.RealizationDate.Month == DateTime.Now.Month && a.CreatorId == Convert.ToInt32(id)).ToList();
+            var listHours = _activityRepo.Activities.Where(a => a.CreatorId == Convert.ToInt32(id) && a.RealizationDate.Year == DateTime.Now.Year && a.RealizationDate.Month == DateTime.Now.Month).ToList();
             var hoursWorked = listHours.Sum(h => h.HoursWorked);
             viewModel.Vacations = Math.Round(vacations,2);
             viewModel.Activities = list;

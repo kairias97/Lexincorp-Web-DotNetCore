@@ -94,11 +94,11 @@
                                         {
                                             <td>Retainer</td>
                                         }
-                                        else if(activity.ActivityType == ActivityTypeEnum.Item)
+                                        else if (activity.ActivityType == ActivityTypeEnum.Item)
                                         {
                                             <td>Ítem</td>
                                         }
-                                        else if(activity.ActivityType == ActivityTypeEnum.Hourly)
+                                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
                                         {
                                             <td>Hora</td>
                                         }
@@ -110,7 +110,7 @@
                         </div>
                         <div class="row col-12" style="margin-top:20px;margin-bottom:20px;">
                             <div class="row col-12">
-                                <button class="btn btn-primary">Ver más</button>
+                                <a class="btn btn-primary" asp-controller="Activity" asp-action="History">Ver más</a>
                             </div>
                         </div>
                     }

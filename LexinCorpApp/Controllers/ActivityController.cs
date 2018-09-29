@@ -24,6 +24,7 @@ namespace LexincorpApp.Controllers
         private readonly IRetainerRepository _retainerRepo;
         private readonly IClientRepository _clientRepo;
         private readonly IActivityRepository _activityRepo;
+        public int PageSize = 5;
         public ActivityController(IItemRepository _itemsRepo, IExpenseRepository _expenseRepo, ICategoryRepository _categoryRepo,
             IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo,
             IActivityRepository _activityRepo)
@@ -64,6 +65,28 @@ namespace LexincorpApp.Controllers
             var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             _activityRepo.Save(body, Convert.ToInt32(id));
             return Json(new { message = "Ingresado", success = true });
+        }
+        [Authorize]
+        public IActionResult History(string filter, int pageNumber = 1)
+        {
+            Func<Activity, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Client.Name.Contains(filter);
+            var user = HttpContext.User;
+            var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            ActivityHistoryViewModel viewModel = new ActivityHistoryViewModel();
+            viewModel.CurrentFilter = filter;
+            viewModel.Activities = _activityRepo.Activities
+                .Where(a => a.CreatorId == Convert.ToInt32(id))
+                .Where(filterFunction)
+                .OrderByDescending(a => a.RealizationDate)
+                .Skip((pageNumber - 1) * PageSize)
+                .Take(PageSize);
+            viewModel.PagingInfo = new PagingInfo
+            {
+                CurrentPage = pageNumber,
+                ItemsPerPage = PageSize,
+                TotalItems = _activityRepo.Activities.Where(a => a.CreatorId == Convert.ToInt32(id)).Count(filterFunction)
+            };
+            return View(viewModel);
         }
     }
 }
