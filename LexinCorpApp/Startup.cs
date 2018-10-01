@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using LexincorpApp.Models.ExternalServices;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Logging;
 
 namespace LexincorpApp
 {
@@ -85,8 +86,11 @@ namespace LexincorpApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzA1NThAMzEzNjJlMzMyZTMwWTBCcXVjTHdxdDU2bU02Q2FBZzJRVXZwa0hqaUdjMkVZRWFNdmVNVFY1ND0=");
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
