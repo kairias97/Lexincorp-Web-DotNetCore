@@ -64,7 +64,7 @@ namespace LexincorpApp.Controllers
             var user = HttpContext.User;
             var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             _activityRepo.Save(body, Convert.ToInt32(id));
-            return Json(new { message = "Ingresado", success = true });
+            return Json(new { message = "Actividad ingresada exitosamente", success = true });
         }
         [Authorize]
         public IActionResult History(string filter, int pageNumber = 1)

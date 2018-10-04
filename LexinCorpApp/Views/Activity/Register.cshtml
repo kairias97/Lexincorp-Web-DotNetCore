@@ -171,7 +171,7 @@
                 }
             });
         $("#categories").change(function () {
-                if ($("#categories").val() === "") {
+            if ($("#categories").val() === "") {
                 $("#services").empty();
                 $("#description").val("");
                 $("#services").prop("disabled", true);
@@ -230,7 +230,7 @@
                     var quantity = $("#expensesQuantity").val();
                     var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
                         "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
-                $("#tableData").append(row);
+                    $("#tableData").append(row);
                 $("#expenses").val("");
                 $("#expensesPrice").val("");
                 $("#expensesQuantity").val("");
@@ -268,7 +268,7 @@
                         body.HourSubtotal = body.HoursWorked * body.HourlyRate;
                     }
                     var expenses = [];
-                $('tbody tr').each(function () {
+                    $('#tableData tr').each(function () {
                         var newExpense = {};
                         var cells = $(this).find("td");
                         newExpense.ExpenseId = cells[0].innerHTML;
@@ -277,7 +277,6 @@
                         newExpense.SubTotal = cells[4].innerHTML;
                         expenses.push(newExpense);
                     });
-                    console.log(expenses);
                     body.Expenses = expenses;
                 $.ajax({
                     url: "@Url.Action("New","Activity")",
@@ -365,8 +364,10 @@
     }
     function calculateTotalExpenses() {
         //To get the total sum of the <td> that contains each subtotal
-        var total = $('tbody tr td:nth-last-child(2)')
-            .map(function () { return parseFloat($(this).html()); })
+        var total = $('#tableData tr td:nth-last-child(2)')
+            .map(function () {
+                return parseFloat($(this).html());
+            })
             .get()
             .reduce(function (total, currentValue) { return total + currentValue; });
         //To set the html content of <td> that contains total
@@ -402,7 +403,7 @@
         $("#expenses").val("");
         $("#expensesQuantity").val("");
         $("#expensesPrice").val("");
-        $('tbody tr').each(function () {
+        $('#tableData tr').each(function () {
             $(this).remove();
         });
         $('tfoot tr td:last-child').html("");
@@ -577,7 +578,7 @@
                                 <tbody id="tableData"></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="4" class="text-right">Total:</td>
+                                        <td colspan="4" class="text-right">Total (USD):</td>
                                         <td class="text-right"></td>
                                     </tr>
                                 </tfoot>
