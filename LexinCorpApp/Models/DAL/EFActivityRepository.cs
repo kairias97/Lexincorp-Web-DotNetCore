@@ -85,5 +85,6 @@ namespace LexincorpApp.Models
             context.Add(activity);
             context.SaveChanges();
         }
+        public IQueryable<ActivityExpense> Expenses { get => context.ActivityExpenses; }
     }
 }

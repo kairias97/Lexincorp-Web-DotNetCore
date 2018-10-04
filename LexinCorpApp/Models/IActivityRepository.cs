@@ -9,5 +9,6 @@ namespace LexincorpApp.Models
     {
         IQueryable<Activity> Activities { get; }
         void Save(NewActivityRequest newActivityRequest, int creatorId);
+        IQueryable<ActivityExpense> Expenses { get; }
     }
 }
