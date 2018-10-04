@@ -10,6 +10,7 @@ using LexincorpApp.Infrastructure;
 using System.IO;
 using Syncfusion.Report;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.ReportWriter;
 
 namespace LexincorpApp.Controllers
 {
@@ -107,35 +108,48 @@ namespace LexincorpApp.Controllers
             list = _activityRepo.Expenses.Include(a => a.Expense).Include(a => a.Activity).ThenInclude(b => b.Package)
                 .Include(a => a.Activity).ThenInclude(b => b.BillableRetainer)
                 .Include(a => a.Activity).ThenInclude(b => b.Item)
-                .Where(a => a.Activity.RealizationDate >= newExpenseReport.InitialDate && a.RealizationDate <= newExpenseReport.FinalDate).ToList();
-            if(newExpenseReport.UserId != null)
-            {
-                list = list.Where(a => a.Activity.CreatorId == newExpenseReport.UserId).ToList();
-            }
-            if(newExpenseReport.ActivityType != null)
-            {
-                list = list.Where(a => a.Activity.ActivityType == newExpenseReport.ActivityType).ToList();
-            }
+                .Where(a => a.Activity.RealizationDate >= newExpenseReport.InitialDate && a.RealizationDate <= newExpenseReport.FinalDate
+                    &&( newExpenseReport.UserId == null || a.Activity.CreatorId == newExpenseReport.UserId)
+                    && (newExpenseReport.ActivityType == null || a.Activity.ActivityType == newExpenseReport.ActivityType)
+                ).ToList();
+            //if(newExpenseReport.UserId != null)
+            //{
+            //    list = list.Where(a => a.Activity.CreatorId == newExpenseReport.UserId).ToList();
+            //}
+            //if(newExpenseReport.ActivityType != null)
+            //{
+            //    list = list.Where(a => a.Activity.ActivityType == newExpenseReport.ActivityType).ToList();
+            //}
             var gastos = list.Select(g => new {
                 expenseName = g.Expense.Name,
                 expenseDate = g.RealizationDate,
                 expenseQuantity = g.Quantity,
                 expensePrice = g.UnitAmount,
-                expenseSubTotal = g.TotalAmount,
+                expenseSubtotal = g.TotalAmount,
                 expenseAssociatedTo = g.Activity.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : g.Activity.ActivityType == ActivityTypeEnum.Item ?
                 $"Item - {g.Activity.Item.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {g.Activity.Package.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? $"Retainer - {g.Activity.BillableRetainer.Name}" : ""
             }).ToList();
+            //Simulacion de varios gastos
+            gastos.AddRange(gastos);
+            gastos.AddRange(gastos);
+            gastos.AddRange(gastos);
+            gastos.AddRange(gastos);
+            gastos.AddRange(gastos);
+            gastos.AddRange(gastos);
             string basePath = _hostingEnvironment.ContentRootPath;
-            FileStream inputStream = new FileStream(basePath + @"/Reports/Expenses.rdlc", FileMode.Open, FileAccess.ReadWrite);
+            string fullPath = basePath + @"/Reports/Expenses.rdlc";
+            FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             ReportDataSourceCollection dataSources = new ReportDataSourceCollection();
-            dataSources.Add(new ReportDataSource { Name = "ExpendDataSet", Value = gastos});
-            Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream);
-            writer.DataSources = dataSources;
+            dataSources.Add(new ReportDataSource { Name = "ExpensesDataSet", Value = gastos});
+
+            Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream, dataSources);
+            //writer.DataSources = dataSources;
+            writer.ReportProcessingMode = ProcessingMode.Local;
             MemoryStream memoryStream = new MemoryStream();
-            writer.Save(memoryStream, Syncfusion.ReportWriter.WriterFormat.PDF);
+            writer.Save(memoryStream, WriterFormat.PDF);
             memoryStream.Position = 0;
             FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf");
-            fileStreamResult.FileDownloadName = "Invoice.pdf";
+            fileStreamResult.FileDownloadName = $"ReporteDeGastosDel{newExpenseReport.InitialDate.ToString("ddMMyyyy")}Al{newExpenseReport.FinalDate.ToString("ddMMyyyy")}.pdf";
             return fileStreamResult;
         }
     }
