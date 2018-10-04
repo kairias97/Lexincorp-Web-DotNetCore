@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexincorpApp", "LexinCorpApp\LexincorpApp.csproj", "{5AB786BE-EC3C-459E-B49B-B67261CF9E79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexincorpApp.CronJob", "LexincorpApp.CronJob\LexincorpApp.CronJob.csproj", "{353E998D-1D87-4231-9929-2214EC9587CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexincorpApp.CronJob", "LexincorpApp.CronJob\LexincorpApp.CronJob.csproj", "{353E998D-1D87-4231-9929-2214EC9587CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexincorpApp.Reports", "LexincorpApp.Reports\LexincorpApp.Reports.csproj", "{60A13AED-A0D7-4443-9C3F-3C37A93C2441}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{353E998D-1D87-4231-9929-2214EC9587CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{353E998D-1D87-4231-9929-2214EC9587CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{353E998D-1D87-4231-9929-2214EC9587CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60A13AED-A0D7-4443-9C3F-3C37A93C2441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60A13AED-A0D7-4443-9C3F-3C37A93C2441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60A13AED-A0D7-4443-9C3F-3C37A93C2441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60A13AED-A0D7-4443-9C3F-3C37A93C2441}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
