@@ -129,13 +129,7 @@ namespace LexincorpApp.Controllers
                 expenseAssociatedTo = g.Activity.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : g.Activity.ActivityType == ActivityTypeEnum.Item ?
                 $"Item - {g.Activity.Item.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {g.Activity.Package.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? $"Retainer - {g.Activity.BillableRetainer.Name}" : ""
             }).ToList();
-            //Simulacion de varios gastos
-            gastos.AddRange(gastos);
-            gastos.AddRange(gastos);
-            gastos.AddRange(gastos);
-            gastos.AddRange(gastos);
-            gastos.AddRange(gastos);
-            gastos.AddRange(gastos);
+ 
             string basePath = _hostingEnvironment.ContentRootPath;
             string fullPath = basePath + @"/Reports/Expenses.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
