@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ActivitiesDS" targetNamespace="http://tempuri.org/ActivitiesDS.xsd" xmlns:mstns="http://tempuri.org/ActivitiesDS.xsd" xmlns="http://tempuri.org/ActivitiesDS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ActivitiesDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ActivitiesDS" msprop:Generator_UserDSName="ActivitiesDS">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Activities" msprop:Generator_TableClassName="ActivitiesDataTable" msprop:Generator_TableVarName="tableActivities" msprop:Generator_RowChangedName="ActivitiesRowChanged" msprop:Generator_TablePropName="Activities" msprop:Generator_RowDeletingName="ActivitiesRowDeleting" msprop:Generator_RowChangingName="ActivitiesRowChanging" msprop:Generator_RowEvHandlerName="ActivitiesRowChangeEventHandler" msprop:Generator_RowDeletedName="ActivitiesRowDeleted" msprop:Generator_RowClassName="ActivitiesRow" msprop:Generator_UserTableName="Activities" msprop:Generator_RowEvArgName="ActivitiesRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="activityService" msprop:Generator_ColumnVarNameInTable="columnactivityService" msprop:Generator_ColumnPropNameInRow="activityService" msprop:Generator_ColumnPropNameInTable="activityServiceColumn" msprop:Generator_UserColumnName="activityService" type="xs:string" minOccurs="0" />
+              <xs:element name="activityCategory" msprop:Generator_ColumnVarNameInTable="columnactivityCategory" msprop:Generator_ColumnPropNameInRow="activityCategory" msprop:Generator_ColumnPropNameInTable="activityCategoryColumn" msprop:Generator_UserColumnName="activityCategory" type="xs:string" minOccurs="0" />
+              <xs:element name="activityAssociatedTo" msprop:Generator_ColumnVarNameInTable="columnactivityAssociatedTo" msprop:Generator_ColumnPropNameInRow="activityAssociatedTo" msprop:Generator_ColumnPropNameInTable="activityAssociatedToColumn" msprop:Generator_UserColumnName="activityAssociatedTo" type="xs:string" minOccurs="0" />
+              <xs:element name="activityHoursWorked" msprop:Generator_ColumnVarNameInTable="columnactivityHoursWorked" msprop:Generator_ColumnPropNameInRow="activityHoursWorked" msprop:Generator_ColumnPropNameInTable="activityHoursWorkedColumn" msprop:Generator_UserColumnName="activityHoursWorked" type="xs:decimal" minOccurs="0" />
+              <xs:element name="activityClient" msprop:Generator_ColumnVarNameInTable="columnactivityClient" msprop:Generator_ColumnPropNameInRow="activityClient" msprop:Generator_ColumnPropNameInTable="activityClientColumn" msprop:Generator_UserColumnName="activityClient" type="xs:string" minOccurs="0" />
+              <xs:element name="activityDate" msprop:Generator_ColumnVarNameInTable="columnactivityDate" msprop:Generator_ColumnPropNameInRow="activityDate" msprop:Generator_ColumnPropNameInTable="activityDateColumn" msprop:Generator_UserColumnName="activityDate" type="xs:dateTime" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

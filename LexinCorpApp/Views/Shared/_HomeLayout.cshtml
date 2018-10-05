@@ -145,6 +145,28 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="transiton-div">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+                                Reportes
+                                <i class="fas fa-arrow-circle-down fa-fw"></i>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="collapse" id="collapseReports">
+                        <ul class="nav flex-column">
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="Expense" asp-action="Report">
+                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Gastos
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="Report">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Actividades
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <ul class="nav flex-column centered">
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-muted" asp-controller="Expense" asp-action="Report">
