@@ -127,7 +127,9 @@ namespace LexincorpApp.Controllers
                 expensePrice = g.UnitAmount,
                 expenseSubtotal = g.TotalAmount,
                 expenseAssociatedTo = g.Activity.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : g.Activity.ActivityType == ActivityTypeEnum.Item ?
-                $"Item - {g.Activity.Item.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {g.Activity.Package.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? $"Retainer - {g.Activity.BillableRetainer.Name}" : ""
+                $"Ítem - {g.Activity.Item.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? 
+                $"Paquete - {g.Activity.Package.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? 
+                $"Retainer - {g.Activity.BillableRetainer.Name}" : ""
             }).ToList();
  
             string basePath = _hostingEnvironment.ContentRootPath;

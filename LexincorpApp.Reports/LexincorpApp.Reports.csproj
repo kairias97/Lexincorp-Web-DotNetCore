@@ -54,6 +54,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivitiesDS.cs">
+      <DependentUpon>ActivitiesDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ActivitiesDS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ActivitiesDS.xsd</DependentUpon>
+    </Compile>
     <Compile Include="ExpensesDS.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -67,6 +75,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Activities.rdlc" />
     <EmbeddedResource Include="Expenses.rdlc" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -77,6 +86,17 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ActivitiesDS.xsc">
+      <DependentUpon>ActivitiesDS.xsd</DependentUpon>
+    </None>
+    <None Include="ActivitiesDS.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ActivitiesDS.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ActivitiesDS.xss">
+      <DependentUpon>ActivitiesDS.xsd</DependentUpon>
+    </None>
     <None Include="ExpensesDS.xsc">
       <DependentUpon>ExpensesDS.xsd</DependentUpon>
     </None>
