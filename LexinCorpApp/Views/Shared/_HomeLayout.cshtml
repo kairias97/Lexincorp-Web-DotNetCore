@@ -157,23 +157,16 @@
                         <ul class="nav flex-column">
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="Expense" asp-action="Report">
-                                    <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Gastos
+                                    <i class="fas fa-money-bill fa-fw"></i>&nbsp; Gastos
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="Activity" asp-action="Report">
-                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Actividades
+                                    <i class="fas fa-clipboard fa-fw"></i>&nbsp; Actividades
                                 </a>
                             </li>
                         </ul>
                     </div>
-                    <ul class="nav flex-column centered">
-                        <li class="nav-item sidebar-li">
-                            <a class="nav-link text-muted" asp-controller="Expense" asp-action="Report">
-                                <i class="fas fa-clipboard fa-fw"></i>&nbsp; Reportes
-                            </a>
-                        </li>
-                    </ul>
                     <div class="transiton-div">
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="false" aria-controls="collapseVacations">
                             <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
@@ -207,6 +200,33 @@
                             <li class="nav-item sidebar-li">
                                 <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="History">
                                     <i class="fas fa-archive fa-fw"></i>&nbsp; Mi historial de solicitudes
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="transiton-div">
+                        <a class="nav-link text-muted" data-toggle="collapse" href="#collapseBills" aria-expanded="false" aria-controls="collapseBills">
+                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+                                Facturación
+                                <i class="fas fa-arrow-circle-down fa-fw"></i>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="collapse" id="collapseBills">
+                        <ul class="nav flex-column">
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" asp-controller="Bill" asp-action="PreBilling">
+                                    <i class="fas fa-file-alt fa-fw"></i>&nbsp; Prefacturar
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" href="#">
+                                    <i class="fas fa-file-archive fa-fw"></i>&nbsp; Facturar
+                                </a>
+                            </li>
+                            <li class="nav-item sidebar-li">
+                                <a class="nav-link text-muted" href="#">
+                                    <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
                                 </a>
                             </li>
                         </ul>
