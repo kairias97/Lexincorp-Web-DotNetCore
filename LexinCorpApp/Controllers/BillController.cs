@@ -24,5 +24,9 @@ namespace LexincorpApp.Controllers
             viewModel.Items = _itemRepo.Items.ToList();
             return View(viewModel);
         }
+        public JsonResult GenerateBill(BillHeader billHeader, BillRequest billRequest)
+        {
+            return Json(new { message = "Factura ingresada exitosamente", success = true });
+        }
     }
 }

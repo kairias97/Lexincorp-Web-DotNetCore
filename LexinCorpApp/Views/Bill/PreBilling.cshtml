@@ -44,6 +44,7 @@
                 $("#ClientName").val(ui.item.clientName);
                 $("#IsEnglish").prop('checked', ui.item.isEnglish);
                 $("#IsClientSelected").prop('checked', true);
+                $("#billName").val(ui.item.clientName);
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
@@ -269,15 +270,60 @@
                 $("#discountAmount").val("");
             }
             else {
+                console.log($("#discount").val())
+                if ($("#discount").val() == 1) {
+                    $("#discountAmount").attr({
+                        "max": 100,
+                        "min": 0
+                    });
+                    $("#discountAmount").val(0);
+                }
+                else if ($("#discount").val() == 2) {
+                    $("#discountAmount").removeAttr("max")
+                    $("#discountAmount").attr({
+                        "min": 0
+                    });
+                    $("#discountAmount").val(0);
+                }                
                 $("#discountAmount").prop("disabled", false);
             }
         });
         $("#btnGenerate").click(function () {
-            validateData();
+            if (validateData()) {
+                var header = {}
+                header.ClientId = $("#ClientId").val();
+                header.BillDate = $("#billDate").val();
+                header.BillDiscountType = $("#discount").val();
+                header.BillDiscount = $("#discountAmount").val();
+                header.BillMonth = $("#month").val();
+                header.BillYear = $("#year").val();
+                header.BillName = $("#billName").val();
+                var request = {}
+                request.Hours = $("#hourCheck").prop("checked");
+                request.PackageId = $("#Packages").val();
+                request.BillableRetainerId = $("#retainers").val();
+                request.ItemId = $("#items").val();
+                $.ajax({
+                    url: "@Url.Action("GenerateBill","Bill")",
+                    type: "POST",
+                    data: { billHeader: header, billRequest: request },
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            }
         });
         function validateData() {
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
-                ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#items").val() !== "" || $("#hourCheck").is(":checked"))) {
+                ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#items").val() !== "" || $("#hourCheck").is(":checked")) &&
+                ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 : 
+                $("#discount").val() == 2 ? $("#discountAmount").val() >=0 : true)) {
                 console.log("completo");
                 return true;
             }
@@ -386,11 +432,21 @@
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="month">Mes:*</label>
-            <input type="text" id="month" class="form-control" placeholder="Mes" aria-label="Mes" />
+            <select id="month" class="form-control">
+                <option value="">Seleccionar mes</option>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
         </div>
         <div class="form-group col-md-5">
             <label for="year">Año:*</label>
-            <input type="text" id="year" class="form-control" placeholder="Año" aria-label="Año" />
+            <select id="year" class="form-control">
+                <option value="">Seleccionar año</option>
+                <option value="@(DateTime.Now.Year-1)">@(DateTime.Now.Year - 1)</option>
+                <option value="@DateTime.Now.Year">@DateTime.Now.Year</option>
+            </select>
         </div>
     </div>
     <div class="form-row">
