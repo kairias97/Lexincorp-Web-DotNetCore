@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Notificaciones";
+}
+
+@model List<NotificationAnswer>
+<h2>Notificaciones de solicitudes de cierre de paquetes</h2>
+@if (ViewBag.IsAnswerProcessed != null && ViewBag.AnswerSubmittedMessage != null)
+{
+    <div class="alert alert-@((bool)ViewBag.IsAnswerProcessed ? "success" : "warning") alert-dismissible fade show">
+        @(ViewBag.AnswerSubmittedMessage)
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+    </div>
+
+}
+<br />
+@if (Model.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var notification in Model)
+                {
+                    <tr>
+                        <td>@notification.ClosureNotification?.Description</td>
+                        <td>
+                            <form asp-action="AllowClosure" asp-controller="Notification" method="post" style="display:inline">
+                                <input value="@notification.Id" name="notificationAnswerId" hidden />
+                                <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Permitir">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </form>
+                            <form asp-action="DenyClosure" asp-controller="Notification" method="post" style="display:inline">
+                                <input value="@notification.Id" name="notificationAnswerId" hidden />
+                                <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Denegar">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}
+else
+{
+    <h5>No hay notificaciones de cierre a las cuales responder</h5>
+
+}
