@@ -57,6 +57,14 @@ namespace LexincorpApp.Controllers
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }
+            if (!_attorneysRepo.VerifyEmail(attorney.Email))
+            {
+                ModelState.AddModelError("uqEmail", "El correo ingresado ya existe");
+            }
+            if (!_attorneysRepo.VerifyNotaryCode(attorney.NotaryCode))
+            {
+                ModelState.AddModelError("uqNotaryCode", "El código de notario ingresado ya existe");
+            }
             //if(attorney.User.Username.Contains(" "))
             //{
             //    ModelState.AddModelError("whiteSpacesUsername", "El nombre de usuario contiene espacios en blanco, favor no incluir espacios en blanco");
@@ -78,8 +86,8 @@ namespace LexincorpApp.Controllers
                 attorney.User.Password = passwordHashed;
                 _attorneysRepo.Save(attorney);
                 //Envío de password sin hash al usuario
-                string emailBody = $@"Se le ha creado un acceso a la aplicación Lexincorp Nicaragua Web, su usuario es {attorney.User.Username} 
-                    y su clave de acceso es {passwordDefault}";
+                string emailBody = $"Se le ha creado un acceso a la aplicación Lexincorp Nicaragua Web, su usuario es {attorney.User.Username} " +
+                    $"y su clave de acceso es {passwordDefault}. \n**Este es un mensaje autogenerado por el sistema, favor no responder**";
                 _mailSender.SendMail(attorney.Email, "Usuario web creado para aplicación Lexincorp Nicaragua Web", emailBody);
                 TempData["added"] = true;
                 return RedirectToAction("New");

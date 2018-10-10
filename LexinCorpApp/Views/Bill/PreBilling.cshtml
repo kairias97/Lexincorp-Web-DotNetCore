@@ -123,7 +123,6 @@
                             $("#Packages").append(options);
                         });
                         $("#Packages").val("");
-                            //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -144,6 +143,10 @@
                             $("#retainers").append(options);
                         });
                         $("#retainers").val("");
+                        $.each(data, function (i, item) {
+                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                            $("#retainers").append(options);
+                            });
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -172,7 +175,6 @@
                             $("#Packages").append(options);
                         });
                         $("#Packages").val("");
-                            //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");

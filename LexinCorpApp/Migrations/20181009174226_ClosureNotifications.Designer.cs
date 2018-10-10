@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181009174226_ClosureNotifications")]
+    partial class ClosureNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,72 +207,6 @@ namespace LexincorpApp.Migrations
                     b.ToTable("BillableRetainers");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.BillDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("ActivityId");
-
-                    b.Property<int>("BillDetailType");
-
-                    b.Property<int>("BillHeaderId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<decimal?>("FixedAmount");
-
-                    b.Property<decimal?>("Quantity");
-
-                    b.Property<decimal>("Subtotal");
-
-                    b.Property<decimal>("TaxesAmount");
-
-                    b.Property<decimal?>("UnitRate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("BillHeaderId");
-
-                    b.ToTable("BillDetails");
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.BillHeader", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("BillDate");
-
-                    b.Property<decimal?>("BillDiscount");
-
-                    b.Property<int?>("BillDiscountType");
-
-                    b.Property<int>("BillMonth");
-
-                    b.Property<string>("BillName");
-
-                    b.Property<decimal>("BillSubtotal");
-
-                    b.Property<int>("BillYear");
-
-                    b.Property<int>("ClientId");
-
-                    b.Property<decimal>("Taxes");
-
-                    b.Property<decimal>("Total");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("BillHeaders");
-                });
-
             modelBuilder.Entity("LexincorpApp.Models.BillingMode", b =>
                 {
                     b.Property<int>("BillingModeId")
@@ -382,7 +318,7 @@ namespace LexincorpApp.Migrations
 
             modelBuilder.Entity("LexincorpApp.Models.ClosureNotification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -394,7 +330,7 @@ namespace LexincorpApp.Migrations
 
                     b.Property<bool?>("WasClosed");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
                     b.HasIndex("PackageId");
 
@@ -515,10 +451,6 @@ namespace LexincorpApp.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired();
-
-                    b.Property<bool>("IsBilled")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsFinished")
                         .ValueGeneratedOnAdd()
@@ -766,26 +698,6 @@ namespace LexincorpApp.Migrations
                     b.HasOne("LexincorpApp.Models.Retainer", "Retainer")
                         .WithMany("BillableRetainers")
                         .HasForeignKey("RetainerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.BillDetail", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.Activity", "Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityId");
-
-                    b.HasOne("LexincorpApp.Models.BillHeader", "BillHeader")
-                        .WithMany("BillDetails")
-                        .HasForeignKey("BillHeaderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.BillHeader", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

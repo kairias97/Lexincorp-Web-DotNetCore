@@ -18,6 +18,7 @@ using System.IO;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador, Regular")]
     public class ActivityController : Controller
     {
         private readonly IItemRepository _itemsRepo;

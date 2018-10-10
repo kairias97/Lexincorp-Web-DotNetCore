@@ -34,6 +34,8 @@ namespace LexincorpApp.Models
         public DbSet<ActivityExpense> ActivityExpenses { get; set; }
         public DbSet<BillHeader> BillHeaders { get; set; }
         public DbSet<BillDetail> BillDetails { get; set; }
+        public DbSet<ClosureNotification> ClosureNotifications { get; set; }
+        public DbSet<NotificationAnswer> NotificationAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

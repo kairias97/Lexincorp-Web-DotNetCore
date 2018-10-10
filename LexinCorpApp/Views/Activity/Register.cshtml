@@ -95,6 +95,11 @@
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
                         });
+                        if ($("#Packages").children().length > 1) {
+                            $("#Packages").prop("disabled", false);
+                        } else {
+                            $("#Packages").prop("disabled", true);
+                        }
                         //console.log(data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -115,7 +120,13 @@
                             //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
+                            
                         });
+                        if ($("#retainers").children().length > 1) {
+                            $("#retainers").prop("disabled", false);
+                        } else {
+                            $("#retainers").prop("disabled", true);
+                        }
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         //var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -239,6 +250,32 @@
                     calculateTotalExpenses();
                 }
             });
+        $("#btnClear").click(function () { 
+            $("#Packages").val('null');
+            $("#retainers").val('null');
+            $("#items").val('null');
+            
+            if ($("#items").children().length > 1) {
+                $("#items").prop("disabled", false);
+            } else {
+                $("#items").prop("disabled", true);
+            }
+            if ($("#retainers").children().length > 1) {
+                $("#retainers").prop("disabled", false);
+            } else {
+                $("#retainers").prop("disabled", true);
+            }
+            if ($("#Packages").children().length > 1) {
+                $("#Packages").prop("disabled", false);
+            } else {
+                $("#Packages").prop("disabled", true);
+            }
+        });
+        if ($("#items").children().length > 1) {
+            $("#items").prop("disabled", false);
+        } else {
+            $("#items").prop("disabled", true);
+        }
         $("#btnSubmit").click(function () {
                 if (validateData()) {
                     var body = {}
@@ -326,7 +363,12 @@
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
-                            });
+                        });
+                        if ($("#Packages").children().length > 1) {
+                            $("#Packages").prop("disabled", false);
+                        } else {
+                            $("#Packages").prop("disabled", true);
+                        }
                             //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -345,7 +387,14 @@
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                            });
+                        });
+                        
+                        if ($("#retainers").children().length > 1) {
+                            $("#retainers").prop("disabled", false);
+                        } else {
+                            $("#retainers").prop("disabled", true);
+                        }
+                        
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -355,6 +404,7 @@
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
                 $("#items").prop("disabled", false);
+
                 }
             })
     });
@@ -502,6 +552,12 @@
                                 <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" disabled />
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-5">
+                                <button class="btn btn-primary" id="btnClear" type="button">Limpiar selección</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="row bg-light rounded" style="margin-top:20px">
