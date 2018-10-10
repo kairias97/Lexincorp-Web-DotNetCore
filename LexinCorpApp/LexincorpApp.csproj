@@ -7,11 +7,13 @@
 
   <ItemGroup>
     <None Remove="Reports\Activities.rdlc" />
+    <None Remove="Reports\Bill.rdlc" />
     <None Remove="Reports\Expenses.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Reports\Activities.rdlc" />
+    <EmbeddedResource Include="Reports\Bill.rdlc" />
     <EmbeddedResource Include="Reports\Expenses.rdlc" />
   </ItemGroup>
 

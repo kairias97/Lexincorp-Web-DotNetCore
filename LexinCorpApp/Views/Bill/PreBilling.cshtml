@@ -49,17 +49,19 @@
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
-                url: "@Url.Action("Search","Package")",
+                url: "@Url.Action("SearchFinished", "Package")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
                         });
+                        $("#Packages").val("");
                         //console.log(data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -76,11 +78,13 @@
                     success: function (data) {
                         console.log(data);
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                             //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
                         });
+                        $("#retainers").val("");
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         //var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -106,17 +110,19 @@
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
-                    url: "@Url.Action("Search","Package")",
+                    url: "@Url.Action("SearchFinished", "Package")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val() },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
-                            });
+                        });
+                        $("#Packages").val("");
                             //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -132,10 +138,12 @@
                     dataType: "json",
                     success: function (data) {
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                            });
+                        });
+                        $("#retainers").val("");
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -151,17 +159,19 @@
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
-                    url: "@Url.Action("Search","Package")",
+                    url: "@Url.Action("SearchFinished", "Package")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val() },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
-                            });
+                        });
+                        $("#Packages").val("");
                             //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -177,10 +187,12 @@
                     dataType: "json",
                     success: function (data) {
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                            });
+                        });
+                        $("#retainers").val("");
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -196,17 +208,19 @@
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
-                    url: "@Url.Action("Search","Package")",
+                    url: "@Url.Action("SearchFinished", "Package")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val() },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+                        $("#Packages").append("<option value='-1'>Todos</option>").val('null');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#Packages").append(options);
-                            });
+                        });
+                        $("#Packages").val("");
                             //console.log(data);
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -222,10 +236,12 @@
                     dataType: "json",
                     success: function (data) {
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                            });
+                        });
+                        $("#retainers").val("");
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -311,6 +327,7 @@
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         console.log(data);
+                        downloadPDF(data.result);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -331,6 +348,12 @@
                 console.log("vacio");
                 return false;
             }
+        }
+        function downloadPDF(pdf) {
+            var link = document.getElementById("download");
+            link.href = 'data:application/octet-stream;base64,'+pdf;
+            $("#btnDownload").prop("disabled", false);
+            link.click();
         }
     });
 </script>
@@ -456,7 +479,8 @@
         </div>
     </div>
     <div class="form-row">
-        <div class="form-group"></div>
         <button class="btn btn-primary" id="btnGenerate" type="button">Generar prefactura</button>
+        <a id="download" download="Prefactura.pdf" hidden></a>
+        <a class="btn btn-success" id="btnDownload" disabled>Descargar Prefactura</a>
     </div>
 </form>

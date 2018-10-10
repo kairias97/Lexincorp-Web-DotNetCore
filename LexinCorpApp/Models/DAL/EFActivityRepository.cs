@@ -51,6 +51,7 @@ namespace LexincorpApp.Models
                     retainer.ConsumedHours += newActivityRequest.HoursWorked;
                     activity.BillableRetainerId = newActivityRequest.BillableRetainerId;
                 }
+                retainer.IsBilled = false;
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.Item)
             {

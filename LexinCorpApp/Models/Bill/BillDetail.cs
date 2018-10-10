@@ -10,7 +10,7 @@ namespace LexincorpApp.Models
         public int Id { get; set; }
         public int BillHeaderId { get; set; }
         public virtual BillHeader BillHeader { get; set; }
-        public int ActivityId { get; set; }
+        public int? ActivityId { get; set; }
         public virtual Activity Activity { get; set; }
         public BillDetailTypeEnum BillDetailType { get; set; }
         public decimal? FixedAmount { get; set; }
@@ -18,5 +18,6 @@ namespace LexincorpApp.Models
         public decimal? Quantity { get; set; }
         public decimal Subtotal { get; set; }
         public string Description { get; set; }
+        public decimal TaxesAmount { get; set; }
     }
 }

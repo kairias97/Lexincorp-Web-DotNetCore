@@ -77,6 +77,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<BillableRetainer>()
                 .Property(b => b.ConsumedHours)
                 .HasDefaultValue(0);
+            modelBuilder.Entity<Package>()
+                .Property(p => p.IsBilled)
+                .HasDefaultValue(false);
         }
     }
 }
