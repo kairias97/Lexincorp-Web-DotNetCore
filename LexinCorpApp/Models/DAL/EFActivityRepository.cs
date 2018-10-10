@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +9,11 @@ namespace LexincorpApp.Models
     public class EFActivityRepository : IActivityRepository
     {
         private ApplicationDbContext context;
-        public EFActivityRepository(ApplicationDbContext ctx)
+        private IConfiguration configuration;
+        public EFActivityRepository(ApplicationDbContext ctx, IConfiguration configuration)
         {
             this.context = ctx;
+            this.configuration = configuration;
         }
         public IQueryable<Activity> Activities { get => context.Activities; }
         public void Save(NewActivityRequest newActivityRequest, int creatorId)
@@ -48,6 +51,7 @@ namespace LexincorpApp.Models
                     retainer.ConsumedHours += newActivityRequest.HoursWorked;
                     activity.BillableRetainerId = newActivityRequest.BillableRetainerId;
                 }
+                retainer.IsBilled = false;
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.Item)
             {
@@ -62,9 +66,20 @@ namespace LexincorpApp.Models
                 activity.BillableRate = Convert.ToDecimal(newActivityRequest.HourlyRate);
                 activity.Subtotal = Convert.ToDecimal(newActivityRequest.HourlySubtotal);
             }
-            activity.TaxesAmount = 0;
-            activity.PayTaxes = false;
-            activity.TotalAmount = 0;
+            decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
+            var client = context.Clients.Where(c => c.Id == newActivityRequest.ClientId).FirstOrDefault();
+            if (client.PayTaxes)
+            {
+                activity.TaxesAmount = activity.Subtotal * ivaValue;
+                activity.PayTaxes = true;
+                activity.TotalAmount = activity.Subtotal + activity.TaxesAmount;
+            }
+            else
+            {
+                activity.TaxesAmount = 0;
+                activity.PayTaxes = false;
+                activity.TotalAmount = activity.Subtotal;
+            }
             activity.IsBilled = false;
             activity.ActivityType = newActivityRequest.ActivityType;
             activity.CreatorId = creatorId;

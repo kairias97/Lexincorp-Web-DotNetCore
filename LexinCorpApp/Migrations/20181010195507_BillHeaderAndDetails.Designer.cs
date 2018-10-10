@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181010195507_BillHeaderAndDetails")]
+    partial class BillHeaderAndDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -380,27 +382,6 @@ namespace LexincorpApp.Migrations
                     b.ToTable("ClientTypes");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.ClosureNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("PackageId");
-
-                    b.Property<bool?>("WasClosed");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackageId");
-
-                    b.ToTable("ClosureNotifications");
-                });
-
             modelBuilder.Entity("LexincorpApp.Models.Department", b =>
                 {
                     b.Property<int>("DepartmentId")
@@ -474,29 +455,6 @@ namespace LexincorpApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.NotificationAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ClosureNotificationId");
-
-                    b.Property<bool>("IsAnswered");
-
-                    b.Property<int>("TargetUserId");
-
-                    b.Property<bool?>("WasAffirmative");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClosureNotificationId");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.ToTable("NotificationAnswers");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.Package", b =>
@@ -804,27 +762,6 @@ namespace LexincorpApp.Migrations
                     b.HasOne("LexincorpApp.Models.DocumentDeliveryMethod", "DocumentDeliveryMethod")
                         .WithMany()
                         .HasForeignKey("DocumentDeliveryMethodId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.ClosureNotification", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.Package", "Package")
-                        .WithMany()
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.NotificationAnswer", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.ClosureNotification", "ClosureNotification")
-                        .WithMany("NotificationAnswers")
-                        .HasForeignKey("ClosureNotificationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("LexincorpApp.Models.User", "TargetUser")
-                        .WithMany("NotificationAnswers")
-                        .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

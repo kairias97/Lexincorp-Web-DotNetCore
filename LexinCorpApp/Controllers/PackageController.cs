@@ -154,7 +154,15 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public JsonResult Search(int clientId)
         {
-            var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == false)
+            var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == false && p.IsBilled == false)
+                .OrderBy(p => p.Name)
+                .Select(p => new { Name = p.Name, Id = p.Id });
+            return Json(list);
+        }
+        [Authorize]
+        public JsonResult SearchFinished(int clientId)
+        {
+            var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == true && p.IsBilled == false)
                 .OrderBy(p => p.Name)
                 .Select(p => new { Name = p.Name, Id = p.Id });
             return Json(list);
