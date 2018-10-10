@@ -19,15 +19,18 @@ namespace LexincorpApp.Controllers
         private readonly IAttorneyRepository _attorneysRepo;
         private readonly IPackageRepository _packagesRepo;
         private readonly IMailSender _mailSender;
+        private readonly INotificationRepository _notificationRepository;
         public int PageSize = 10;
 
         public PackageController(IAttorneyRepository attorneysRepo,
             IPackageRepository packagesRepo,
-            IMailSender mailSender)
+            IMailSender mailSender,
+            INotificationRepository notificationRepo)
         {
             _attorneysRepo = attorneysRepo;
             _packagesRepo = packagesRepo;
             _mailSender = mailSender;
+            _notificationRepository = notificationRepo;
         }
 
         public IActionResult New()
@@ -67,7 +70,7 @@ namespace LexincorpApp.Controllers
                 => !OnlyAdminNotification || attorney.User.IsAdmin == OnlyAdminNotification;
             var emails = _attorneysRepo.Attorneys.Where(filterNotifications).Select(a => a.Email);
             string msg = $"El usuario {HttpContext.User.Identity.Name} ha creado el paquete '{package.Name}' para el cliente {ClientName} " +
-                $"por un monto de honorarios acordados de ${package.Amount}.";
+                $"por un monto de honorarios acordados de ${package.Amount}.\n**Este es un mensaje autogenerado por el sistema, favor no responder**";
             _mailSender.SendMail(emails, "Creación de paquete", msg);
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
@@ -75,6 +78,9 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            //Setting up the messages passed through temp data from closure request
+            ViewBag.IsClosureProcessed = TempData["IsClosureProcessed"];
+            ViewBag.ClosureRequestMessage = TempData["ClosureRequestMessage"];
             Func<Package, bool> filterFunction = package => String.IsNullOrEmpty(filter) || package.Name.CaseInsensitiveContains(filter)
                 || package.Client.Name.CaseInsensitiveContains(filter);
             PackageListViewModel vm = new PackageListViewModel
@@ -94,9 +100,35 @@ namespace LexincorpApp.Controllers
                     TotalItems = _packagesRepo.Packages.Count(filterFunction)
                 }
             };
+            TempData["filter"] = filter;
             return View(vm);
         }
+        [HttpPost]
+        public IActionResult RequestClosure(int packageId)
+        {
+            if (_notificationRepository.VerifyExistingOpenNotification(packageId))
+            {
+                TempData["IsClosureProcessed"] = false;
+                TempData["ClosureRequestMessage"] = "Ya existe una solicitud abierta de cierre para el paquete seleccionado";
+            } else
+            {
 
+                
+                int currentUserId = Convert.ToInt32(HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+                bool wasClosed;
+                _notificationRepository.RequestPackageClosure(packageId, currentUserId, out wasClosed);
+                TempData["IsClosureProcessed"] = true;
+                if (wasClosed)
+                {
+                    TempData["ClosureRequestMessage"] = "El paquete seleccionado ha sido marcado como finalizado exitosamente";
+                } else
+                {
+                    TempData["ClosureRequestMessage"] = "Solicitud de cierre de paquete iniciada exitosamente";
+                }
+                
+            }
+            return RedirectToAction(nameof(Admin), new {filter = TempData["filter"]});
+        }
         public IActionResult Edit(int id)
         {
             var package = _packagesRepo.Packages.Include(p=> p.Client).Where(p => p.Id == id).FirstOrDefault();
