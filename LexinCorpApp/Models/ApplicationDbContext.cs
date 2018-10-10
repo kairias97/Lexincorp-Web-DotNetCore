@@ -28,10 +28,12 @@ namespace LexincorpApp.Models
         public DbSet<Service> Services { get; set; }
         public DbSet<Retainer> Retainers { get; set; }
         public DbSet<Package> Packages { get; set; }
-        public DbSet<RetainerSubscription> RetainerSubscriptions {get; set;}
+        public DbSet<RetainerSubscription> RetainerSubscriptions { get; set; }
         public DbSet<BillableRetainer> BillableRetainers { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityExpense> ActivityExpenses { get; set; }
+        public DbSet<BillHeader> BillHeaders { get; set; }
+        public DbSet<BillDetail> BillDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
