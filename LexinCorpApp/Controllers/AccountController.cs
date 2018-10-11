@@ -126,5 +126,56 @@ namespace LexincorpApp.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            ChangePasswordViewModel viewModel = new ChangePasswordViewModel();
+            viewModel.PasswordUser = new NewPasswordUser();
+            ViewBag.Updated = TempData["Updated"];
+            ViewBag.PasswordsDontMatch = TempData["PasswordsDontMatch"];
+            ViewBag.OldPasswordDontMatch = TempData["OldPasswordDontMatch"];
+            return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult ChangePassword(NewPasswordUser PasswordUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                ChangePasswordViewModel vm = new ChangePasswordViewModel();
+                vm.PasswordUser = PasswordUser;
+                return View(vm);
+            }
+            else
+            {
+                var user = HttpContext.User;
+                var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                var u = _usersRepo.Users.Where(x => x.Id == Convert.ToInt32(id)).FirstOrDefault();
+                if (_cryptoManager.VerifyHash(PasswordUser.oldPassword, u.Password))
+                {
+                    if(PasswordUser.newPassword == PasswordUser.confirmNewPassword)
+                    {
+                        u.Password = _cryptoManager.HashString(PasswordUser.newPassword);
+                        _usersRepo.UpdateUserPassword(u);
+                        TempData["Updated"] = true;
+                        return RedirectToAction("ChangePassword");
+                    }
+                    else
+                    {
+                        TempData["PasswordsDontMatch"] = true;
+                        ChangePasswordViewModel vm = new ChangePasswordViewModel();
+                        vm.PasswordUser = PasswordUser;
+                        return View(vm);
+                    }
+                }
+                else
+                {
+                    TempData["OldPasswordDontMatch"] = true;
+                    ChangePasswordViewModel vm = new ChangePasswordViewModel();
+                    vm.PasswordUser = PasswordUser;
+                    return View(vm);
+                }
+            }
+        }
     }
 }

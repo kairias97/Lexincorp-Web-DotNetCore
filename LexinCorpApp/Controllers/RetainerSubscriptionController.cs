@@ -64,10 +64,21 @@ namespace LexincorpApp.Controllers
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
-        public JsonResult GetByClient(int clientId)
+        public JsonResult GetByDateMonthClient(int clientId, int month, int year)
         {
             var results = _billableRetainerRepo.BillableRetainers
-                .Where(b => b.ClientId == clientId)
+                .Where(b => b.ClientId == clientId && b.Month == month && b.Year == year)
+                .Select(b => new
+                {
+                    id = b.Id,
+                    name = b.Name
+                });
+            return Json(results);
+        }
+        public JsonResult GetByClient(int clientId, int year)
+        {
+            var results = _billableRetainerRepo.BillableRetainers
+                .Where(b => b.ClientId == clientId && b.Year == year)
                 .Select(b => new
                 {
                     id = b.Id,

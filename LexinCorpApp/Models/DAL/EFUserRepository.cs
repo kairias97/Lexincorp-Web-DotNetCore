@@ -41,5 +41,11 @@ namespace LexincorpApp.Models
         {
             return context.Users.Where(x => x.Username == username && (bool)x.Active).FirstOrDefault();
         }
+        public void UpdateUserPassword(User user)
+        {
+            context.Update(user);
+            context.Entry<User>(user).Property(x => x.Password).IsModified = true;
+            context.SaveChanges();
+        }
     }
 }
