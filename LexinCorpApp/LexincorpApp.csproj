@@ -6,18 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Reports\Activities.rdlc" />
-    <None Remove="Reports\Bill.rdlc" />
-    <None Remove="Reports\Expenses.rdlc" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Reports\Activities.rdlc" />
-    <EmbeddedResource Include="Reports\Bill.rdlc" />
-    <EmbeddedResource Include="Reports\Expenses.rdlc" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
 
@@ -27,13 +15,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
-    <PackageReference Include="Sendgrid" Version="9.10.0" />
-    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="16.3.0.21" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.3" />
+    <PackageReference Include="Sendgrid" Version="9.9.0" />
     <PackageReference Include="Syncfusion.Report.Net.Core" Version="16.3.0.21" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

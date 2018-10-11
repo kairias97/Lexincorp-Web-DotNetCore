@@ -20,5 +20,7 @@ namespace LexincorpApp.Models
         public decimal Taxes { get; set; }
         public decimal Total { get; set; }
         public virtual ICollection<BillDetail> BillDetails { get; set; }
+        public int CreatorId { get; set; }
+        public virtual User Creator { get; set; }
     }
 }

@@ -134,7 +134,7 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Attorney attorney)
         {
-            if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.Id,attorney.UserId))
+            if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.Id, attorney.UserId))
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
             }

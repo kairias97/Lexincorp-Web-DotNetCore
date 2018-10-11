@@ -7,6 +7,7 @@
         $("div.container-fluid").css("background-color", "lightgrey");
         $("#activityDate").datepicker();
         $("#activityDate").datepicker("option", "dateFormat", "dd/mm/yy");
+        $("#activityDate").datepicker("setDate", new Date());
 
 
         @if (!User.IsInRole("Administrador"))
@@ -110,7 +111,7 @@
                 $.ajax({
                 url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
-                    data: { clientId: ui.item.clientId },
+                    data: { clientId: ui.item.clientId, year: new Date().getFullYear() },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -379,7 +380,7 @@
                 $.ajax({
                     url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
-                    data: { clientId: clientId },
+                    data: { clientId: ui.item.clientId, year: new Date().getFullYear() },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
