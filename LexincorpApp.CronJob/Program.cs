@@ -1,16 +1,30 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using LexincorpApp.CronJob.Models;
 //using LexincorpApp.CronJob.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using Microsoft.Extensions.Configuration.Json;
+
 namespace LexincorpApp.CronJob
 {
     class Program
     {
         static void Main(string[] args)
         {
+            //Setting up config file
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
 
-            using (var context = new LexincorpAdminContext())
+            DbContextOptionsBuilder<LexincorpAdminContext> optionsBuilder = new DbContextOptionsBuilder<LexincorpAdminContext>()
+                .UseSqlServer(config["cnLexincorpDB"]);
+            
+
+            using (var context = new LexincorpAdminContext(optionsBuilder.Options))
             {
 
                 string spanishMonth = System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag("es").DateTimeFormat.GetMonthName(DateTime.UtcNow.Month);

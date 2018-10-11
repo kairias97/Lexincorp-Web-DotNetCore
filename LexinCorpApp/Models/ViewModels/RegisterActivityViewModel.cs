@@ -8,6 +8,7 @@ namespace LexincorpApp.Models.ViewModels
     public class RegisterActivityViewModel
     {
         public IEnumerable<Client> Clients { get; set; }
+        public IEnumerable<AttorneySelection> Attorneys { get; set; }
         public IEnumerable<Item> Items { get; set; }
         public IEnumerable<Expense> Expenses { get; set; }
         public IEnumerable<Category> Categories { get; set; }

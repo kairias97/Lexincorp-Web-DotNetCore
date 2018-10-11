@@ -26,6 +26,7 @@ namespace LexincorpApp.Models
         public decimal? ItemUnitPrice { get; set; }
         public int? ItemQuantity { get; set; }
         public decimal? ItemSubTotal { get; set; }
+        public int? UserId { get; set; } 
         [Required(ErrorMessage = "Es requerido indicar una tasa horaria")]
         public decimal HourlyRate { get; set; }
         public decimal HourlySubtotal { get; set; }
