@@ -161,13 +161,16 @@
             });
         $("#Packages").change(function () {
                 if ($("#Packages").val() === "") {
-                $("#retainers").prop("disabled", false);
+                    $("#retainers").prop("disabled", false);
                     $("#items").prop("disabled", false);
+                    $("#packageClose").prop("checked", false);
+                    $("#packageClose").prop("disabled", true);
                     activateSelect2ById('#items')
                 }
             else {
-                $("#retainers").prop("disabled", true);
+                    $("#retainers").prop("disabled", true);
                     $("#items").prop("disabled", true);
+                    $("#packageClose").prop("disabled", false);
                     disableSelect2ById('#items')
                 }
             });
@@ -274,9 +277,9 @@
                 }
             });
         $("#btnClear").click(function () {
-            $("#Packages").val('null');
-            $("#retainers").val('null');
-            $("#items").val('null');
+            $("#Packages").val('');
+            $("#retainers").val('');
+            $("#items").val('');
 
             if ($("#items").children().length > 1) {
                 $("#items").prop("disabled", false);
@@ -295,6 +298,16 @@
             } else {
                 $("#Packages").prop("disabled", true);
             }
+            $("#packageClose").prop("checked", false);
+            $("#packageClose").prop("disabled", true);
+        });
+        $("#goTop").click(function (e) {
+            var jump = $("#goTop").attr("href");
+            var newPosition = $(jump).offset();
+            $('html, body').stop().animate({ scrollTop: 0 }, 500);
+            5
+            e.preventDefault();
+            //window.scrollTo(x - coord, y - coord);
         });
         if ($("#items").children().length > 1) {
             $("#items").prop("disabled", false);
@@ -348,7 +361,7 @@
                 $.ajax({
                     url: "@Url.Action("New","Activity")",
                     type: "POST",
-                    data: { body: body },
+                    data: { body: body, packageClosed: $("#packageClose").prop("checked") },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
@@ -356,9 +369,11 @@
                             if (data.success) {
                                 showSuccess(data.message);
                                 clean();
+                                $("#goTop").click();
                             }
                             else {
                                 showError(data.message);
+                                $("#goTop").click();
                             }
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -374,12 +389,10 @@
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-            document.getElementsByClassName("container-fluid").scrollIntoView(true);
             }
             function showError(message) {
             $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                document.getElementByClassName("container-fluid").scrollIntoView(true);
             }
         $("#activityDate").change(function () {
                 if ($("#IsClientSelected").is(":checked")) {
@@ -480,6 +493,7 @@
         $("#isEnglish").prop("checked", false);
         $("#IsClientSelected").prop("checked", false);
         $("#activityDate").val("");
+        $("#activityDate").datepicker("setDate", new Date());
         $("#clientFilter").val("");
         $("#ClientName").val("");
         $("#clientLanguage").val("")
@@ -512,6 +526,8 @@
         $("#items").prop("disabled", false);
         $("#itemsPrice").prop("disabled", false);
         $("#itemsQuantity").prop("disabled", false);
+        $("#packageClose").prop("checked", false);
+        $("#packageClose").prop("disabled", true);
     }
 </script>
 
@@ -591,7 +607,13 @@
                                 <label for="Packages">Paquetes disponibles:</label>
                                 <select class="form-control" id="Packages" disabled></select>
                             </div>
-                            <div class="form-group offset-md-1  col-md-5">
+                            <div class="form-group offset-md-1 col-md-5">
+                                <label for="packageClose">Cerrar paquete:</label>
+                                <input type="checkbox" class="form-control" id="packageClose" disabled/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-5">
                                 <label for="retainers">Retainers:</label>
                                 <select id="retainers" class="form-control" disabled></select>
                             </div>
@@ -607,7 +629,7 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group offset-md-1 col-md-5">
+                            <div class="form-group offset-1 col-md-5">
                                 <label for="itemsPrice">Precio unitario del ítem (USD): </label>
                                 <input type="text" class="form-control" id="itemsPrice" disabled />
                             </div>
@@ -718,6 +740,7 @@
                             <div class="form-group col-md-5">
                                 <button class="btn btn-primary" id="btnSubmit" type="button">Guardar</button>
                             </div>
+                            <a href="#placeholderSuccess" id="goTop" hidden></a>
                         </div>
                     </div>
                 </div>

@@ -30,12 +30,13 @@ namespace LexincorpApp.Controllers
         private readonly IClientRepository _clientRepo;
         private readonly IActivityRepository _activityRepo;
         private readonly IAttorneyRepository _attorneyRepo;
+        private readonly INotificationRepository _notificationRepo;
         public int PageSize = 5;
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
         public ActivityController(IItemRepository _itemsRepo, IExpenseRepository _expenseRepo, ICategoryRepository _categoryRepo,
             IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo,
             IActivityRepository _activityRepo, IAttorneyRepository attorneyRepository, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment,
-            IAttorneyRepository _attorneysRepo)
+            IAttorneyRepository _attorneysRepo, INotificationRepository notificationRepository)
         {
             this._itemsRepo = _itemsRepo;
             this._attorneysRepo = _attorneysRepo;
@@ -48,6 +49,7 @@ namespace LexincorpApp.Controllers
             this._activityRepo = _activityRepo;
             this._attorneyRepo = attorneyRepository;
             _hostingEnvironment = hostingEnvironment;
+            this._notificationRepo = notificationRepository;
         }
         public IActionResult Index()
         {
@@ -76,16 +78,22 @@ namespace LexincorpApp.Controllers
         }
         [Authorize]
         [HttpPost]
-        public JsonResult New(NewActivityRequest body)
+        public JsonResult New(NewActivityRequest body, bool packageClosed)
         {
             var user = HttpContext.User;
             int id;
+            bool wasClosed;
             if(User.IsInRole("Administrador"))
             {
                 id = body.UserId ?? Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             } else
             {
                 id = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            }
+            if(packageClosed && body.PackageId != null)
+            {
+                var u = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                _notificationRepo.RequestPackageClosure(body.PackageId ?? 0, u, out wasClosed);
             }
             
             _activityRepo.Save(body, id);
