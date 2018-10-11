@@ -430,10 +430,8 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>ActivitiesDataSet</DataSetName>
-        <Top>0cm</Top>
-        <Left>0cm</Left>
         <Height>1.37584cm</Height>
-        <Width>22.18437cm</Width>
+        <Width>22.18438cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -444,7 +442,7 @@
     <Height>1.37584cm</Height>
     <Style />
   </Body>
-  <Width>22.18437cm</Width>
+  <Width>22.18438cm</Width>
   <Page>
     <PageHeader>
       <Height>2.54cm</Height>
