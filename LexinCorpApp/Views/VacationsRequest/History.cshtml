@@ -1,4 +1,7 @@
 ﻿@model VacationsRequestListViewModel
+@{
+    ViewData["Title"] = "Historial de solicitudes de vacaciones";
+}
 <h2>Historial de solicitudes de vacaciones</h2>
 <form asp-action="History" asp-controller="VacationsRequest" method="get">
     <label>Filtro de búsqueda:</label>

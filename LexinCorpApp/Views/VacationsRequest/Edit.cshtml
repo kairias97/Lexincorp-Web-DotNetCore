@@ -1,4 +1,7 @@
 ﻿@model NewVacationsRequestViewModel
+@{
+    ViewData["Title"] = "Actualización de solicitud de vacaciones";
+}
 <h4>Actualización de solicitud de vacaciones</h4>
 <br />
 @if (ViewBag.UpdatedVacationRequest ?? false)
@@ -14,40 +17,40 @@
 }
 <form asp-action="Edit" asp-controller="VacationsRequest" method="post" role="alert" id="@Model.VacationsRequest.VacationsRequestId">
     @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-        {
-            <div class="alert alert-danger alert-dismissible fade show">
-                @Html.ValidationSummary(false, "Errores de validación:")
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        }
-    <input asp-for="@Model.VacationsRequest.VacationsRequestId" hidden/>
-    <input asp-for="@Model.VacationsRequest.AttorneyId" hidden/>
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    <input asp-for="@Model.VacationsRequest.VacationsRequestId" hidden />
+    <input asp-for="@Model.VacationsRequest.AttorneyId" hidden />
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="@Model.AttorneyName">Nombre del abogado:</label>
-            <input type="text" asp-for="@Model.AttorneyName" class="form-control" readonly/>
+            <input type="text" asp-for="@Model.AttorneyName" class="form-control" readonly />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.Reason">Razón de la solicitud:</label>
-            <input type="text" asp-for="@Model.VacationsRequest.Reason" class="form-control" readonly/>
+            <input type="text" asp-for="@Model.VacationsRequest.Reason" class="form-control" readonly />
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.Quantity">Cantidad de días solicitados:</label>
-            <input type="text" asp-for="@Model.VacationsRequest.Quantity" class="form-control" readonly/>
+            <input type="text" asp-for="@Model.VacationsRequest.Quantity" class="form-control" readonly />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.StartDate">Fecha de inicio de días solicitados:</label>
-            <input type="text" asp-for="@Model.VacationsRequest.StartDate" class="form-control" readonly/>
+            <input type="text" asp-for="@Model.VacationsRequest.StartDate" class="form-control" readonly />
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.Created">Fecha de creación de la solicitud:</label>
-            <input type="text" asp-for="@Model.VacationsRequest.Created" class="form-control" readonly/>
+            <input type="text" asp-for="@Model.VacationsRequest.Created" class="form-control" readonly />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.IsApproved">Estado:*</label>

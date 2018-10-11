@@ -1,4 +1,7 @@
 ﻿@model ClientsListViewModel
+@{
+    ViewData["Title"] = "Administrar clientes";
+}
 <h2>Administración de clientes</h2>
 <form asp-action="Admin" method="get" asp-controller="Client">
     <label for="Client_BillingInEnglish">Filtro de búsqueda:</label>
@@ -32,7 +35,7 @@
                     <td>@client.ClientType?.Name</td>
                     <td>@client.TributaryId</td>
                     <td>
-                        <a asp-action="Edit" asp-controller="Client" asp-route-id="@client.Id" ><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                        <a asp-action="Edit" asp-controller="Client" asp-route-id="@client.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
                     </td>
                 </tr>
             }

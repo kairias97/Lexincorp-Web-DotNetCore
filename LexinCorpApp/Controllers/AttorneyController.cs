@@ -14,6 +14,7 @@ using LexincorpApp.Models.ExternalServices;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class AttorneyController : Controller
     {
         private readonly IDepartmentRepository _departmentsRepo;
@@ -97,7 +98,7 @@ namespace LexincorpApp.Controllers
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.IdentificationNumber.CaseInsensitiveContains(filter);
-
+            ViewBag.ResetedPassword = TempData["ResetedPassword"];
             AttorneyListViewModel viewModel = new AttorneyListViewModel();
             viewModel.CurrentFilter = filter;
             viewModel.Attorneys = _attorneysRepo.Attorneys
@@ -113,6 +114,7 @@ namespace LexincorpApp.Controllers
                 ItemsPerPage = PageSize,
                 TotalItems = _attorneysRepo.Attorneys.Count(filterFunction)
             };
+            TempData["filter"] = filter;
             return View(viewModel);
         }
         [Authorize]
@@ -162,6 +164,14 @@ namespace LexincorpApp.Controllers
                 TempData["updated"] = true;
                 return RedirectToAction("Edit", new { id = attorney.Id });
             }
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(int attorneyId)
+        {
+            _usersRepo.ResetPassword(attorneyId);
+            TempData["ResetedPassword"] = true;
+            return RedirectToAction(nameof(Admin), new { filter = TempData["filter"] });
         }
     }
 }

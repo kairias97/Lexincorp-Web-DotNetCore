@@ -1,4 +1,7 @@
 ﻿@model NewAttorneyViewModel
+@{
+    ViewData["Title"] = "Agregar usuario";
+}
 <h4>Agregar nuevo usuario abogado</h4>
 <br />
 @if (ViewBag.AddedAttorney ?? false)
@@ -12,7 +15,7 @@
     </div>
 }
 <form asp-action="New" asp-controller="Attorney" method="post">
-    @if(ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
     {
         <div class="alert alert-danger alert-dismissible fade show">
             @Html.ValidationSummary(false, "Errores de validación:")
@@ -24,7 +27,7 @@
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.Name">Nombre del abogado:*</label>
-            <input type="text" asp-for="@Model.Attorney.Name" class="form-control" required/>
+            <input type="text" asp-for="@Model.Attorney.Name" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.User.Username">Nombre de usuario:*</label>
@@ -39,35 +42,35 @@
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.AdmissionDate">Fecha de admisión (dd/MM/yyyy):*</label>
-            <input type="text" asp-for="@Model.Attorney.AdmissionDate" value="@(Model.Attorney.AdmissionDate == DateTime.MinValue ? DateTime.Now.ToString("dd/MM/yyyy") : Model.Attorney.AdmissionDate.ToString("dd/MM/yyyy"))" class="form-control" required/>
+            <input type="text" asp-for="@Model.Attorney.AdmissionDate" value="@(Model.Attorney.AdmissionDate == DateTime.MinValue ? DateTime.Now.ToString("dd/MM/yyyy") : Model.Attorney.AdmissionDate.ToString("dd/MM/yyyy"))" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.Address">Dirección:*</label>
-            <input type="text" asp-for="@Model.Attorney.Address" class="form-control" required/>
+            <input type="text" asp-for="@Model.Attorney.Address" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.IdentificationNumber">Número de identificación (cédula):*</label>
-            <input type="text" asp-for="@Model.Attorney.IdentificationNumber" class="form-control" required/>
+            <input type="text" asp-for="@Model.Attorney.IdentificationNumber" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.AssignedPhoneNumber">Número de teléfono asignado:*</label>
-            <input type="tel" asp-for="@Model.Attorney.AssignedPhoneNumber" class="form-control" required/>
+            <input type="tel" asp-for="@Model.Attorney.AssignedPhoneNumber" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.PersonalPhoneNumber">Número de teléfono personal:*</label>
-            <input type="tel" asp-for="@Model.Attorney.PersonalPhoneNumber" class="form-control" required/>
+            <input type="tel" asp-for="@Model.Attorney.PersonalPhoneNumber" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.EmergencyContact">Contacto de emergencia:*</label>
-            <input type="text" asp-for="@Model.Attorney.EmergencyContact" class="form-control" required/>
+            <input type="text" asp-for="@Model.Attorney.EmergencyContact" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.EmergencyContactPhoneNumber">Número de teléfono del contacto de emergencia:*</label>
-            <input type="tel" asp-for="@Model.Attorney.EmergencyContactPhoneNumber" class="form-control" required/>
+            <input type="tel" asp-for="@Model.Attorney.EmergencyContactPhoneNumber" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.NotaryCode">Código de notario:*</label>
-            <input type="number" asp-for="@Model.Attorney.NotaryCode" class="form-control" required/>
+            <input type="number" asp-for="@Model.Attorney.NotaryCode" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.DepartmentId">Departamento:*</label>
@@ -88,7 +91,7 @@
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.Email">Email:*</label>
-            <input type="email" asp-for="@Model.Attorney.Email" class="form-control" required/>
+            <input type="email" asp-for="@Model.Attorney.Email" class="form-control" required />
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Agregar</button>

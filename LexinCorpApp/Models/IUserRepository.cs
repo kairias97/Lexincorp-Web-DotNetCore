@@ -13,5 +13,6 @@ namespace LexincorpApp.Models
         bool VerifyAttorneyIDAndUsername(int attorneyID, int userID);
         User GetUserByUsername(string username);
         void UpdateUserPassword(User user);
+        void ResetPassword(int attorneyId);
     }
 }

@@ -1,4 +1,7 @@
 ﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
 <script type="text/javascript">
     $(function () {
         $("body").css("background-color", "lightgrey");
@@ -82,28 +85,28 @@
                                 <tbody>
                                     @foreach (var activity in Model.Activities)
                                     {
-                                    <tr>
-                                        <td>@activity.Client.Name</td>
-                                        <td>@activity.Service.Name</td>
-                                        <td>@Math.Round(activity.HoursWorked, 2)</td>
-                                        @if (activity.ActivityType == ActivityTypeEnum.Package)
-                                        {
-                                            <td>Paquete</td>
-                                        }
-                                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
-                                        {
-                                            <td>Retainer</td>
-                                        }
-                                        else if (activity.ActivityType == ActivityTypeEnum.Item)
-                                        {
-                                            <td>Ítem</td>
-                                        }
-                                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
-                                        {
-                                            <td>Hora</td>
-                                        }
-                                        <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                                    </tr>
+                                        <tr>
+                                            <td>@activity.Client.Name</td>
+                                            <td>@activity.Service.Name</td>
+                                            <td>@Math.Round(activity.HoursWorked, 2)</td>
+                                            @if (activity.ActivityType == ActivityTypeEnum.Package)
+                                            {
+                                                <td>Paquete</td>
+                                            }
+                                            else if (activity.ActivityType == ActivityTypeEnum.Retainer)
+                                            {
+                                                <td>Retainer</td>
+                                            }
+                                            else if (activity.ActivityType == ActivityTypeEnum.Item)
+                                            {
+                                                <td>Ítem</td>
+                                            }
+                                            else if (activity.ActivityType == ActivityTypeEnum.Hourly)
+                                            {
+                                                <td>Hora</td>
+                                            }
+                                            <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>

@@ -1,9 +1,12 @@
 ﻿@model BillHistoryViewModel
+@{
+    ViewData["Title"] = "Historial de facturación";
+}
 <h2>Historial de facturas</h2>
 <form asp-controller="Bill" asp-action="History" method="get">
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente o nombre de factura" aria-label="Nombre del cliente o nombre de factura" aria-describedby="button-addon2">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente o nombre de a quien se facturó" aria-label="Nombre del cliente o nombre de factura" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
         </div>
@@ -30,9 +33,9 @@
                     <tr>
                         <td>@bill.Client.Name</td>
                         <td>@bill.BillName</td>
-                        <td>@Math.Round(bill.BillSubtotal,2)</td>
-                        <td>@Math.Round(bill.Taxes,2)</td>
-                        <td>@Math.Round(bill.Total,2)</td>
+                        <td>@Math.Round(bill.BillSubtotal, 2)</td>
+                        <td>@Math.Round(bill.Taxes, 2)</td>
+                        <td>@Math.Round(bill.Total, 2)</td>
                         <td>@bill.BillMonth</td>
                         <td>@bill.BillYear</td>
                         <td>@bill.BillDate.ToString("dd/MM/yyyy")</td>

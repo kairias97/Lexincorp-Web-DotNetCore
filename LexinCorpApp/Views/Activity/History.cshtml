@@ -1,4 +1,7 @@
 ﻿@model ActivityHistoryViewModel
+@{
+    ViewData["Title"] = "Historial de actividades";
+}
 <h2>Historial de actividades</h2>
 <form asp-controller="Activity" asp-action="History" method="get">
     <label for="filter">Filtro de búsqueda:</label>
@@ -26,31 +29,31 @@
             <tbody>
                 @foreach (var activity in Model.Activities)
                 {
-                <tr>
-                    <td>@activity.Client.Name</td>
-                    <td>@activity.Service.Name</td>
-                    <td>@Math.Round(activity.HoursWorked, 2)</td>
-                    @if (activity.ActivityType == ActivityTypeEnum.Package)
-                    {
-                        <td>Paquete</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Retainer)
-                    {
-                        <td>Retainer</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Item)
-                    {
-                        <td>Ítem</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Hourly)
-                    {
-                        <td>Hora</td>
-                    }
-                    <td>@(activity.Package?.Name ?? "-")</td>
-                    <td>@(activity.BillableRetainer?.Name ?? "-")</td>
-                    <td>@(activity.Item?.Name ?? "-")</td>
-                    <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                </tr>
+                    <tr>
+                        <td>@activity.Client.Name</td>
+                        <td>@activity.Service.Name</td>
+                        <td>@Math.Round(activity.HoursWorked, 2)</td>
+                        @if (activity.ActivityType == ActivityTypeEnum.Package)
+                        {
+                            <td>Paquete</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
+                        {
+                            <td>Retainer</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Item)
+                        {
+                            <td>Ítem</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
+                        {
+                            <td>Hora</td>
+                        }
+                        <td>@(activity.Package?.Name ?? "-")</td>
+                        <td>@(activity.BillableRetainer?.Name ?? "-")</td>
+                        <td>@(activity.Item?.Name ?? "-")</td>
+                        <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
                 }
             </tbody>
         </table>
