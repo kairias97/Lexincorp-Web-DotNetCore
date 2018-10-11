@@ -1,4 +1,7 @@
 ﻿@model ExpenseListViewModel
+@{
+    ViewData["Title"] = "Administrar gastos";
+}
 <h2>Administración de catálogo de gastos</h2>
 <form asp-action="Admin" method="get" asp-controller="Expense">
     <label for="filter">Filtro de búsqueda:</label>
@@ -24,15 +27,15 @@
         <tbody>
             @foreach (var expense in Model.Expenses)
             {
-            <tr>
-                <td>@expense.Name</td>
-                <td>@expense.DisplayName</td>
-                <td>@expense.Amount</td>
-                <td>@(expense.Active ? "Activo" : "Inactivo")</td>
-                <td>
-                    <a asp-action="Edit" asp-controller="Expense" asp-route-id="@expense.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
-                </td>
-            </tr>
+                <tr>
+                    <td>@expense.Name</td>
+                    <td>@expense.DisplayName</td>
+                    <td>@expense.Amount</td>
+                    <td>@(expense.Active ? "Activo" : "Inactivo")</td>
+                    <td>
+                        <a asp-action="Edit" asp-controller="Expense" asp-route-id="@expense.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>

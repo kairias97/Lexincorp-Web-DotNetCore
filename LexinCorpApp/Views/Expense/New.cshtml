@@ -1,4 +1,7 @@
 ﻿@model Expense
+@{
+    ViewData["Title"] = "Agregar tipo de gasto";
+}
 <h4>Agregar nuevo tipo de gasto</h4>
 <br />
 @if (ViewBag.AddedExpense ?? false)
@@ -12,47 +15,47 @@
     </div>
 
 }
-    <form asp-action="New" asp-controller="Expense" role="alert">
-        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-        {
-            // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
-            <div class="alert alert-danger alert-dismissible fade show">
-                @Html.ValidationSummary(false, "Errores de validación:")
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-
-            </div>
-        }
-        <div class="form-row">
-            <div class="form-group col-md-5">
-                <label for="Name">Nombre del gasto*:</label>
-                <input type="text" class="form-control" asp-for="Name" required />
-            </div>
-            
+<form asp-action="New" asp-controller="Expense" role="alert">
+    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    {
+        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-5">
-                <label for="SpanishDescription">Descripción en Español*:</label>
-                <input type="text" class="form-control" asp-for="SpanishDescription" required spellcheck="true" lang="es"/>
-            </div>
-            <div class="form-group offset-md-1 col-md-5">
-                <label for="EnglishDescription">Descripción en Inglés*:</label>
-                <input type="text" class="form-control" asp-for="EnglishDescription" required spellcheck="true" lang="en"/>
-            </div>
-
+    }
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Name">Nombre del gasto*:</label>
+            <input type="text" class="form-control" asp-for="Name" required />
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-5">
-                <label for="Amount">Monto asociado (USD)*:</label>
-                <input type="number" step="0.01" min="0" class="form-control" asp-for="Amount" required />
-            </div>
 
 
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="SpanishDescription">Descripción en Español*:</label>
+            <input type="text" class="form-control" asp-for="SpanishDescription" required spellcheck="true" lang="es" />
         </div>
-        <button type="submit" class="btn btn-primary">Agregar</button>
+        <div class="form-group offset-md-1 col-md-5">
+            <label for="EnglishDescription">Descripción en Inglés*:</label>
+            <input type="text" class="form-control" asp-for="EnglishDescription" required spellcheck="true" lang="en" />
+        </div>
 
-        <br />
-    </form>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Amount">Monto asociado (USD)*:</label>
+            <input type="number" step="0.01" min="0" class="form-control" asp-for="Amount" required />
+        </div>
+
+
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+
+    <br />
+</form>
 <br />

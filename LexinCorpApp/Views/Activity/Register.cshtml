@@ -1,7 +1,29 @@
 ﻿@model RegisterActivityViewModel
+@{
+    ViewData["Title"] = "Registro de nueva actividad";
+}
 <script type="text/javascript">
     $(function ()
     {
+        activateSelect2ById('#categories')
+        activateSelect2ById('#expenses')
+        activateSelect2ById('#items')
+        function activateSelect2ById(id) {
+            $(id).select2({
+                theme: 'bootstrap4',
+                width: '100%'
+            });
+
+        }
+        function disableSelect2ById(id) {
+            $(id).select2('destroy');
+
+        }
+        
+        /*$('#services').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });*/
         //Para setear idioma inicial
         //$("#Package_Description").prop("lang", $("#IsEnglish").value ? "en" : "es");
         $("div.container-fluid").css("background-color", "lightgrey");
@@ -121,7 +143,7 @@
                             //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
-                            
+
                         });
                         if ($("#retainers").children().length > 1) {
                             $("#retainers").prop("disabled", false);
@@ -147,21 +169,25 @@
         $("#Packages").change(function () {
                 if ($("#Packages").val() === "") {
                 $("#retainers").prop("disabled", false);
-                $("#items").prop("disabled", false);
+                    $("#items").prop("disabled", false);
+                    activateSelect2ById('#items')
                 }
             else {
                 $("#retainers").prop("disabled", true);
-                $("#items").prop("disabled", true);
+                    $("#items").prop("disabled", true);
+                    disableSelect2ById('#items')
                 }
             });
         $("#retainers").change(function () {
                 if ($("#retainers").val() === "") {
                 $("#Packages").prop("disabled", false);
                 $("#items").prop("disabled", false);
+                    activateSelect2ById('#items')
                 }
             else {
                 $("#Packages").prop("disabled", true);
-                $("#items").prop("disabled", true);
+                    $("#items").prop("disabled", true);
+                    disableSelect2ById('#items')
                 }
             });
         $("#items").change(function () {
@@ -187,6 +213,7 @@
                 $("#services").empty();
                 $("#description").val("");
                 $("#services").prop("disabled", true);
+                disableSelect2ById('#services')
                 $("#description").prop("disabled", true);
                 }
             else {
@@ -205,6 +232,8 @@
                             $("#services").append(options);
                             });
                         $("#services").prop("disabled", false);
+                        activateSelect2ById('#services')
+                       
                         }
                     });
                 }
@@ -251,15 +280,17 @@
                     calculateTotalExpenses();
                 }
             });
-        $("#btnClear").click(function () { 
+        $("#btnClear").click(function () {
             $("#Packages").val('null');
             $("#retainers").val('null');
             $("#items").val('null');
-            
+
             if ($("#items").children().length > 1) {
                 $("#items").prop("disabled", false);
+                activateSelect2ById("#items")
             } else {
                 $("#items").prop("disabled", true);
+                disableSelect2ById("#items")
             }
             if ($("#retainers").children().length > 1) {
                 $("#retainers").prop("disabled", false);
@@ -274,8 +305,10 @@
         });
         if ($("#items").children().length > 1) {
             $("#items").prop("disabled", false);
+            activateSelect2ById("#items");
         } else {
             $("#items").prop("disabled", true);
+            disableSelect2ById("#items")
         }
         $("#btnSubmit").click(function () {
                 if (validateData()) {
@@ -389,13 +422,13 @@
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
                         });
-                        
+
                         if ($("#retainers").children().length > 1) {
                             $("#retainers").prop("disabled", false);
                         } else {
                             $("#retainers").prop("disabled", true);
                         }
-                        
+
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
@@ -443,13 +476,17 @@
         $("#clientLanguage").val("")
         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+        //TODO in a future refresh the items list
         $("#items").val("");
+        activateSelect2ById('#items')
         $("#itemsPrice").val("");
         $("#itemsQuantity").val("");
         $("#hours").val("");
         $("#FeePerHour").val("");
+        //TODO in a future refresh the categories in the list
         $("#categories").val("");
         $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
+        disableSelect2ById('#services')
         $("#description").val("");
         $("#expenses").val("");
         $("#expensesQuantity").val("");
@@ -463,7 +500,7 @@
         $("#items").prop("disabled", true);
         $("#itemsPrice").prop("disabled", true);
         $("#itemsQuantity").prop("disabled", true);
-        
+
     }
 </script>
 
@@ -481,7 +518,7 @@
         </div>
         <div class="row">
             <div class="offset-md-1 col-md-10">
-                <div class="row bg-light rounded" style="margin-top:20px">
+                <div class="row rounded" style="margin-top:20px; background-color:white">
                     <div class="offset-1 col-md-10">
                         <div class="form-row" style="margin-top:20px">
                             <h4 class="text-center text-secondary">Paso 1</h4>
@@ -508,7 +545,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row bg-light rounded" style="margin-top:20px">
+                <div class="row rounded" style="margin-top:20px;background-color:white">
                     <div class="offset-1 col-md-10">
                         <div class="form-row" style="margin-top:20px">
                             <h4 class="text-center text-secondary">Paso 2</h4>
@@ -526,7 +563,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label for="items">Items:</label>
-                                <select id="items" class="form-control" disabled>
+                                <select id="items" class="form-control js-example-basic-single" disabled>
                                     <option value="" data-price="">Seleccionar Item</option>
                                     @foreach (var i in Model.Items)
                                     {
@@ -561,7 +598,7 @@
 
                     </div>
                 </div>
-                <div class="row bg-light rounded" style="margin-top:20px">
+                <div class="row rounded" style="margin-top:20px; background-color:white">
                     <div class="offset-1 col-md-10">
                         <div class="form-row" style="margin-top:20px">
                             <h4 class="text-center text-secondary">Paso 3</h4>
@@ -569,7 +606,7 @@
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
                                 <label for="categories">Categoría:*</label>
-                                <select id="categories" class="form-control">
+                                <select id="categories" class="form-control" style="background-color:white">
                                     <option value="">Seleccionar Categoría</option>
                                     @foreach (var c in Model.Categories)
                                     {
@@ -590,7 +627,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row bg-light rounded" style="margin-top:20px;margin-bottom:20px;">
+                <div class="row rounded" style="margin-top:20px;margin-bottom:20px; background-color:white">
                     <div class="offset-1 col-md-10">
                         <div class="form-row" style="margin-top:20px">
                             <h4 class="text-center text-secondary">Paso 4</h4>

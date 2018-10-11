@@ -1,4 +1,7 @@
 ﻿@model NewPreBillViewModel
+@{
+    ViewData["Title"] = "Prefacturación";
+}
 <script type="text/javascript">
     $(function () {
         $("#billDate").datepicker();
@@ -310,7 +313,7 @@
                         "min": 0
                     });
                     $("#discountAmount").val(0);
-                }                
+                }
                 $("#discountAmount").prop("disabled", false);
             }
         });
@@ -355,7 +358,7 @@
         function validateData() {
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
                 ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#items").val() !== "" || $("#hourCheck").is(":checked")) &&
-                ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 : 
+                ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 :
                 $("#discount").val() == 2 ? $("#discountAmount").val() >=0 : true)) {
                 console.log("completo");
                 return true;
