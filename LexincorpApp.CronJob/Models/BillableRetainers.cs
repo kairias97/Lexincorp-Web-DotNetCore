@@ -17,6 +17,7 @@ namespace LexincorpApp.CronJob.Models
         public bool IsBilled { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+        public decimal ConsumedHours { get; set; }
 
         public Clients Client { get; set; }
         public Retainers Retainer { get; set; }
