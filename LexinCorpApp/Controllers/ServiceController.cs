@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace LexincorpApp.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador, Regular")]
     public class ServiceController : Controller
     {
         private readonly IServiceRepository _servicesRepo;
@@ -22,7 +22,7 @@ namespace LexincorpApp.Controllers
             _servicesRepo = servicesRepo;
             _categoriesRepo = categoriesRepo;
         }
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult New()
         {
             ViewBag.AddedService = TempData["added"];
@@ -34,6 +34,7 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult New(Service service)
         {
@@ -51,7 +52,7 @@ namespace LexincorpApp.Controllers
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             Func<Service, bool> filterFunction = service => String.IsNullOrEmpty(filter) || service.Name.CaseInsensitiveContains(filter);
@@ -74,7 +75,7 @@ namespace LexincorpApp.Controllers
             return View(vm);
 
         }
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id)
         {
             
@@ -92,6 +93,7 @@ namespace LexincorpApp.Controllers
             ViewBag.UpdatedService = TempData["updated"];
             return View(vm);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult Edit(Service service)
         {
@@ -109,7 +111,7 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction(nameof(Edit), new { id = service.Id });
         }
-
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult GetByCategory(int categoryId)
         {
             var list = _servicesRepo.Services.Where(s => s.CategoryId == categoryId)

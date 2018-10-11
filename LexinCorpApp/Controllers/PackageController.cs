@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LexincorpApp.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador, Regular")]
     public class PackageController : Controller
     {
         private readonly IAttorneyRepository _attorneysRepo;
@@ -32,7 +32,7 @@ namespace LexincorpApp.Controllers
             _mailSender = mailSender;
             _notificationRepository = notificationRepo;
         }
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult New()
         {
             ViewBag.AddedPackage = TempData["added"];
@@ -46,6 +46,7 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult New(Package package, string ClientName, bool IsEnglish, bool IsClientSelected, bool OnlyAdminNotification)
         {
@@ -75,7 +76,7 @@ namespace LexincorpApp.Controllers
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
-
+        [Authorize(Roles = "Administrador")]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             //Setting up the messages passed through temp data from closure request
@@ -103,6 +104,7 @@ namespace LexincorpApp.Controllers
             TempData["filter"] = filter;
             return View(vm);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult RequestClosure(int packageId)
         {
@@ -129,6 +131,7 @@ namespace LexincorpApp.Controllers
             }
             return RedirectToAction(nameof(Admin), new {filter = TempData["filter"]});
         }
+        [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id)
         {
             var package = _packagesRepo.Packages.Include(p=> p.Client).Where(p => p.Id == id).FirstOrDefault();
@@ -140,6 +143,7 @@ namespace LexincorpApp.Controllers
             ViewBag.UpdatedPackage = TempData["updated"];
             return View(package);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult Edit(Package package)
         {
@@ -151,7 +155,7 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction(nameof(Edit), new { id = package.Id});
         }
-        [Authorize]
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult Search(int clientId)
         {
             var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == false && p.IsBilled == false)
@@ -159,7 +163,7 @@ namespace LexincorpApp.Controllers
                 .Select(p => new { Name = p.Name, Id = p.Id });
             return Json(list);
         }
-        [Authorize]
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult SearchFinished(int clientId)
         {
             var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == true && p.IsBilled == false)

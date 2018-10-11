@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class RetainerController : Controller
     {
         private readonly IRetainerRepository _retainersRepo;

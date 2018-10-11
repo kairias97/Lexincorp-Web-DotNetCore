@@ -11,7 +11,6 @@ using LexincorpApp.Infrastructure;
 using LexincorpApp.Models.ExternalServices;
 using System.Security.Claims;
 using Syncfusion.Report;
-using Microsoft.EntityFrameworkCore;
 using Syncfusion.ReportWriter;
 using System.IO;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,6 +21,7 @@ namespace LexincorpApp.Controllers
     public class ActivityController : Controller
     {
         private readonly IItemRepository _itemsRepo;
+        private readonly IAttorneyRepository _attorneysRepo;
         private readonly IExpenseRepository _expenseRepo;
         private readonly ICategoryRepository _categoryRepo;
         private readonly IServiceRepository _serviceRepo;
@@ -34,9 +34,11 @@ namespace LexincorpApp.Controllers
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
         public ActivityController(IItemRepository _itemsRepo, IExpenseRepository _expenseRepo, ICategoryRepository _categoryRepo,
             IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo,
-            IActivityRepository _activityRepo, IAttorneyRepository attorneyRepository, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
+            IActivityRepository _activityRepo, IAttorneyRepository attorneyRepository, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment,
+            IAttorneyRepository _attorneysRepo)
         {
             this._itemsRepo = _itemsRepo;
+            this._attorneysRepo = _attorneysRepo;
             this._expenseRepo = _expenseRepo;
             this._categoryRepo = _categoryRepo;
             this._serviceRepo = _serviceRepo;
@@ -61,8 +63,14 @@ namespace LexincorpApp.Controllers
                 Expenses = _expenseRepo.Expenses,
                 Categories = _categoryRepo.Categories,
                 Services = _serviceRepo.Services,
+                Attorneys = _attorneysRepo.Attorneys
+                .Where(a => a.User.Active)
+                .Select(a => new AttorneySelection{
+                    UserId = a.UserId,
+                    AttorneyName = a.Name
+                }).OrderBy(a => a.AttorneyName),
                 //Packages = _packageRepo.Packages,
-                Retainers = _retainerRepo.Retainers,
+                Retainers = _retainerRepo.Retainers
             };
             return View(viewModel);
         }
@@ -71,8 +79,16 @@ namespace LexincorpApp.Controllers
         public JsonResult New(NewActivityRequest body)
         {
             var user = HttpContext.User;
-            var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            _activityRepo.Save(body, Convert.ToInt32(id));
+            int id;
+            if(User.IsInRole("Administrador"))
+            {
+                id = body.UserId ?? Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            } else
+            {
+                id = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            }
+            
+            _activityRepo.Save(body, id);
             return Json(new { message = "Actividad ingresada exitosamente", success = true });
         }
         [Authorize]

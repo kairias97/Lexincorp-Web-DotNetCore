@@ -1,25 +1,17 @@
 ﻿@model RegisterActivityViewModel
 @{
     ViewData["Title"] = "Registro de nueva actividad";
+    int currentUserId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 }
 <script type="text/javascript">
+
     $(function ()
     {
         activateSelect2ById('#categories')
         activateSelect2ById('#expenses')
         activateSelect2ById('#items')
-        function activateSelect2ById(id) {
-            $(id).select2({
-                theme: 'bootstrap4',
-                width: '100%'
-            });
-
-        }
-        function disableSelect2ById(id) {
-            $(id).select2('destroy');
-
-        }
         
+
         /*$('#services').select2({
             theme: 'bootstrap4',
             width: '100%'
@@ -160,6 +152,7 @@
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
                 $("#items").prop("disabled", false);
+                $("#description").prop("lang", ui.item.isEnglish ? "en" : "es");
                 //$("#Package_Description").prop("lang", ui.item.isEnglish ? "en" : "es");
 
 
@@ -233,7 +226,7 @@
                             });
                         $("#services").prop("disabled", false);
                         activateSelect2ById('#services')
-                       
+
                         }
                     });
                 }
@@ -348,6 +341,9 @@
                         newExpense.SubTotal = cells[4].innerHTML;
                         expenses.push(newExpense);
                     });
+                    if ($('#attorneys').length) {
+                        body.UserId = $('#attorneys').val();
+                    }
                     body.Expenses = expenses;
                 $.ajax({
                     url: "@Url.Action("New","Activity")",
@@ -378,10 +374,12 @@
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            document.getElementsByClassName("container-fluid").scrollIntoView(true);
             }
             function showError(message) {
             $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                document.getElementByClassName("container-fluid").scrollIntoView(true);
             }
         $("#activityDate").change(function () {
                 if ($("#IsClientSelected").is(":checked")) {
@@ -442,6 +440,17 @@
                 }
             })
     });
+    function activateSelect2ById(id) {
+        $(id).select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+
+    }
+    function disableSelect2ById(id) {
+        $(id).select2('destroy');
+
+    }
     function deleteRow(button) {
         $(button).closest("tr").remove();
         calculateTotalExpenses();
@@ -485,8 +494,10 @@
         $("#FeePerHour").val("");
         //TODO in a future refresh the categories in the list
         $("#categories").val("");
+        $("#categories").prop("title", "Seleccionar categoría")
         $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
         disableSelect2ById('#services')
+        $("#services").prop("disabled", true);
         $("#description").val("");
         $("#expenses").val("");
         $("#expensesQuantity").val("");
@@ -494,13 +505,13 @@
         $('#tableData tr').each(function () {
             $(this).remove();
         });
-        $('tfoot tr td:last-child').html("");
+        $("#expenses").prop("title", "Seleccionar gastos")
+        $('#expensesTable tfoot tr td:last-child').html("");
         $("#Packages").prop("disabled", true);
         $("#retainers").prop("disabled", true);
-        $("#items").prop("disabled", true);
-        $("#itemsPrice").prop("disabled", true);
-        $("#itemsQuantity").prop("disabled", true);
-
+        $("#items").prop("disabled", false);
+        $("#itemsPrice").prop("disabled", false);
+        $("#itemsQuantity").prop("disabled", false);
     }
 </script>
 
@@ -510,7 +521,7 @@
         <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
         <input type="checkbox" hidden id="IsAdmin" />
-        <div id="placeholderSuccess">
+        <div id="placeholderSuccess" tabindex="">
 
         </div>
         <div id="placeholderError">
@@ -523,12 +534,37 @@
                         <div class="form-row" style="margin-top:20px">
                             <h4 class="text-center text-secondary">Paso 1</h4>
                         </div>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <div class="form-row" style="margin-top:20px">
+
+                                <div class="form-group col-md-5">
+                                    <label for="attorneys">Abogado:</label>
+                                    <select id="attorneys" class="form-control">
+                                        @foreach (var a in Model.Attorneys)
+                                        {
+                                            if (a.UserId == currentUserId)
+                                            {
+                                                <option value="@a.UserId" selected>@a.AttorneyName</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@a.UserId">@a.AttorneyName</option>
+
+                                            }
+
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        }
                         <div class="form-row" style="margin-top:20px">
                             <div class="form-group col-md-5">
                                 <label for="activityDate">Fecha:*</label>
                                 <input type="text" id="activityDate" class="form-control" placeholder="Fecha" aria-label="Fecha del registro" />
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1  col-md-5">
                                 <label for="clientFilter">Búsqueda del cliente:*</label>
                                 <input type="text" id="clientFilter" class="form-control" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
                             </div>
@@ -538,7 +574,7 @@
                                 <label for="ClientName">Nombre del cliente:</label>
                                 <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente" />
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1  col-md-5">
                                 <label for="clientName">Idioma de facturación:</label>
                                 <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control" aria-label="Idioma de facturación" />
                             </div>
@@ -555,15 +591,15 @@
                                 <label for="Packages">Paquetes disponibles:</label>
                                 <select class="form-control" id="Packages" disabled></select>
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1  col-md-5">
                                 <label for="retainers">Retainers:</label>
                                 <select id="retainers" class="form-control" disabled></select>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-5">
                                 <label for="items">Items:</label>
-                                <select id="items" class="form-control js-example-basic-single" disabled>
+                                <select id="items" class="form-control" disabled>
                                     <option value="" data-price="">Seleccionar Item</option>
                                     @foreach (var i in Model.Items)
                                     {
@@ -571,12 +607,12 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="itemsPrice">Precio: </label>
+                            <div class="form-group offset-md-1 col-md-5">
+                                <label for="itemsPrice">Precio unitario del ítem (USD): </label>
                                 <input type="text" class="form-control" id="itemsPrice" disabled />
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="itemsQuantity">Cantidad:</label>
+                            <div class="form-group col-md-5">
+                                <label for="itemsQuantity">Cantidad de Ítems:</label>
                                 <input type="number" class="form-control" id="itemsQuantity" disabled />
                             </div>
                         </div>
@@ -585,8 +621,8 @@
                                 <label for="hours">Horas:*</label>
                                 <input type="number" class="form-control" id="hours" />
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="FeePerHour">Precio por hora:*</label>
+                            <div class="form-group offset-md-1  col-md-5">
+                                <label for="FeePerHour">Precio por hora (USD):</label>
                                 <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" disabled />
                             </div>
                         </div>
@@ -607,22 +643,22 @@
                             <div class="form-group col-md-5">
                                 <label for="categories">Categoría:*</label>
                                 <select id="categories" class="form-control" style="background-color:white">
-                                    <option value="">Seleccionar Categoría</option>
+                                    <option value="">Seleccionar categoría</option>
                                     @foreach (var c in Model.Categories)
                                     {
                                         <option value="@c.Id">@c.Name</option>
                                     }
                                 </select>
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1  col-md-5">
                                 <label for="services">Servicios:*</label>
                                 <select id="services" class="form-control" disabled></select>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-10">
+                            <div class="form-group col-md-11">
                                 <label for="description">Descripción:*</label>
-                                <textarea id="description" class="form-control" disabled></textarea>
+                                <textarea id="description" class="form-control" spellcheck="true" lang="es" disabled></textarea>
                             </div>
                         </div>
                     </div>
@@ -643,7 +679,7 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1  col-md-5">
                                 <label for="expensesQuantity">Cantidad:*</label>
                                 <input type="number" class="form-control" id="expensesQuantity" disabled />
                             </div>
@@ -658,7 +694,7 @@
                             </div>
                         </div>
                         <div class="form-row table-responsive">
-                            <table class="table table-stribed table-bordered">
+                            <table id="expensesTable" class="table table-stribed table-bordered">
                                 <thead>
                                     <tr>
                                         <th hidden>ID</th>

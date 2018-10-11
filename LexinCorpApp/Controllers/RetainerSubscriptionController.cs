@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using LexincorpApp.Infrastructure;
 using LexincorpApp.Models;
 using LexincorpApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles = "Administrador, Regular")]
     public class RetainerSubscriptionController : Controller
     {
         public int PageSize = 10;
@@ -26,6 +28,7 @@ namespace LexincorpApp.Controllers
             _retainerSubscriptionRepository = retainerSubscriptionRepository;
             this._billableRetainerRepo = _billableRetainerRepo;
         }
+        [Authorize(Roles = "Administrador")]
         public IActionResult New()
         {
             ViewBag.AddedSubscription = TempData["added"];
@@ -41,6 +44,7 @@ namespace LexincorpApp.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult New(RetainerSubscription RetainerSubscription, string ClientName, bool IsEnglish, bool IsClientSelected)
         {
@@ -64,6 +68,7 @@ namespace LexincorpApp.Controllers
             TempData["added"] = true;
             return RedirectToAction(nameof(New));
         }
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult GetByDateMonthClient(int clientId, int month, int year)
         {
             var results = _billableRetainerRepo.BillableRetainers
@@ -75,6 +80,7 @@ namespace LexincorpApp.Controllers
                 });
             return Json(results);
         }
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult GetByClient(int clientId, int year)
         {
             var results = _billableRetainerRepo.BillableRetainers
@@ -99,6 +105,7 @@ namespace LexincorpApp.Controllers
             return Json(results);*/
         }
 
+        [Authorize(Roles = "Administrador")]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             TempData["filter"] = filter;
@@ -138,6 +145,7 @@ namespace LexincorpApp.Controllers
             ViewBag.UpdatedSubscription = TempData["updated"];
             return View(subscription);
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult Edit(RetainerSubscription retainerSubscription)
         {
@@ -149,6 +157,7 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction(nameof(Edit), new { id = retainerSubscription.Id });
         }
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult Delete(int retainerSubscriptionId)
         {
