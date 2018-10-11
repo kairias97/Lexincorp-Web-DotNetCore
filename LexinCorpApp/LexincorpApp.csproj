@@ -21,4 +21,16 @@
     <PackageReference Include="Syncfusion.Report.Net.Core" Version="16.3.0.21" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Reports\Activities.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Bill.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Expenses.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
