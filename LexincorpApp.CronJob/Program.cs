@@ -1,6 +1,7 @@
-﻿using LexincorpApp.CronJob.Models;
-using System;
+﻿using System;
 using System.Linq;
+using LexincorpApp.CronJob.Models;
+//using LexincorpApp.CronJob.Models;
 using Microsoft.EntityFrameworkCore;
 namespace LexincorpApp.CronJob
 {
@@ -8,9 +9,10 @@ namespace LexincorpApp.CronJob
     {
         static void Main(string[] args)
         {
+
             using (var context = new LexincorpAdminContext())
             {
-                
+
                 string spanishMonth = System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag("es").DateTimeFormat.GetMonthName(DateTime.UtcNow.Month);
                 string englishMonth = System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag("en").DateTimeFormat.GetMonthName(DateTime.UtcNow.Month);
                 if (!context.BillableRetainers.Any(br => br.Month == DateTime.UtcNow.Month && br.Year == DateTime.UtcNow.Year))
@@ -35,8 +37,9 @@ namespace LexincorpApp.CronJob
                     context.BillableRetainers.AddRange(newBillableRetainers);
                     context.SaveChanges();
                 }
-                
+
             }
+
         }
     }
 }
