@@ -13,5 +13,6 @@ namespace LexincorpApp.Models
         void AnswerClosureNotification(int notificationAnswerId, int userId, bool isAffirmative, out bool wasClosed);
         IEnumerable<NotificationAnswer> GetPendingNotifications(int userId);
         int GetPendingNotificationsCount(int userId);
+        void RefreshNotificationsForUpdatedUser(int userId);
     }
 }

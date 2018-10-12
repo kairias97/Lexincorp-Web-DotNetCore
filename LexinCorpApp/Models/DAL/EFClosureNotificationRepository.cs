@@ -100,19 +100,21 @@ namespace LexincorpApp.Models
                             $"\n**Este es un mensaje autogenerado por el sistema, favor no responder**";
                         mailer.SendMail(emailsToNotify, subject, body);
                         wasClosed = true;
-                    } else
+                    }
+                    else
                     {
                         wasClosed = false;
                     }
                 }
-            } else
+            }
+            else
             {
                 wasClosed = false;
             }
-            
+
         }
 
-        
+
 
         public bool CheckPendingAnswer(int notificationAnswerId, int userId)
         {
@@ -135,6 +137,69 @@ namespace LexincorpApp.Models
                 .Count(na => na.TargetUserId == userId && !na.IsAnswered && na.ClosureNotification.Active);
         }
 
+        public void RefreshNotificationsForUpdatedUser(int userId)
+        {
+            var user = context.Users.Where(u => u.Id == userId).Select(u => new { u.Active, u.Username, u.Id }).First();
+            if (user.Active)
+            {
+                //Add the user to all the active notifications that have pending answers
+                var newNotificationAnswers = context.ClosureNotifications
+                    .Where(cn => cn.Active && cn.NotificationAnswers.Any(na => !na.IsAnswered && na.TargetUserId != userId))
+                    .Select(cn => new NotificationAnswer {
+                        TargetUserId = userId,
+                        WasAffirmative = null,
+                        IsAnswered = false,
+                        ClosureNotificationId = cn.Id 
+                    })
+                    .ToList();
+                if (newNotificationAnswers.Any())
+                {
+                    context.NotificationAnswers.AddRange(newNotificationAnswers);
+                    context.SaveChanges();
+                }
+            }
+            else
+            {
+                var answersToDelete = context.NotificationAnswers.Where(na => na.TargetUserId == userId
+                && !na.IsAnswered && na.ClosureNotification.Active);
+                if (answersToDelete.Any())
+                {
+                    //List of affected notifications that the user belonged to
+                    int[] notificationIds = answersToDelete.Select(atd => atd.ClosureNotificationId).ToArray();
+                    context.NotificationAnswers.RemoveRange(answersToDelete);
+                    context.SaveChanges();
+                    //Notifications to close 
+                    var targetNotifications = context.ClosureNotifications
+                        .Include(cn => cn.Package)
+                        .ThenInclude(p => p.Client)
+                        .Where(cn => notificationIds.Contains(cn.Id) && cn.Active && !cn.NotificationAnswers.Any(na => !na.IsAnswered))
+                        .ToList();
+                    //Check if there is any items of notifications affected to close in case there is no more people to answer to it
+
+                    if (targetNotifications.Any())
+                    {
+                        var usersToNotify = context.Users
+                            .Where(u => u.Active && u.Username != "webAdmin" && u.Id != userId)
+                            .Select(u => new { UserId = u.Id, Email = u.Attorney.Email }).ToList();
+                        for (int i = 0; i < targetNotifications.Count; i++)
+                        {
+                            targetNotifications[i].WasClosed = true;
+                            targetNotifications[i].Active = false;
+                            targetNotifications[i].Package.IsFinished = true;
+                            //Notify that the package was successfully closed
+                            var emailsToNotify = usersToNotify.Select(u => u.Email).ToList();
+                            string subject = $"Cierre de paquete {targetNotifications[i].Package.Name} completado";
+                            string body = $"Se ha marcado como finalizado el paquete '{targetNotifications[i].Package?.Name}' del cliente {targetNotifications[i].Package?.Client?.Name} " +
+                                $"dado que el único usuario que hacía falta por contestar ha sido deshabilitado. " +
+                                $"\n**Este es un mensaje autogenerado por el sistema, favor no responder**";
+                            mailer.SendMail(emailsToNotify, subject, body);
+                        }
+                        context.SaveChanges();
+                    }
+                }
+            }
+        }
+
         public void RequestPackageClosure(int packageId, int petitionerId, out bool wasClosed)
         {
             wasClosed = false;
@@ -152,7 +217,7 @@ namespace LexincorpApp.Models
                         .Where(u => u.Id == petitionerId)
                         .Select(u => u.Username).First();
                     wasClosed = false;
-                    var packageToClose = context.Packages.Where(p => p.Id == packageId).Select(p => new { p.Name, ClientName = p.Client.Name}).First();
+                    var packageToClose = context.Packages.Where(p => p.Id == packageId).Select(p => new { p.Name, ClientName = p.Client.Name }).First();
 
                     ClosureNotification newNotification = new ClosureNotification
                     {
@@ -161,11 +226,12 @@ namespace LexincorpApp.Models
                         PackageId = packageId,
                         WasClosed = null
                     };
-                    newNotification.NotificationAnswers = usersToNotify.Select(u => new NotificationAnswer {
+                    newNotification.NotificationAnswers = usersToNotify.Select(u => new NotificationAnswer
+                    {
                         TargetUserId = u.UserId,
                         IsAnswered = false,
-                        WasAffirmative  = null
-                        
+                        WasAffirmative = null
+
                     }).ToList();
                     context.ClosureNotifications.Add(newNotification);
                     context.SaveChanges();
@@ -176,7 +242,8 @@ namespace LexincorpApp.Models
                         $"Permita o evite este cierre de paquete en la sección de notificaciones del sistema" +
                         $"\n**Este es un mensaje autogenerado por el sistema, favor no responder**";
                     mailer.SendMail(emailsToNotify, subject, body);
-                } else 
+                }
+                else
                 {
                     //Close the package without notifying since the requester is the one that closed the package
                     var packageToClose = new Package

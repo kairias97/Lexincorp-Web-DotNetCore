@@ -137,7 +137,7 @@
                         }
                     });
                 $.ajax({
-                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                    url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val(), month: $("#month").val(), year: $("#year").val() },
                     contentType: "application/json; charset=utf-8",
@@ -262,15 +262,15 @@
                 //$("#items").prop("disabled", false);
                 }
         });
-        $("#itemCheck").change(function () {
-            if ($("#itemCheck").prop("checked")) {
-                $("#items").prop("disabled", false);
-            }
-            else {
-                $("#items").val("");
-                $("#items").prop("disabled", true);
-            }
-        });
+        //$("#itemCheck").change(function () {
+        //    if ($("#itemCheck").prop("checked")) {
+        //        $("#items").prop("disabled", false);
+        //    }
+        //    else {
+        //        $("#items").val("");
+        //        $("#items").prop("disabled", true);
+        //    }
+        //});
         $("#packageCheck").change(function () {
             if ($("#packageCheck").prop("checked")) {
                 if ($("#Packages").children().length > 2) {
@@ -319,23 +319,30 @@
         });
         $("#btnGenerate").click(function () {
             if (validateData()) {
-                var header = {}
-                header.ClientId = $("#ClientId").val();
-                header.BillDate = $("#billDate").val();
-                header.BillDiscountType = $("#discount").val();
-                header.BillDiscount = $("#discountAmount").val();
-                header.BillMonth = $("#month").val();
-                header.BillYear = $("#year").val();
-                header.BillName = $("#billName").val();
+                //var header = {}
+                //header.ClientId = $("#ClientId").val();
+                //header.BillDate = $("#billDate").val();
+                //header.BillDiscountType = $("#discount").val();
+                //header.BillDiscount = $("#discountAmount").val();
+                //header.BillMonth = $("#month").val();
+                //header.BillYear = $("#year").val();
+                //header.BillName = $("#billName").val();
                 var request = {}
                 request.Hours = $("#hourCheck").prop("checked");
+                request.IncludeItems = $("#itemCheck").prop("checked");
                 request.PackageId = $("#Packages").val();
                 request.BillableRetainerId = $("#retainers").val();
-                request.ItemId = $("#items").val();
+                request.ClientId = $("#ClientId").val();
+                request.BillDate = $("#billDate").val();
+                request.BillDiscountType = $("#discount").val();
+                request.BillDiscount = $("#discountAmount").val();
+                request.BillMonth = $("#month").val();
+                request.BillYear = $("#year").val();
+                request.BillName = $("#billName").val();
                 $.ajax({
-                    url: "@Url.Action("GenerateBill","Bill")",
+                    url: "@Url.Action("GeneratePreBill","Bill")",
                     type: "POST",
-                    data: { billHeader: header, billRequest: request },
+                    data: {billRequest: request },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
@@ -364,6 +371,7 @@
                 return true;
             }
             else {
+                alert("Campos incompletos")
                 console.log("vacio");
                 return false;
             }
@@ -463,7 +471,7 @@
             </div>
         </div>
         <div class="form-row offset-2 col-md-5">
-            <div class="form-row col-12">
+            @*<div class="form-row col-12">
                 <div class="form-group col-md-12">
                     <label for="items">Ítems:</label>
                     <select id="items" class="form-control" disabled>
@@ -474,7 +482,7 @@
                         }
                     </select>
                 </div>
-            </div>
+            </div>*@
             <div class="form-row col-12">
                 <div class="form-group col-md-12">
                     <label for="Packages">Paquetes:</label>
@@ -505,19 +513,36 @@
         <div class="form-group col-md-5">
             <label for="month">Mes:*</label>
             <select id="month" class="form-control">
-                <option value="">Seleccionar mes</option>
+
                 @for (int i = 1; i <= 12; i++)
                 {
-                    <option value="@i">@i</option>
+                    if ((i == DateTime.Now.Month - 1) || (DateTime.Now.Month == 1 && i == 12))
+                    {
+                        <option value="@i" selected>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+
+                    }
+                    else
+                    {
+                        <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                    }
                 }
             </select>
         </div>
         <div class="form-group col-md-5">
             <label for="year">Año:*</label>
             <select id="year" class="form-control">
-                <option value="">Seleccionar año</option>
-                <option value="@(DateTime.Now.Year-1)">@(DateTime.Now.Year - 1)</option>
-                <option value="@DateTime.Now.Year">@DateTime.Now.Year</option>
+                @if (DateTime.Now.Month == 1)
+                {
+                    <option value="@(DateTime.Now.Year-1)" selected>@(DateTime.Now.Year - 1)</option>
+                    <option value="@DateTime.Now.Year">@DateTime.Now.Year</option>
+
+                }
+                else
+                {
+                    <option value="@(DateTime.Now.Year-1)">@(DateTime.Now.Year - 1)</option>
+                    <option value="@DateTime.Now.Year" selected>@DateTime.Now.Year</option>
+
+                }
             </select>
         </div>
     </div>
@@ -531,6 +556,8 @@
         <button class="btn btn-primary" id="btnGenerate" type="button">Generar prefactura</button>
         <a id="download" download="Prefactura.pdf" hidden></a>
     </div>
+
+    <br />
     <div id="placeholderSuccess">
 
     </div>

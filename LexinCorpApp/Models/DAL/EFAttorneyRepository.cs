@@ -8,13 +8,17 @@ namespace LexincorpApp.Models
     public class EFAttorneyRepository: IAttorneyRepository
     {
         private ApplicationDbContext context;
-        public EFAttorneyRepository(ApplicationDbContext ctx)
+        private INotificationRepository notificationRepository;
+        public EFAttorneyRepository(ApplicationDbContext ctx,
+            INotificationRepository notificationRepository)
         {
             this.context = ctx;
+            this.notificationRepository = notificationRepository;
         }
         public IQueryable<Attorney> Attorneys { get => context.Attorneys; }
         public void Save(Attorney attorney)
         {
+            bool isNew = attorney.Id == 0;
             if (attorney.Id == 0)
             {
                 context.Attorneys.Add(attorney);
@@ -22,10 +26,18 @@ namespace LexincorpApp.Models
             {
                 context.Update(attorney);
                 context.Entry<Attorney>(attorney).Property(x => x.VacationCount).IsModified = false;
+
+                context.Entry<User>(attorney.User).Property(x => x.Password).IsModified = false;
+                context.Entry<User>(attorney.User).Property(x => x.Username).IsModified = false;
                 //context.Attach(attorney).Context.Entry(attorney).Property(x => x.VacationCount).IsModified = false;
                 //context.Entry(attorney).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             context.SaveChanges();
+            if (!isNew)
+            {
+                notificationRepository.RefreshNotificationsForUpdatedUser(attorney.UserId);
+            }
+
         }
 
         public bool VerifyAttorneyIDAndEmailOwnership(int attorneyID, string email)
