@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -81,10 +82,11 @@ namespace LexincorpApp.Controllers
             return Json(results);
         }
         [Authorize(Roles = "Administrador, Regular")]
-        public JsonResult GetByClient(int clientId, int year)
+        public JsonResult GetByClient(int clientId, string date)
         {
+            DateTime d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             var results = _billableRetainerRepo.BillableRetainers
-                .Where(b => b.ClientId == clientId && b.Year == year)
+                .Where(b => b.ClientId == clientId && b.Year == d.Year && b.Month == d.Month)
                 .Select(b => new
                 {
                     id = b.Id,

@@ -122,10 +122,11 @@
                         alert(err.Message);
                     }
                 });
+                console.log($("#activityDate").val());
                 $.ajax({
                 url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
-                    data: { clientId: ui.item.clientId, year: new Date().getFullYear() },
+                    data: { clientId: ui.item.clientId, date: $("#activityDate").val() },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -317,6 +318,7 @@
             disableSelect2ById("#items")
         }
         $("#btnSubmit").click(function () {
+            var spin = loadingOverlay.activate();
                 if (validateData()) {
                     var body = {}
                     body.ClientId = $("#ClientId").val();
@@ -384,7 +386,9 @@
                 }
                 else {
                     showError("Debe ingresar los campos requeridos (*)");
-                }
+                    $("#goTop").click();
+            }
+            loadingOverlay.cancel(spin);
             });
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
@@ -400,7 +404,7 @@
                     $.ajax({
                     url: "@Url.Action("Search","Package")",
                     type: "GET",
-                    data: { clientId: ui.item.clientId },
+                    data: { clientId: clientId },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
@@ -424,7 +428,7 @@
                 $.ajax({
                     url: "@Url.Action("GetByClient","RetainerSubscription")",
                     type: "GET",
-                    data: { clientId: ui.item.clientId, year: new Date().getFullYear() },
+                    data: { clientId: clientId, date: $("#activityDate").val() },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {

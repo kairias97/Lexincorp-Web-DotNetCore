@@ -189,7 +189,7 @@
                         }
                     });
                 $.ajax({
-                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                    url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val(), month: $("#month").val(), year: $("#year").val() },
                     contentType: "application/json; charset=utf-8",
@@ -238,7 +238,7 @@
                         }
                     });
                 $.ajax({
-                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                    url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
                     type: "GET",
                     data: { clientId: $("#ClientId").val(), month: $("#month").val(), year: $("#year").val() },
                     contentType: "application/json; charset=utf-8",
@@ -318,6 +318,7 @@
             }
         });
         $("#btnGenerate").click(function () {
+            openDialog();
             if (validateData()) {
                 //var header = {}
                 //header.ClientId = $("#ClientId").val();
@@ -349,22 +350,40 @@
                         console.log(data);
                         cleanData();
                         showSuccess("Éxito al generar la prefactura");
+                        $("#goTop").click();
                         downloadPDF(data.result);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
                         showError(err.Message);
+                        $("#goTop").click();
                         alert(err.Message);
                     }
                 });
             }
             else {
                 showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
+                $("#goTop").click();
             }
+            closeDialog();
         });
+        $("#goTop").click(function (e) {
+            var jump = $("#goTop").attr("href");
+            var newPosition = $(jump).offset();
+            $('html, body').stop().animate({ scrollTop: 0 }, 500);
+            5
+            e.preventDefault();
+            //window.scrollTo(x - coord, y - coord);
+        });
+        function openDialog() {
+            $("#dialog").modal("show");
+        }
+        function closeDialog() {
+            $("#dialog").modal("hide");
+        }
         function validateData() {
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
-                ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#items").val() !== "" || $("#hourCheck").is(":checked")) &&
+                ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#itemCheck").is(":checked") || $("#hourCheck").is(":checked")) &&
                 ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 :
                 $("#discount").val() == 2 ? $("#discountAmount").val() >=0 : true)) {
                 console.log("completo");
@@ -420,6 +439,21 @@
     <input type="number" hidden asp-for="@Model.ClientId" id="ClientId" />
     <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
     <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
+    <div id="placeholderSuccess">
+
+    </div>
+    <div id="placeholderError">
+
+    </div>
+    <div class="modal fade" id="dialog" tabindex="-1" role="dialog" aria-labelledby="dialogLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Cargando...
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="clientFilter">Búsqueda del cliente:*</label>
@@ -472,17 +506,17 @@
         </div>
         <div class="form-row offset-2 col-md-5">
             @*<div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="items">Ítems:</label>
-                    <select id="items" class="form-control" disabled>
-                        <option value="" data-price="">Seleccionar Ítem</option>
-                        @foreach (var i in Model.Items)
-                        {
-                            <option value="@i.Id" data-price="@i.Amount">@i.Name</option>
-                        }
-                    </select>
-                </div>
-            </div>*@
+                    <div class="form-group col-md-12">
+                        <label for="items">Ítems:</label>
+                        <select id="items" class="form-control" disabled>
+                            <option value="" data-price="">Seleccionar Ítem</option>
+                            @foreach (var i in Model.Items)
+                            {
+                                <option value="@i.Id" data-price="@i.Amount">@i.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>*@
             <div class="form-row col-12">
                 <div class="form-group col-md-12">
                     <label for="Packages">Paquetes:</label>
@@ -555,13 +589,8 @@
     <div class="form-row">
         <button class="btn btn-primary" id="btnGenerate" type="button">Generar prefactura</button>
         <a id="download" download="Prefactura.pdf" hidden></a>
+        <a href="#placeholderSuccess" id="goTop" hidden></a>
     </div>
 
     <br />
-    <div id="placeholderSuccess">
-
-    </div>
-    <div id="placeholderError">
-
-    </div>
 </form>

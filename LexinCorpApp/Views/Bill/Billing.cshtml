@@ -318,6 +318,7 @@
             }
         });
         $("#btnGenerate").click(function () {
+            var spin = loadingOverlay.activate();
             if (validateData()) {
                 //var header = {}
                 //header.ClientId = $("#ClientId").val();
@@ -350,18 +351,22 @@
                         console.log(data);
                         cleanData();
                         showSuccess("Éxito al generar la prefactura");
+                        $("#goTop").click();
                         downloadPDF(data.result);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
                         showError(err.Message);
+                        $("#goTop").click();
                         alert(err.Message);
                     }
                 });
             }
             else {
                 showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
+                $("#goTop").click();
             }
+            loadingOverlay.cancel(spin);
         });
         function validateData() {
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
@@ -377,6 +382,14 @@
                 return false;
             }
         }
+        $("#goTop").click(function (e) {
+            var jump = $("#goTop").attr("href");
+            var newPosition = $(jump).offset();
+            $('html, body').stop().animate({ scrollTop: 0 }, 500);
+            5
+            e.preventDefault();
+            //window.scrollTo(x - coord, y - coord);
+        });
         function downloadPDF(pdf) {
             var link = document.getElementById("download");
             link.href = 'data:application/octet-stream;base64,' + pdf;
@@ -558,6 +571,7 @@
     <div class="form-row">
         <button class="btn btn-primary" id="btnGenerate" type="button">Generar prefactura</button>
         <a id="download" download="Prefactura.pdf" hidden></a>
+        <a href="#placeholderSuccess" id="goTop" hidden></a>
     </div>
 
     <br />
