@@ -140,26 +140,57 @@ namespace LexincorpApp.Controllers
                     && (newActivityReport.UserId == null || a.CreatorId == newActivityReport.UserId)
                     && (newActivityReport.ActivityType == null || a.ActivityType == newActivityReport.ActivityType)
                 ).ToList();
-            var actividades = list.Select(a => new
+            var activities = list.Select(a => new
             {
                 activityClient = a.Client.Name,
                 activityService = a.Service.Name,
                 activityCategory = a.Service.Category.Name,
                 activityHoursWorked = Math.Round(a.HoursWorked, 2),
                 activityAssociatedTo = a.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : a.ActivityType == ActivityTypeEnum.Item ?
-                $"Ítem - {a.Item.Name}" : a.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {a.Package.Name}" : a.ActivityType == ActivityTypeEnum.Retainer ?
-                $"Retainer - {a.BillableRetainer.Name}" : "",
+                $"Ítem - {a?.Item?.Name}" : a.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {a.Package?.Name}" : a.ActivityType == ActivityTypeEnum.Retainer ?
+                $"Retainer - {a?.BillableRetainer?.Name}" : "",
                 activityDate = a.RealizationDate
             }).ToList();
+            
             string basePath = _hostingEnvironment.ContentRootPath;
             string fullPath = basePath + @"/Reports/Activities.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             ReportDataSourceCollection dataSources = new ReportDataSourceCollection();
-            dataSources.Add(new ReportDataSource { Name = "ActivitiesDataSet", Value = actividades });
+            dataSources.Add(new ReportDataSource { Name = "ActivitiesDataSet", Value = activities });
 
             Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream, dataSources);
             //writer.DataSources = dataSources;
             writer.ReportProcessingMode = ProcessingMode.Local;
+            //Setting up the parameters
+            List<ReportParameter> parameters = new List<ReportParameter>();
+            //StartDate
+            ReportParameter startDateParam = new ReportParameter();
+            startDateParam.Name = "StartDate";
+            startDateParam.Values = new List<string>() { newActivityReport.InitialDate.ToString("dd/MM/yyyy") };
+            //EndDate
+            ReportParameter endDateParam = new ReportParameter();
+            endDateParam.Name = "EndDate";
+            endDateParam.Values = new List<string>() { newActivityReport.FinalDate.ToString("dd/MM/yyyy") };
+            //AttorneyName
+            ReportParameter attorneyParam = new ReportParameter();
+            attorneyParam.Name = "AttorneyName";
+            attorneyParam.Values = new List<string>() { newActivityReport.UserId ==null? "Todos"
+                : _attorneyRepo.Attorneys.Where(a => a.UserId == ((int)newActivityReport.UserId)).Select(a => a.Name).First() };
+            //ActivityType
+            ReportParameter activityTypeParam = new ReportParameter();
+            activityTypeParam.Name = "ActivityType";
+            activityTypeParam.Values = new List<string>() { newActivityReport.ActivityType == null ? "0" : ((int)newActivityReport.ActivityType).ToString() };
+            //TotalExpense
+            ReportParameter totalExpenseParam = new ReportParameter();
+            totalExpenseParam.Name = "TotalHours";
+            totalExpenseParam.Values = new List<string>() { activities.Sum(a => a.activityHoursWorked).ToString() };
+
+            parameters.Add(startDateParam);
+            parameters.Add(endDateParam);
+            parameters.Add(attorneyParam);
+            parameters.Add(activityTypeParam);
+            parameters.Add(totalExpenseParam);
+            writer.SetParameters(parameters);
             MemoryStream memoryStream = new MemoryStream();
             writer.Save(memoryStream, WriterFormat.PDF);
             memoryStream.Position = 0;

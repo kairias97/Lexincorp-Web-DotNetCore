@@ -84,7 +84,7 @@ namespace LexincorpApp
             services.AddTransient<IActivityRepository, EFActivityRepository>();
             services.AddTransient<IBillableRetainerRepository, EFBillableRetainerRepository>();
             services.AddTransient<INotificationRepository, EFClosureNotificationRepository>();
-            services.AddTransient<IBillHeaderRepository, EFBillHeaderRepository>();
+            services.AddTransient<IBillRepository, EFBillRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

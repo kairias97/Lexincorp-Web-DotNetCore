@@ -112,35 +112,58 @@ namespace LexincorpApp.Controllers
                     &&( newExpenseReport.UserId == null || a.Activity.CreatorId == newExpenseReport.UserId)
                     && (newExpenseReport.ActivityType == null || a.Activity.ActivityType == newExpenseReport.ActivityType)
                 ).ToList();
-            //if(newExpenseReport.UserId != null)
-            //{
-            //    list = list.Where(a => a.Activity.CreatorId == newExpenseReport.UserId).ToList();
-            //}
-            //if(newExpenseReport.ActivityType != null)
-            //{
-            //    list = list.Where(a => a.Activity.ActivityType == newExpenseReport.ActivityType).ToList();
-            //}
-            var gastos = list.Select(g => new {
+
+            var expenses = list.Select(g => new {
                 expenseName = g.Expense.Name,
                 expenseDate = g.RealizationDate,
                 expenseQuantity = g.Quantity,
                 expensePrice = g.UnitAmount,
                 expenseSubtotal = g.TotalAmount,
                 expenseAssociatedTo = g.Activity.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : g.Activity.ActivityType == ActivityTypeEnum.Item ?
-                $"Ítem - {g.Activity.Item.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? 
-                $"Paquete - {g.Activity.Package.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? 
-                $"Retainer - {g.Activity.BillableRetainer.Name}" : ""
+                $"Ítem - {g.Activity?.Item?.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? 
+                $"Paquete - {g.Activity?.Package?.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? 
+                $"Retainer - {g.Activity?.BillableRetainer?.Name}" : ""
             }).ToList();
- 
             string basePath = _hostingEnvironment.ContentRootPath;
             string fullPath = basePath + @"/Reports/Expenses.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             ReportDataSourceCollection dataSources = new ReportDataSourceCollection();
-            dataSources.Add(new ReportDataSource { Name = "ExpensesDataSet", Value = gastos});
+            dataSources.Add(new ReportDataSource { Name = "ExpensesDataSet", Value = expenses});
 
-            Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream, dataSources);
+            ReportWriter writer = new ReportWriter(inputStream, dataSources);
             //writer.DataSources = dataSources;
             writer.ReportProcessingMode = ProcessingMode.Local;
+            //Setting up the parameters
+            List<ReportParameter> parameters = new List<ReportParameter>();
+            //StartDate
+            ReportParameter startDateParam = new ReportParameter();
+            startDateParam.Name = "StartDate";
+            startDateParam.Values = new List<string>() { newExpenseReport.InitialDate.ToString("dd/MM/yyyy")  };
+            //EndDate
+            ReportParameter endDateParam = new ReportParameter();
+            endDateParam.Name = "EndDate";
+            endDateParam.Values = new List<string>() { newExpenseReport.FinalDate.ToString("dd/MM/yyyy") };
+            //AttorneyName
+            ReportParameter attorneyParam = new ReportParameter();
+            attorneyParam.Name = "AttorneyName";
+            attorneyParam.Values = new List<string>() { newExpenseReport.UserId ==null? "Todos" 
+                : _attorneyRepo.Attorneys.Where(a => a.UserId == ((int)newExpenseReport.UserId)).Select(a => a.Name).First() };
+            //ActivityType
+            ReportParameter activityTypeParam = new ReportParameter();
+            activityTypeParam.Name = "ActivityType";
+            activityTypeParam.Values = new List<string>() { newExpenseReport.ActivityType == null? "0" : ((int)newExpenseReport.ActivityType).ToString()};
+            //TotalExpense
+            ReportParameter totalExpenseParam = new ReportParameter();
+            totalExpenseParam.Name = "TotalExpense";
+            totalExpenseParam.Values = new List<string>() { expenses.Sum(e=>e.expenseSubtotal).ToString()};
+            
+            parameters.Add(startDateParam);
+            parameters.Add(endDateParam);
+            parameters.Add(attorneyParam);
+            parameters.Add(activityTypeParam);
+            parameters.Add(totalExpenseParam);
+            writer.SetParameters(parameters);
+            //Generating the processed report
             MemoryStream memoryStream = new MemoryStream();
             writer.Save(memoryStream, WriterFormat.PDF);
             memoryStream.Position = 0;
