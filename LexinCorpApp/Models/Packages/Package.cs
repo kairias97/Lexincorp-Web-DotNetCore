@@ -22,7 +22,7 @@ namespace LexincorpApp.Models
         public int ClientId { get; set; }
         public virtual Client Client { get; set; }
         public int CreatorUserId { get; set; }
-        public virtual User Creator { get; set; }
+        public virtual User CreatorUser { get; set; }
         public bool IsBilled { get; set; }
     }
 }

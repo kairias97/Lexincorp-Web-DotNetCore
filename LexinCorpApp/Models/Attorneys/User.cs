@@ -19,6 +19,7 @@ namespace LexincorpApp.Models
         public virtual Attorney Attorney { get; set; }
         public bool Active { get; set; } = true;
         public virtual ICollection<Activity> Activities { get; set; }
+        public virtual ICollection<Package> Packages { get; set; }
         public virtual ICollection<NotificationAnswer> NotificationAnswers { get; set; }
     }
 }

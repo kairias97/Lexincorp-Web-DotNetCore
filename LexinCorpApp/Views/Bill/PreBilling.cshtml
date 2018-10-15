@@ -82,7 +82,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
                         $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
                         $.each(data, function (i, item) {
@@ -90,7 +90,7 @@
                             var options = "<option value='" + item.id + "'>" + item.name + "</option>";
                             $("#retainers").append(options);
                         });
-                        console.log($("#retainers").children().length);
+                        //console.log($("#retainers").children().length);
                         $("#retainers").val("");
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -299,7 +299,7 @@
                 $("#discountAmount").val("");
             }
             else {
-                console.log($("#discount").val())
+                //console.log($("#discount").val())
                 if ($("#discount").val() == 1) {
                     $("#discountAmount").attr({
                         "max": 100,
@@ -318,7 +318,7 @@
             }
         });
         $("#btnGenerate").click(function () {
-            openDialog();
+            //openDialog();
             if (validateData()) {
                 //var header = {}
                 //header.ClientId = $("#ClientId").val();
@@ -337,9 +337,12 @@
                 request.BillDate = $("#billDate").val();
                 request.BillDiscountType = $("#discount").val();
                 request.BillDiscount = $("#discountAmount").val();
+                console.log()
                 request.BillMonth = $("#month").val();
                 request.BillYear = $("#year").val();
                 request.BillName = $("#billName").val();
+                //Show loading animation
+                var generatePreBillSpinHandle = loadingOverlay.activate();
                 $.ajax({
                     url: "@Url.Action("GeneratePreBill","Bill")",
                     type: "POST",
@@ -347,13 +350,14 @@
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                        console.log(data);
+                        loadingOverlay.cancel(generatePreBillSpinHandle);
                         cleanData();
                         showSuccess("Éxito al generar la prefactura");
                         $("#goTop").click();
                         downloadPDF(data.result);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        loadingOverlay.cancel(generatePreBillSpinHandle);
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
                         showError(err.Message);
                         $("#goTop").click();
@@ -365,7 +369,7 @@
                 showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
                 $("#goTop").click();
             }
-            closeDialog();
+            //closeDialog();
         });
         $("#goTop").click(function (e) {
             var jump = $("#goTop").attr("href");
@@ -375,23 +379,23 @@
             e.preventDefault();
             //window.scrollTo(x - coord, y - coord);
         });
-        function openDialog() {
-            $("#dialog").modal("show");
-        }
-        function closeDialog() {
-            $("#dialog").modal("hide");
-        }
+        //function openDialog() {
+        //    $("#dialog").modal("show");
+        //}
+        //function closeDialog() {
+        //    $("#dialog").modal("hide");
+        //}
         function validateData() {
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
                 ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#itemCheck").is(":checked") || $("#hourCheck").is(":checked")) &&
                 ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 :
                 $("#discount").val() == 2 ? $("#discountAmount").val() >=0 : true)) {
-                console.log("completo");
+                //console.log("completo");
                 return true;
             }
             else {
                 alert("Campos incompletos")
-                console.log("vacio");
+                //console.log("vacio");
                 return false;
             }
         }

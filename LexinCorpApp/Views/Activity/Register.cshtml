@@ -124,7 +124,7 @@
                 });
                 console.log($("#activityDate").val());
                 $.ajax({
-                url: "@Url.Action("GetByClient","RetainerSubscription")",
+                url: "@Url.Action("GetByClientAndDate", "RetainerSubscription")",
                     type: "GET",
                     data: { clientId: ui.item.clientId, date: $("#activityDate").val() },
                     contentType: "application/json; charset=utf-8",
@@ -161,42 +161,60 @@
 
             });
         $("#Packages").change(function () {
-                if ($("#Packages").val() === "") {
+            if ($("#Packages").val() === "" || $("#Packages").val() === undefined) {
                     $("#retainers").prop("disabled", false);
                     $("#items").prop("disabled", false);
                     $("#packageClose").prop("checked", false);
                     $("#packageClose").prop("disabled", true);
-                    activateSelect2ById('#items')
+                activateSelect2ById('#items')
+
+                $("#FeePerHour").prop("disabled", false)
                 }
             else {
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
                     $("#retainers").prop("disabled", true);
                     $("#items").prop("disabled", true);
                     $("#packageClose").prop("disabled", false);
-                    disableSelect2ById('#items')
+                disableSelect2ById('#items')
+
+                $("#FeePerHour").prop("disabled", true)
                 }
             });
         $("#retainers").change(function () {
-                if ($("#retainers").val() === "") {
+            if ($("#retainers").val() === "" || $("#retainers").val() === undefined) {
                 $("#Packages").prop("disabled", false);
                 $("#items").prop("disabled", false);
+
+                $("#FeePerHour").prop("disabled", false)
                     activateSelect2ById('#items')
                 }
             else {
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+                $("#FeePerHour").prop("disabled", true)
                 $("#Packages").prop("disabled", true);
                     $("#items").prop("disabled", true);
                     disableSelect2ById('#items')
                 }
             });
         $("#items").change(function () {
-                if ($("#items").val() === "") {
+            if ($("#items").val() === "" || $("#items").val() === undefined) {
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
                 $("#itemsPrice").prop("disabled", true);
                 $("#itemsQuantity").prop("disabled", true);
                 $("#itemsPrice").val("");
                 $("#itemsQuantity").val("");
+                $("#FeePerHour").prop("disabled", false)
                 }
             else {
+
+                $("#FeePerHour").prop("disabled", true)
                 $("#Packages").prop("disabled", true);
                 $("#retainers").prop("disabled", true);
                 $("#itemsPrice").prop("disabled", false);
@@ -206,7 +224,7 @@
                 }
             });
         $("#categories").change(function () {
-            if ($("#categories").val() === "") {
+            if ($("#categories").val() === "" || $("#categories").val() === undefined) {
                 $("#services").empty();
                 $("#description").val("");
                 $("#services").prop("disabled", true);
@@ -236,7 +254,7 @@
                 }
             });
         $("#services").change(function () {
-                if ($("#services").val() === "") {
+            if ($("#services").val() === "" || $("#services").val() === undefined) {
                 $("#description").val("");
                 $("#description").prop("disabled", true);
                 }
@@ -247,9 +265,10 @@
                 }
             });
         $("#expenses").change(function () {
-                if ($("#expenses").val() === "") {
+            if ($("#expenses").val() === "" || $("#expenses").val() === undefined) {
                 $("#expensesQuantity").val("");
                 $("#expensesPrice").val("");
+                $("#expenses").prop("title", "Seleccionar gasto");
                 $("#expensesQuantity").prop("disabled", true);
                 $("#expensesPrice").prop("disabled", true);
                 }
@@ -271,11 +290,14 @@
                     $("#tableData").append(row);
                 $("#expenses").val("");
                 $("#expensesPrice").val("");
+
                 $("#expensesQuantity").val("");
                 $("#expensesQuantity").prop("disabled", true);
+                   
                 $("#expensesPrice").prop("disabled", true);
                     calculateTotalExpenses();
-                }
+            }
+            $("#expenses").prop("title", "Seleccionar gastos")
             });
         $("#btnClear").click(function () {
             $("#Packages").val('');
@@ -318,7 +340,7 @@
             disableSelect2ById("#items")
         }
         $("#btnSubmit").click(function () {
-            var spin = loadingOverlay.activate();
+            //var spin = loadingOverlay.activate();
                 if (validateData()) {
                     var body = {}
                     body.ClientId = $("#ClientId").val();
@@ -327,22 +349,27 @@
                     body.ServiceId = $("#services").val();
                     body.HoursWorked = $("#hours").val();
                     body.HourlyRate = $("#FeePerHour").val();
-                    if ($("#Packages").val() !== "") {
+                    
+                    if ($("#Packages").val() !== "" && $("#Packages").val() != undefined) {
+                        console.log("Entro a paquete")
                         body.PackageId = $("#Packages").val();
                         body.ActivityType = 2;
                     }
-                else if ($("#retainers").val() !== "") {
+                    else if ($("#retainers").val() !== "" && $("#retainers").val() != undefined) {
+                        console.log("Entro a retainer")
                         body.BillableRetainerId = $("#retainers").val();
                         body.ActivityType = 3;
                     }
-                else if ($("#items").val() !== "") {
+                    else if ($("#items").val() !== "" && $("#items").val() != undefined) {
                         body.ItemId = $("#items").val();
+                        console.log("Entro a item")
                         body.ItemUnitPrice = $("#itemsPrice").val();
                         body.ItemQuantity = $("#itemsQuantity").val();
                         body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
                         body.ActivityType = 4;
                     }
-                else {
+                    else {
+                        console.log("Entro a horas")
                         body.ActivityType = 1;
                         body.HourSubtotal = body.HoursWorked * body.HourlyRate;
                     }
@@ -360,6 +387,9 @@
                         body.UserId = $('#attorneys').val();
                     }
                     body.Expenses = expenses;
+                //Show popup
+                var newActivitySpinHandle = loadingOverlay.activate();
+                    
                 $.ajax({
                     url: "@Url.Action("New","Activity")",
                     type: "POST",
@@ -367,7 +397,7 @@
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                            console.log(data);
+                            loadingOverlay.cancel(newActivitySpinHandle);
                             if (data.success) {
                                 showSuccess(data.message);
                                 clean();
@@ -379,6 +409,7 @@
                             }
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            loadingOverlay.cancel(newActivitySpinHandle);
                             var err = eval("(" + XMLHttpRequest.responseText + ")");
                             alert(err.Message);
                         }
@@ -388,7 +419,7 @@
                     showError("Debe ingresar los campos requeridos (*)");
                     $("#goTop").click();
             }
-            loadingOverlay.cancel(spin);
+            //loadingOverlay.cancel(spin);
             });
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
@@ -426,7 +457,7 @@
                         }
                     });
                 $.ajax({
-                    url: "@Url.Action("GetByClient","RetainerSubscription")",
+                    url: "@Url.Action("GetByClientAndDate", "RetainerSubscription")",
                     type: "GET",
                     data: { clientId: clientId, date: $("#activityDate").val() },
                     contentType: "application/json; charset=utf-8",
@@ -470,6 +501,7 @@
     }
     function deleteRow(button) {
         $(button).closest("tr").remove();
+        $('tfoot tr td:last-child').html("");
         calculateTotalExpenses();
     }
     function calculateTotalExpenses() {
@@ -614,7 +646,7 @@
                             </div>
                             <div class="form-group offset-md-1 col-md-5">
                                 <label for="packageClose">Cerrar paquete:</label>
-                                <input type="checkbox" class="form-control" id="packageClose" disabled/>
+                                <input type="checkbox" class="form-control text-left" id="packageClose" disabled/>
                             </div>
                         </div>
                         <div class="form-row">

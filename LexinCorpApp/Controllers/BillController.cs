@@ -67,21 +67,7 @@ namespace LexincorpApp.Controllers
                 Description = d.Description,
                 TaxesAmount = d.TaxesAmount
             }).ToList();
-            details.AddRange(details);
-
-            details.AddRange(details);
-
-            details.AddRange(details);
-
-            details.AddRange(details);
-
-            details.AddRange(details);
-
-            details.AddRange(details);
-
-
-            details.AddRange(details);
-            details.AddRange(details);
+            
             string basePath = _hostingEnvironment.ContentRootPath;
             string fullPath = basePath + @"/Reports/Bill.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
@@ -156,7 +142,7 @@ namespace LexincorpApp.Controllers
         public IActionResult RenderBill(int id)
         {
             var bill = _billRepo.BillHeaders.Where(b => b.Id == id).Include(b => b.BillDetails).FirstOrDefault();
-            var detalles = bill.BillDetails.Select(d => new
+            var details = bill.BillDetails.Select(d => new
             {
                 BillDetailType = Convert.ToInt32(d.BillDetailType),
                 d.FixedAmount,
@@ -170,7 +156,7 @@ namespace LexincorpApp.Controllers
             string fullPath = basePath + @"/Reports/Bill.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             ReportDataSourceCollection dataSources = new ReportDataSourceCollection();
-            dataSources.Add(new ReportDataSource { Name = "BillDataSet", Value = detalles });
+            dataSources.Add(new ReportDataSource { Name = "BillDataSet", Value = details });
 
             Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream, dataSources);
             //writer.DataSources = dataSources;

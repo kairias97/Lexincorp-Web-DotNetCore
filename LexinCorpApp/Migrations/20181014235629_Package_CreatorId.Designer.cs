@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181014235629_Package_CreatorId")]
+    partial class Package_CreatorId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -518,6 +520,8 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
+                    b.Property<int>("FK_Packages_Users_CreatorUserId");
+
                     b.Property<bool>("IsBilled")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(false);
@@ -536,7 +540,7 @@ namespace LexincorpApp.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("CreatorUserId");
+                    b.HasIndex("FK_Packages_Users_CreatorUserId");
 
                     b.ToTable("Packages");
                 });
@@ -844,7 +848,7 @@ namespace LexincorpApp.Migrations
 
                     b.HasOne("LexincorpApp.Models.User", "CreatorUser")
                         .WithMany("Packages")
-                        .HasForeignKey("CreatorUserId")
+                        .HasForeignKey("FK_Packages_Users_CreatorUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

@@ -84,6 +84,12 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Package>()
                 .Property(p => p.IsBilled)
                 .HasDefaultValue(false);
+            modelBuilder.Entity<Package>()
+                .HasOne<User>(p => p.CreatorUser)
+                .WithMany(u => u.Packages)
+                .HasForeignKey(p => p.CreatorUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

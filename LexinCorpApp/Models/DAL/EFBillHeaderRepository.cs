@@ -54,6 +54,23 @@ namespace LexincorpApp.Models
                     }).ToList();
                 details.AddRange(hourlyDetails);
             }
+            if (billRequest.IncludeItems ?? false)
+            {
+                List<BillDetail> itemsDetails = context.Activities.OrderBy(a => a.RealizationDate).Where(a => a.ActivityType == ActivityTypeEnum.Item && a.ClientId == billHeader.ClientId
+                 && !a.IsBilled && a.RealizationDate.Year == billHeader.BillYear && a.RealizationDate.Month == billHeader.BillMonth)
+                    .Select(a => new BillDetail
+                    {
+                        ActivityId = a.Id,
+                        BillDetailType = BillDetailTypeEnum.Item,
+                        FixedAmount = 0,
+                        UnitRate = a.BillableRate,
+                        Quantity = a.BillableQuantity,
+                        Subtotal = a.Subtotal,
+                        Description = a.Description,
+                        TaxesAmount = a.TaxesAmount
+                    }).ToList();
+                details.AddRange(itemsDetails);
+            }
             if (billRequest.PackageId != null)
             {
                 var packages = context.Packages.Where(p => (billRequest.PackageId == -1 || p.Id == billRequest.PackageId) && p.IsFinished == true && p.IsBilled == false && p.ClientId == billHeader.ClientId).ToList();
@@ -76,7 +93,7 @@ namespace LexincorpApp.Models
                         {
                             ActivityId = a.Id,
                             BillDetailType = BillDetailTypeEnum.PackageDetail,
-                            FixedAmount = p.Amount,
+                            FixedAmount = (decimal)0.00,
                             UnitRate = a.BillableRate,
                             Quantity = a.BillableQuantity,
                             Subtotal = a.Subtotal,
@@ -89,7 +106,9 @@ namespace LexincorpApp.Models
             }
             if (billRequest.BillableRetainerId != null)
             {
-                var retainers = context.BillableRetainers.Where(r => (billRequest.BillableRetainerId == -1 || r.Id == billRequest.BillableRetainerId) && r.IsBilled == false && r.ClientId == billHeader.ClientId).ToList();
+                var retainers = context.BillableRetainers.Where(r => (billRequest.BillableRetainerId == -1 || r.Id == billRequest.BillableRetainerId) 
+                && r.IsBilled == false && r.ClientId == billHeader.ClientId
+                && r.Month == billRequest.BillMonth && r.Year == billRequest.BillYear).ToList();
                 var result = new List<BillDetail>();
                 foreach (var r in retainers)
                 {
@@ -109,8 +128,9 @@ namespace LexincorpApp.Models
                         {
                             ActivityId = a.Id,
                             BillDetailType = BillDetailTypeEnum.RetainerDetail,
-                            FixedAmount = r.AgreedFee,
+                            FixedAmount = (decimal)0.00,
                             UnitRate = a.BillableRate,
+                            //Quantity = a.BillableRate == (decimal)0.00 ? a.HoursWorked : a.BillableQuantity,
                             Quantity = a.BillableQuantity,
                             Subtotal = a.Subtotal,
                             Description = a.Description,
@@ -120,27 +140,11 @@ namespace LexincorpApp.Models
                 }
                 details.AddRange(result);
             }
-            if (billRequest.IncludeItems ?? false)
-            {
-                List<BillDetail> itemsDetails = context.Activities.OrderBy(a => a.RealizationDate).Where(a => a.ActivityType == ActivityTypeEnum.Item && a.ClientId == billHeader.ClientId
-                 && !a.IsBilled && a.RealizationDate.Year == billHeader.BillYear && a.RealizationDate.Month == billHeader.BillMonth)
-                    .Select(a => new BillDetail
-                    {
-                        ActivityId = a.Id,
-                        BillDetailType = BillDetailTypeEnum.Item,
-                        FixedAmount = 0,
-                        UnitRate = a.BillableRate,
-                        Quantity = a.BillableQuantity,
-                        Subtotal = a.Subtotal,
-                        Description = a.Description,
-                        TaxesAmount = a.TaxesAmount
-                    }).ToList();
-                details.AddRange(itemsDetails);
-            }
+            
             billHeader.BillDetails = details;
             billHeader.BillSubtotal = billHeader.BillDetails.Sum(d => d.Subtotal);
             billHeader.Taxes = billHeader.BillDetails.Sum(d => d.TaxesAmount);
-            var discount = billHeader.BillDiscountType == null ? 0 : billHeader.BillDiscountType == BillDiscountEnum.Net ? billHeader.BillDiscount ?? 0 : billHeader.BillDiscountType == BillDiscountEnum.Percentage ? billHeader.BillDiscount ?? 0 / 100 : 0;
+            var discount = billRequest.BillDiscountType == null ? 0 : billRequest.BillDiscountType == BillDiscountEnum.Net ? billRequest.BillDiscount ?? 0 : billRequest.BillDiscountType == BillDiscountEnum.Percentage ? ((billRequest.BillDiscount ?? (decimal)0.00) / 100) * billHeader.BillSubtotal : 0;
             billHeader.BillDiscount = discount;
             billHeader.Total = billHeader.BillSubtotal - discount + billHeader.Taxes;
 
@@ -206,6 +210,24 @@ namespace LexincorpApp.Models
                     }).ToList();
                 details.AddRange(result);
             }
+            if (preBillingRequest.IncludeItems ?? false)
+            {
+                List<BillDetail> result = context.Activities
+                    .OrderBy(a => a.RealizationDate)
+                    .Where(a => a.ActivityType == ActivityTypeEnum.Item && a.ClientId == billHeader.ClientId && !a.IsBilled && a.RealizationDate.Year == billHeader.BillYear && a.RealizationDate.Month == billHeader.BillMonth)
+                    .Select(a => new BillDetail
+                    {
+                        ActivityId = a.Id,
+                        BillDetailType = BillDetailTypeEnum.Item,
+                        FixedAmount = 0,
+                        UnitRate = a.BillableRate,
+                        Quantity = a.BillableQuantity,
+                        Subtotal = a.Subtotal,
+                        Description = a.Description,
+                        TaxesAmount = a.TaxesAmount
+                    }).ToList();
+                details.AddRange(result);
+            }
             if (preBillingRequest.PackageId != null)
             {
                 var packages = context.Packages.Where(p => (preBillingRequest.PackageId == -1 || p.Id == preBillingRequest.PackageId) && p.IsFinished == true && p.IsBilled == false && p.ClientId == billHeader.ClientId).ToList();
@@ -226,7 +248,7 @@ namespace LexincorpApp.Models
                         {
                             ActivityId = a.Id,
                             BillDetailType = BillDetailTypeEnum.PackageDetail,
-                            FixedAmount = p.Amount,
+                            FixedAmount = (decimal)0.00,
                             UnitRate = a.BillableRate,
                             Quantity = a.BillableQuantity,
                             Subtotal = a.Subtotal,
@@ -239,7 +261,9 @@ namespace LexincorpApp.Models
             }
             if (preBillingRequest.BillableRetainerId != null)
             {
-                var retainers = context.BillableRetainers.Where(r => (preBillingRequest.BillableRetainerId == -1 || r.Id == preBillingRequest.BillableRetainerId) && r.IsBilled == false && r.ClientId == billHeader.ClientId).ToList();
+                var retainers = context.BillableRetainers.Where(r => (preBillingRequest.BillableRetainerId == -1 || r.Id == preBillingRequest.BillableRetainerId) 
+                && r.IsBilled == false && r.ClientId == billHeader.ClientId
+                && r.Month == preBillingRequest.BillMonth && r.Year == preBillingRequest.BillYear).ToList();
                 var result = new List<BillDetail>();
                 foreach (var r in retainers)
                 {
@@ -257,7 +281,7 @@ namespace LexincorpApp.Models
                         {
                             ActivityId = a.Id,
                             BillDetailType = BillDetailTypeEnum.RetainerDetail,
-                            FixedAmount = r.AgreedFee,
+                            FixedAmount = (decimal)0.00,
                             UnitRate = a.BillableRate,
                             Quantity = a.BillableQuantity,
                             Subtotal = a.Subtotal,
@@ -268,28 +292,11 @@ namespace LexincorpApp.Models
                 }
                 details.AddRange(result);
             }
-            if (preBillingRequest.IncludeItems ?? false)
-            {
-                List<BillDetail> result = context.Activities
-                    .OrderBy(a => a.RealizationDate)
-                    .Where(a => a.ActivityType == ActivityTypeEnum.Item && a.ClientId == billHeader.ClientId && !a.IsBilled && a.RealizationDate.Year == billHeader.BillYear && a.RealizationDate.Month == billHeader.BillMonth)
-                    .Select(a => new BillDetail
-                    {
-                        ActivityId = a.Id,
-                        BillDetailType = BillDetailTypeEnum.Item,
-                        FixedAmount = 0,
-                        UnitRate = a.BillableRate,
-                        Quantity = a.BillableQuantity,
-                        Subtotal = a.Subtotal,
-                        Description = a.Description,
-                        TaxesAmount = a.TaxesAmount
-                    }).ToList();
-                details.AddRange(result);
-            }
+            
             billHeader.BillDetails = details;
             billHeader.BillSubtotal = billHeader.BillDetails.Sum(d => d.Subtotal);
             billHeader.Taxes = billHeader.BillDetails.Sum(d => d.TaxesAmount);
-            var discount = billHeader.BillDiscountType == null ? 0 : billHeader.BillDiscountType == BillDiscountEnum.Net ? billHeader.BillDiscount ?? 0 : billHeader.BillDiscountType == BillDiscountEnum.Percentage ? billHeader.BillDiscount ?? 0 / 100 : 0;
+            var discount = preBillingRequest.BillDiscountType == null ? 0 : preBillingRequest.BillDiscountType == BillDiscountEnum.Net ? preBillingRequest.BillDiscount ?? 0 : preBillingRequest.BillDiscountType == BillDiscountEnum.Percentage ? ((preBillingRequest.BillDiscount ?? (decimal)0.00) / 100)* billHeader.BillSubtotal : 0;
             billHeader.BillDiscount = discount;
             billHeader.Total = billHeader.BillSubtotal - discount + billHeader.Taxes;
 

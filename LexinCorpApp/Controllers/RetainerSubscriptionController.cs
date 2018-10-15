@@ -82,7 +82,7 @@ namespace LexincorpApp.Controllers
             return Json(results);
         }
         [Authorize(Roles = "Administrador, Regular")]
-        public JsonResult GetByClient(int clientId, string date)
+        public JsonResult GetByClientAndDate(int clientId, string date)
         {
             DateTime d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             var results = _billableRetainerRepo.BillableRetainers
@@ -105,6 +105,25 @@ namespace LexincorpApp.Controllers
                     clientId = rs.ClientId
                 });
             return Json(results);*/
+        }
+
+        [Authorize(Roles = "Administrador, Regular")]
+        public JsonResult GetByClient(int clientId, string date)
+        {
+
+            var results = _retainerSubscriptionRepository.Subscriptions
+                .Include(s => s.Retainer)
+                .Where(rs => rs.ClientId == clientId)
+                .Select(rs => new
+                {
+                    id = rs.Id,
+                    retainerType = new { id = rs.Retainer.Id, spanishName = rs.Retainer.SpanishName, englishName = rs.Retainer.EnglishName },
+                    agreedFee = rs.AgreedFee,
+                    agreedHours = rs.AgreedHours,
+                    additionalFeePerHour = rs.AdditionalFeePerHour,
+                    clientId = rs.ClientId
+                });
+            return Json(results);
         }
 
         [Authorize(Roles = "Administrador")]
