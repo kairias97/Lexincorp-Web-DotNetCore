@@ -5,7 +5,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using LexincorpApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Serilog.Context;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,6 +22,16 @@ namespace LexincorpApp.Controllers
         {
             this._activityRepo = _activityRepo;
             this._attorneyRepo = _attorneyRepo;
+        }
+        [AllowAnonymous]
+        public IActionResult Error()
+        {
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            string user = HttpContext.User.Identity.IsAuthenticated ? HttpContext.User.Identity.Name : "Anonymous";
+            string path = "~"+exceptionHandlerPathFeature.Path;
+            Log.Error(exceptionHandlerPathFeature.Error, "Error 500 - {User} - {Path}", user, path);
+            ViewBag.returnUrl = path;
+            return View();
         }
         [Authorize]
         public IActionResult Index()

@@ -14,6 +14,10 @@ using LexincorpApp.Models.ExternalServices;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using System.IO;
+using Serilog.Events;
+using Serilog.Context;
 
 namespace LexincorpApp
 {
@@ -90,12 +94,23 @@ namespace LexincorpApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            
+
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzA1NThAMzEzNjJlMzMyZTMwWTBCcXVjTHdxdDU2bU02Q2FBZzJRVXZwa0hqaUdjMkVZRWFNdmVNVFY1ND0=");
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            app.Use(async (httpContext, next) =>
+            {
+                var userName = httpContext.User.Identity.IsAuthenticated ? httpContext.User.Identity.Name : "anonymous";
+                LogContext.PushProperty("User", !String.IsNullOrWhiteSpace(userName) ? userName : "unknown");
+                await next.Invoke();
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            } else
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
             app.UseStatusCodePages();
             app.UseStaticFiles();
@@ -134,6 +149,8 @@ namespace LexincorpApp
                     );
             });
             SeedData.EnsurePropulated(app);
+            Log.Information("The app started successfully");
+            
         }
     }
 }
