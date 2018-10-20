@@ -7,6 +7,7 @@
 
     $(function ()
     {
+        
         activateSelect2ById('#categories')
         activateSelect2ById('#expenses')
         activateSelect2ById('#items')
@@ -18,12 +19,12 @@
         });*/
         //Para setear idioma inicial
         //$("#Package_Description").prop("lang", $("#IsEnglish").value ? "en" : "es");
-        $("div.container-fluid").css("background-color", "lightgrey");
+        $("div.container-fluid").css("background-color", "#D3D3D3");
         $("#activityDate").datepicker();
         $("#activityDate").datepicker("option", "dateFormat", "dd/mm/yy");
         $("#activityDate").datepicker("setDate", new Date());
 
-
+        
         @if (!User.IsInRole("Administrador"))
         {
             <text>
@@ -92,10 +93,14 @@
                 $("#ClientId").val(ui.item.clientId);
                 $("#ClientName").val(ui.item.clientName);
                 $("#IsEnglish").prop('checked', ui.item.isEnglish);
+
                 $("#IsClientSelected").prop('checked', true);
                 $("#FeePerHour").val(ui.item.feePerHour);
                 $("#FeePerHour").prop("disabled", false);
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
+                
+                $("#seeClient").attr("data-content", ui.item.clientName + " (" + (ui.item.isEnglish ? "Inglés" : "Español") + ")")
+                
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
@@ -166,9 +171,8 @@
                     $("#items").prop("disabled", false);
                     $("#packageClose").prop("checked", false);
                     $("#packageClose").prop("disabled", true);
-                activateSelect2ById('#items')
-
-                $("#FeePerHour").prop("disabled", false)
+                    activateSelect2ById('#items')
+                    $("#FeePerHour").prop("disabled", false)
                 }
             else {
                 $("#itemsPrice").prop("disabled", true);
@@ -582,18 +586,18 @@
         </div>
         <div class="row">
             <div class="offset-md-1 col-md-10">
-                <div class="row rounded" style="margin-top:20px; background-color:white">
+                <div class="row rounded" style="margin-top:10px; background-color:white">
                     <div class="offset-1 col-md-10">
-                        <div class="form-row" style="margin-top:20px">
+                        @*<div class="form-row" style="margin-top:10px">
                             <h4 class="text-center text-secondary">Paso 1</h4>
-                        </div>
+                        </div>*@
                         @if (User.IsInRole("Administrador"))
                         {
-                            <div class="form-row" style="margin-top:20px">
+                            <div class="form-row" style="margin-top:10px">
 
                                 <div class="form-group col-md-5">
                                     <label for="attorneys">Abogado:</label>
-                                    <select id="attorneys" class="form-control">
+                                    <select id="attorneys" class="form-control form-control-sm">
                                         @foreach (var a in Model.Attorneys)
                                         {
                                             if (a.UserId == currentUserId)
@@ -612,53 +616,56 @@
                                 </div>
                             </div>
                         }
-                        <div class="form-row" style="margin-top:20px">
+                        <div class="form-row" style="margin-top:10px">
                             <div class="form-group col-md-5">
                                 <label for="activityDate">Fecha:*</label>
-                                <input type="text" id="activityDate" class="form-control" placeholder="Fecha" aria-label="Fecha del registro" />
+                                <input type="text" id="activityDate" class="form-control form-control-sm" placeholder="Fecha" aria-label="Fecha del registro" />
                             </div>
-                            <div class="form-group offset-md-1  col-md-5">
+                            <div class="form-group offset-md-1  col-md-4">
                                 <label for="clientFilter">Búsqueda del cliente:*</label>
-                                <input type="text" id="clientFilter" class="form-control" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
+                                <input type="text" id="clientFilter" class="form-control form-control-sm" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="clientFilter">Selección:</label>
+                                <a href="#" id="seeClient" class="btn btn-primary" role="button" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="Cliente seleccionado" data-content="">Ver</a>
                             </div>
                         </div>
-                        <div class="form-row" style="margin-top:20px">
+                        <div class="form-row" style="margin-top:10px" hidden>
                             <div class="form-group col-md-5">
                                 <label for="ClientName">Nombre del cliente:</label>
-                                <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente" />
+                                <input type="text" readonly asp-for="@Model.ClientName" class="form-control form-control-sm" aria-label="Nombre del cliente" />
                             </div>
                             <div class="form-group offset-md-1  col-md-5">
                                 <label for="clientName">Idioma de facturación:</label>
-                                <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control" aria-label="Idioma de facturación" />
+                                <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control form-control-sm" aria-label="Idioma de facturación" />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row rounded" style="margin-top:20px;background-color:white">
+                <div class="row rounded" style="margin-top:10px;background-color:white">
                     <div class="offset-1 col-md-10">
-                        <div class="form-row" style="margin-top:20px">
+                        @*<div class="form-row" style="margin-top:10px">
                             <h4 class="text-center text-secondary">Paso 2</h4>
-                        </div>
-                        <div class="form-row" style="margin-top:20px">
-                            <div class="form-group col-md-5">
+                        </div>*@
+                        <div class="form-row" style="margin-top:10px">
+                            <div class="form-group col-md-4">
                                 <label for="Packages">Paquetes disponibles:</label>
-                                <select class="form-control" id="Packages" disabled></select>
+                                <select class="form-control form-control-sm" id="Packages" disabled></select>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="packageClose">¿Cerrar?</label>
+                                <input type="checkbox" class="form-control form-control-sm text-left" id="packageClose" disabled/>
                             </div>
                             <div class="form-group offset-md-1 col-md-5">
-                                <label for="packageClose">Cerrar paquete:</label>
-                                <input type="checkbox" class="form-control text-left" id="packageClose" disabled/>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
                                 <label for="retainers">Retainers:</label>
-                                <select id="retainers" class="form-control" disabled></select>
+                                <select id="retainers" class="form-control form-control-sm" disabled></select>
                             </div>
                         </div>
+                       
                         <div class="form-row">
                             <div class="form-group col-md-5">
                                 <label for="items">Items:</label>
-                                <select id="items" class="form-control" disabled>
+                                <select id="items" class="form-control form-control-sm" disabled>
                                     <option value="" data-price="">Seleccionar Item</option>
                                     @foreach (var i in Model.Items)
                                     {
@@ -666,42 +673,42 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group offset-1 col-md-5">
-                                <label for="itemsPrice">Precio unitario del ítem (USD): </label>
-                                <input type="text" class="form-control" id="itemsPrice" disabled />
+                            <div class="form-group offset-1 col-md-3">
+                                <label for="itemsPrice">Precio del ítem (USD): </label>
+                                <input type="text" class="form-control form-control-sm" id="itemsPrice" disabled />
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="itemsQuantity">Cantidad de Ítems:</label>
-                                <input type="number" class="form-control" id="itemsQuantity" disabled />
+                            <div class="form-group col-md-2">
+                                <label for="itemsQuantity">Cantidad:</label>
+                                <input type="number" class="form-control form-control-sm" id="itemsQuantity" disabled />
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-5">
+                            <div class="form-group col-md-2">
                                 <label for="hours">Horas:*</label>
-                                <input type="number" class="form-control" id="hours" />
+                                <input type="number" class="form-control form-control-sm" id="hours" />
                             </div>
-                            <div class="form-group offset-md-1  col-md-5">
+                            <div class="form-group col-md-3">
                                 <label for="FeePerHour">Precio por hora (USD):</label>
-                                <input type="text" asp-for="@Model.FeePerHour" class="form-control" id="FeePerHour" disabled />
+                                <input type="text" asp-for="@Model.FeePerHour" class="form-control form-control-sm" id="FeePerHour" disabled />
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
+                            <div class="form-group offset-md-1 col-md-5">
+                                <label for="btnClear">&nbsp;</label><br />
                                 <button class="btn btn-primary" id="btnClear" type="button">Limpiar selección</button>
                             </div>
                         </div>
 
+
                     </div>
                 </div>
-                <div class="row rounded" style="margin-top:20px; background-color:white">
+                <div class="row rounded" style="margin-top:10px; background-color:white">
                     <div class="offset-1 col-md-10">
-                        <div class="form-row" style="margin-top:20px">
+                        @*<div class="form-row" style="margin-top:10px">
                             <h4 class="text-center text-secondary">Paso 3</h4>
-                        </div>
-                        <div class="form-row" style="margin-top:20px">
+                        </div>*@
+                        <div class="form-row" style="margin-top:10px">
                             <div class="form-group col-md-5">
                                 <label for="categories">Categoría:*</label>
-                                <select id="categories" class="form-control" style="background-color:white">
+                                <select id="categories" class="form-control form-control-sm" style="background-color:white">
                                     <option value="">Seleccionar categoría</option>
                                     @foreach (var c in Model.Categories)
                                     {
@@ -711,26 +718,26 @@
                             </div>
                             <div class="form-group offset-md-1  col-md-5">
                                 <label for="services">Servicios:*</label>
-                                <select id="services" class="form-control" disabled></select>
+                                <select id="services" class="form-control form-control-sm" disabled></select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-11">
                                 <label for="description">Descripción:*</label>
-                                <textarea id="description" class="form-control" spellcheck="true" lang="es" disabled></textarea>
+                                <textarea id="description" class="form-control form-control-sm" spellcheck="true" lang="es" disabled></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row rounded" style="margin-top:20px;margin-bottom:20px; background-color:white">
+                <div class="row rounded" style="margin-top:10px;margin-bottom:10px; background-color:white">
                     <div class="offset-1 col-md-10">
-                        <div class="form-row" style="margin-top:20px">
-                            <h4 class="text-center text-secondary">Paso 4</h4>
-                        </div>
-                        <div class="form-row" style="margin-top:20px">
+                        @*<div class="form-row" style="margin-top:10px">
+            <h4 class="text-center text-secondary">Paso 4</h4>
+        </div>*@
+                        <div class="form-row" style="margin-top:10px">
                             <div class="form-group col-md-5">
                                 <label for="expenses">Gastos:*</label>
-                                <select id="expenses" class="form-control">
+                                <select id="expenses" class="form-control form-control-sm">
                                     <option data-amount="" value="">Seleccionar gasto</option>
                                     @foreach (var e in Model.Expenses)
                                     {
@@ -738,21 +745,70 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group offset-md-1  col-md-5">
+                            <div class="form-group offset-md-1  col-md-2">
                                 <label for="expensesQuantity">Cantidad:*</label>
-                                <input type="number" class="form-control" id="expensesQuantity" disabled />
+                                <input type="number" class="form-control form-control-sm" id="expensesQuantity" disabled />
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
+                            <div class="form-group col-md-2">
                                 <label for="expensesPrice">Monto:*</label>
-                                <input type="text" class="form-control" id="expensesPrice" disabled />
+                                <input type="text" class="form-control form-control-sm" id="expensesPrice" disabled />
                             </div>
-                            <div class="form-group col-md-5 offset-md-1">
+                            <div class="form-group col-md-1">
                                 <button class="btn btn-primary" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
                             </div>
                         </div>
-                        <div class="form-row table-responsive">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="clientFilter"><strong>Gastos incluidos:</strong></label>
+                                <a href="#" id="seeExpenses" class="btn btn-primary" data-toggle="modal" data-target="#elegantModalForm">Ver</a>
+                            </div>
+
+                        </div>
+                        <!--Modal begin-->
+                        <!-- Modal -->
+                        <div class="modal fade" id="elegantModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <!--Content-->
+                                <div class="modal-content form-elegant">
+                                    <!--Header-->
+                                    <div class="modal-header text-center">
+                                        <h3 class="modal-title dark-grey-text font-weight-bold my-3" id="myModalLabel"><strong>Gastos de la actividad</strong></h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <!--Body-->
+                                    <div class="modal-body mx-4">
+                                        <!--Body-->
+                                        <div id="containerTable" class="form-row table-responsive">
+                                            <table id="expensesTable" class="table table-stribed table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th hidden>ID</th>
+                                                        <th>Gasto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Monto</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tableData"></tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="4" class="text-right">Total (USD):</td>
+                                                        <td class="text-right"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!--/.Content-->
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        @*<div id="containerTable" class="form-row table-responsive">
                             <table id="expensesTable" class="table table-stribed table-bordered">
                                 <thead>
                                     <tr>
@@ -772,8 +828,8 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div>
-                        <div class="form-row" style="margin-bottom:20px">
+                        </div>*@
+                        <div class="form-row" style="margin-bottom:10px">
                             <div class="form-group col-md-5">
                                 <button class="btn btn-primary" id="btnSubmit" type="button">Guardar</button>
                             </div>
@@ -784,4 +840,13 @@
             </div>
         </div>
     </form>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#seeClient').popover({
+                container: 'body'
+            }); 
+
+        });
+        
+    </script>
 </div>
