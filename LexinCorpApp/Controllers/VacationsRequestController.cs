@@ -91,7 +91,7 @@ namespace LexincorpApp.Controllers
         public IActionResult History(bool? filter, string filterText, int pageNumber = 1)
         {
             var user = HttpContext.User;
-            var id = user.Claims.Where(claim => claim.Type == ClaimTypes.NameIdentifier).First();
+            var id = user.Claims.Where(claim => claim.Type == ClaimTypes.NameIdentifier).First().Value;
             var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
 
             Func<VacationsRequest, bool> filterFunction = c => c.IsApproved == filter;

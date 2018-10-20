@@ -140,8 +140,8 @@ namespace LexincorpApp.Controllers
                     .Include(rs => rs.Retainer)
                     .Where(filterFunction)
                     .OrderBy(rs => rs.Retainer.SpanishName)
-                    .Skip((pageNumber - 1) * pageNumber)
-                    .Take(pageNumber),
+                    .Skip((pageNumber - 1) * PageSize)
+                    .Take(PageSize),
                 PagingInfo = new PagingInfo
                 {
                     CurrentPage = pageNumber,
