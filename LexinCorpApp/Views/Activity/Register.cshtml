@@ -266,6 +266,8 @@
                     var description = $("#services").find(":selected").attr("data-description");
                 $("#description").val(description);
                 $("#description").prop("disabled", false);
+                //dismiss the modal
+                $("#servicesForm").modal('hide');
                 }
             });
         $("#expenses").change(function () {
@@ -701,11 +703,56 @@
                     </div>
                 </div>
                 <div class="row rounded" style="margin-top:10px; background-color:white">
-                    <div class="offset-1 col-md-10">
+                    <div class="offset-1 col-sm-10" style="margin-top:10px">
+                        <div class="form-row">
+                            <div class="form-group col-2">
+                                <label for="description">&nbsp;</label>
+                                <button type="button"  id="selectService" class="btn btn-primary" data-toggle="modal" data-target="#servicesForm">Seleccionar servicio</button>
+                            </div>
+                            
+                            <div class="form-group offset-1 col-8">
+                                <label for="description">Descripción:*</label>
+                                <textarea id="description" class="form-control form-control-sm" spellcheck="true" lang="es" disabled></textarea>
+                            </div>
+                        </div>
+                        <!--Modal begin for services-->
+                        <!-- Modal -->
+                        <div class="modal fade" id="servicesForm" tabindex="-1" role="dialog" aria-labelledby="serviceModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <!--Content-->
+                                <div class="modal-content form-elegant">
+                                    <!--Header-->
+                                    <div class="modal-header text-center">
+                                        <h3 class="modal-title dark-grey-text font-weight-bold my-3" id="serviceModalLabel"><strong>Selección de servicio</strong></h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <!--Body-->
+                                    <div class="modal-body mx-4">
+                                        <div class="form-row" style="margin-top:10px">
+                                            <div class="form-group col-md-5">
+                                                <label for="categories">Categoría:*</label>
+                                                <select id="categories" class="form-control form-control-sm" style="background-color:white">
+                                                    <option value="">Seleccionar categoría</option>
+                                                    @foreach (var c in Model.Categories)
+                                                    {
+                                                        <option value="@c.Id">@c.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group offset-md-1  col-md-5">
+                                                <label for="services">Servicio:*</label>
+                                                <select id="services" class="form-control form-control-sm" disabled></select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!--/.Content-->
+                            </div>
+                        </div>
                         @*<div class="form-row" style="margin-top:10px">
-                            <h4 class="text-center text-secondary">Paso 3</h4>
-                        </div>*@
-                        <div class="form-row" style="margin-top:10px">
                             <div class="form-group col-md-5">
                                 <label for="categories">Categoría:*</label>
                                 <select id="categories" class="form-control form-control-sm" style="background-color:white">
@@ -720,13 +767,13 @@
                                 <label for="services">Servicios:*</label>
                                 <select id="services" class="form-control form-control-sm" disabled></select>
                             </div>
-                        </div>
-                        <div class="form-row">
+                        </div>*@
+                        @*<div class="form-row">
                             <div class="form-group col-md-11">
                                 <label for="description">Descripción:*</label>
                                 <textarea id="description" class="form-control form-control-sm" spellcheck="true" lang="es" disabled></textarea>
                             </div>
-                        </div>
+                        </div>*@
                     </div>
                 </div>
                 <div class="row rounded" style="margin-top:10px;margin-bottom:10px; background-color:white">
@@ -831,7 +878,7 @@
                         </div>*@
                         <div class="form-row" style="margin-bottom:10px">
                             <div class="form-group col-md-5">
-                                <button class="btn btn-primary" id="btnSubmit" type="button">Guardar</button>
+                                <button class="btn btn-primary" id="btnSubmit" type="button">Registrar actividad</button>
                             </div>
                             <a href="#placeholderSuccess" id="goTop" hidden></a>
                         </div>
