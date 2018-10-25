@@ -629,7 +629,7 @@
                             </div>
                             <div class="form-group col-md-1">
                                 <label for="clientFilter">Selección:</label>
-                                <a href="#" id="seeClient" class="btn btn-primary" role="button" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="Cliente seleccionado" data-content="">Ver</a>
+                                <a href="#" id="seeClient" class="btn btn-primary btn-sm" role="button" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="Cliente seleccionado" data-content="">Ver</a>
                             </div>
                         </div>
                         <div class="form-row" style="margin-top:10px" hidden>
@@ -695,7 +695,7 @@
                             </div>
                             <div class="form-group offset-md-1 col-md-5">
                                 <label for="btnClear">&nbsp;</label><br />
-                                <button class="btn btn-primary" id="btnClear" type="button">Limpiar selección</button>
+                                <button class="btn btn-primary btn-sm" id="btnClear" type="button">Limpiar selección</button>
                             </div>
                         </div>
 
@@ -707,7 +707,7 @@
                         <div class="form-row">
                             <div class="form-group col-2">
                                 <label for="description">&nbsp;</label>
-                                <button type="button"  id="selectService" class="btn btn-primary" data-toggle="modal" data-target="#servicesForm">Seleccionar servicio</button>
+                                <button type="button"  id="selectService" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#servicesForm">Seleccionar servicio</button>
                             </div>
                             
                             <div class="form-group offset-1 col-8">
@@ -801,15 +801,17 @@
                                 <input type="text" class="form-control form-control-sm" id="expensesPrice" disabled />
                             </div>
                             <div class="form-group col-md-1">
-                                <button class="btn btn-primary" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
+                                <button class="btn btn-primary btn-sm" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="clientFilter"><strong>Gastos incluidos:</strong></label>
-                                <a href="#" id="seeExpenses" class="btn btn-primary" data-toggle="modal" data-target="#elegantModalForm">Ver</a>
+                            <div class="form-group col-md-5">
+                                <a href="#" id="seeExpenses" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#elegantModalForm">Ver gastos incluidos</a>
                             </div>
-
+                            <div class="form-group offset-1 col-md-5">
+                                <button class="btn btn-primary btn-sm" id="btnSubmit" type="button">Registrar actividad</button>
+                            </div>
+                            <a href="#placeholderSuccess" id="goTop" hidden></a>
                         </div>
                         <!--Modal begin-->
                         <!-- Modal -->
@@ -876,12 +878,9 @@
                                 </tfoot>
                             </table>
                         </div>*@
-                        <div class="form-row" style="margin-bottom:10px">
-                            <div class="form-group col-md-5">
-                                <button class="btn btn-primary" id="btnSubmit" type="button">Registrar actividad</button>
-                            </div>
-                            <a href="#placeholderSuccess" id="goTop" hidden></a>
-                        </div>
+                        @*<div class="form-row" style="margin-bottom:10px">
+                            
+                        </div>*@
                     </div>
                 </div>
             </div>

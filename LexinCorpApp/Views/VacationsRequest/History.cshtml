@@ -2,8 +2,16 @@
 @{
     ViewData["Title"] = "Historial de solicitudes de vacaciones";
 }
+<script type="text/javascript">
+    $(function () {
+        $('input[type=radio]').change(function () {
+            $('#requestHistoryForm').submit();
+
+        });
+    });
+</script>
 <h2>Historial de solicitudes de vacaciones</h2>
-<form asp-action="History" asp-controller="VacationsRequest" method="get">
+<form id="requestHistoryForm" asp-action="History" asp-controller="VacationsRequest" method="get">
     <label>Filtro de búsqueda:</label>
     <div class="row">
         <div class="btn-group btn-group-toggle col-md-6" data-toggle="buttons">
@@ -96,6 +104,7 @@
     <div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
          page-class="btn" page-class-normal="btn-outline-info"
          page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
+         page-url-filterText="@Model.CurrentFilterText"
          page-number-url-key="pageNumber"
          class="btn-group float-right m-1">
 

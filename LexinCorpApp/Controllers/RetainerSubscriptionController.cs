@@ -187,5 +187,15 @@ namespace LexincorpApp.Controllers
             TempData["deleted"] = true;
             return RedirectToAction(nameof(Admin), new { filter = TempData["filter"], pageNumber = 1});
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Apply()
+        {
+            string message;
+            bool success;
+            _retainerSubscriptionRepository.Apply(out success, out message);
+            return Json(new { success, message});
+        }
     }
 }

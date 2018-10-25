@@ -10,5 +10,6 @@ namespace LexincorpApp.Models
         IQueryable<RetainerSubscription> Subscriptions { get;}
         void Save(RetainerSubscription subscription);
         void Delete(int subscriptionId);
+        void Apply(out bool success, out string message);
     }
 }

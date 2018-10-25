@@ -133,6 +133,8 @@ namespace LexincorpApp.Controllers
                 ItemsPerPage = PageSize,
                 TotalItems = _vacationsRequestRepo.VacationsRequests().Count(filterFunction)
             };
+            ViewBag.Answered = TempData["answered"];
+            ViewBag.Approved = TempData["approved"];
             return View(viewModel);
         }
         [Authorize]
@@ -153,6 +155,10 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(VacationsRequest vacationsRequest)
         {
+            if (vacationsRequest.IsApproved == null)
+            {
+                ModelState.AddModelError("notAnswered", "No ha respondido aún a la solicitud");
+            }
             if (!ModelState.IsValid)
             {
                 var attorney = _attorneysRepo.Attorneys.Where(a => a.Id == vacationsRequest.AttorneyId).FirstOrDefault();
@@ -166,6 +172,8 @@ namespace LexincorpApp.Controllers
             else
             {
                 _vacationsRequestRepo.Update(vacationsRequest);
+                TempData["answered"] = true;
+                TempData["approved"] = vacationsRequest.IsApproved;
                 return RedirectToAction("Admin");
             }
         }

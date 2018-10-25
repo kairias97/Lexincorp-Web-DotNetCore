@@ -1,13 +1,13 @@
 ﻿@model NewVacationsRequestViewModel
 @{
-    ViewData["Title"] = "Actualización de solicitud de vacaciones";
+    ViewData["Title"] = "Respuesta de solicitud de vacaciones";
 }
-<h4>Actualización de solicitud de vacaciones</h4>
+<h4>Respuesta de solicitud de vacaciones</h4>
 <br />
 @if (ViewBag.UpdatedVacationRequest ?? false)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <p>Información actualizada exitosamente!</p>
+        <p>Estado de la solicitud actualizado exitosamente!</p>
 
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -54,29 +54,67 @@
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.VacationsRequest.IsApproved">Estado:*</label>
-            <select class="form-control" asp-for="@Model.VacationsRequest.IsApproved" required>
-                @if (Model.VacationsRequest.IsApproved == null)
-                {
-                    <option value="" selected>Pendiente de aprobación</option>
-                    <option value="true">Aprobado</option>
-                    <option value="false">Rechazado</option>
-                }
-                else if (Model.VacationsRequest.IsApproved == true)
-                {
-                    <option value="">Pendiente de aprobación</option>
-                    <option value="true" selected>Aprobado</option>
-                    <option value="false">Rechazado</option>
-                }
-                else if (Model.VacationsRequest.IsApproved == false)
-                {
-                    <option value="">Pendiente de aprobación</option>
-                    <option value="true">Aprobado</option>
-                    <option value="false" selected>Rechazado</option>
-                }
-            </select>
+            @if (Model.VacationsRequest.IsApproved != null)
+            {
+                <select class="form-control" asp-for="@Model.VacationsRequest.IsApproved" required disabled>
+                    @if (Model.VacationsRequest.IsApproved == null)
+                    {
+                        <option value="" selected>Pendiente de aprobación</option>
+                        <option value="true">Aprobado</option>
+                        <option value="false">Rechazado</option>
+                    }
+                    else if (Model.VacationsRequest.IsApproved == true)
+                    {
+                        <option value="">Pendiente de aprobación</option>
+                        <option value="true" selected>Aprobado</option>
+                        <option value="false">Rechazado</option>
+                    }
+                    else if (Model.VacationsRequest.IsApproved == false)
+                    {
+                        <option value="">Pendiente de aprobación</option>
+                        <option value="true">Aprobado</option>
+                        <option value="false" selected>Rechazado</option>
+                    }
+                </select>
+
+            }
+            else
+            {
+                <select class="form-control" asp-for="@Model.VacationsRequest.IsApproved" required >
+                    @if (Model.VacationsRequest.IsApproved == null)
+                    {
+                        <option value="" selected>Pendiente de aprobación</option>
+                        <option value="true">Aprobado</option>
+                        <option value="false">Rechazado</option>
+                    }
+                    else if (Model.VacationsRequest.IsApproved == true)
+                    {
+                        <option value="">Pendiente de aprobación</option>
+                        <option value="true" selected>Aprobado</option>
+                        <option value="false">Rechazado</option>
+                    }
+                    else if (Model.VacationsRequest.IsApproved == false)
+                    {
+                        <option value="">Pendiente de aprobación</option>
+                        <option value="true">Aprobado</option>
+                        <option value="false" selected>Rechazado</option>
+                    }
+                </select>
+
+            }
+
         </div>
     </div>
     <div class="form-row">
-        <button type="submit" class="btn btn-primary">Actualizar</button>
+        @if (Model.VacationsRequest.IsApproved != null)
+        {
+            <a asp-action="Admin" asp-controller="VacationsRequest" class="btn btn-primary">Regresar</a>
+        }
+        else
+        {
+
+            <button type="submit" class="btn btn-primary">Responder</button>
+        }
+
     </div>
 </form>

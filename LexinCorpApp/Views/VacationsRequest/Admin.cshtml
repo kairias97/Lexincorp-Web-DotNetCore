@@ -2,8 +2,17 @@
 @{
     ViewData["Title"] = "Administrar solicitudes de vacaciones";
 }
+<script type="text/javascript">
+    $(function () {
+        $('input[type=radio]').change(function () {
+            $('#requestAdminForm').submit();
+
+        });
+    });
+</script>
 <h2>Administración de solicitudes de vacaciones</h2>
-<form asp-action="Admin" asp-controller="VacationsRequest" method="get">
+<form id="requestAdminForm" asp-action="Admin" asp-controller="VacationsRequest" method="get">
+
     <label>Filtro de búsqueda:</label>
     <div class="row">
         <div class="btn-group btn-group-toggle col-md-6" data-toggle="buttons">
@@ -54,6 +63,26 @@
         </div>
     </div>
     <br />
+    @if ((ViewBag.Answered ?? false) && (bool)ViewBag.Approved)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            Solicitud de vacaciones aprobada exitosamente!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+    }
+    else if ((ViewBag.Answered ?? false) && !(bool)ViewBag.Approved)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            Solicitud de vacaciones rechazada exitosamente!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+    }
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead>
@@ -76,11 +105,11 @@
                         <td>
                             @if (vacation.IsApproved == null)
                             {
-                                <a asp-action="Edit" asp-controller="VacationsRequest" asp-route-id="@vacation.VacationsRequestId"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                                <a asp-action="Edit" asp-controller="VacationsRequest" asp-route-id="@vacation.VacationsRequestId"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Responder"></i></a>
                             }
                             else
                             {
-                                <p>No es posible realizar acción alguna</p>
+                                <p>Ninguna</p>
                             }
 
                         </td>
@@ -92,6 +121,7 @@
     <div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
          page-class="btn" page-class-normal="btn-outline-info"
          page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
+         page-url-filterText="@Model.CurrentFilterText"
          page-number-url-key="pageNumber"
          class="btn-group float-right m-1">
 
