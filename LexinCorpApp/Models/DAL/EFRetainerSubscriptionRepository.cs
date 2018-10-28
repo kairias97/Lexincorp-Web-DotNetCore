@@ -51,6 +51,10 @@ namespace LexincorpApp.Models
                         Year = DateTime.Now.Year
                     }).ToList();
                     context.BillableRetainers.AddRange(newBillableRetainers);
+                    //To clean up the subscriptions
+                    var subscriptionsToWipe = context.RetainerSubscriptions.ToList();
+                    context.RetainerSubscriptions.RemoveRange(subscriptionsToWipe);
+
                     context.SaveChanges();
                     var count = newBillableRetainers.Count;
                     message = "Se aplicaron exitosamente {Count} suscripciones de retainers activas y se convirtieron en billable retainers";
