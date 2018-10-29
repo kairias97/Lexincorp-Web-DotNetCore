@@ -14,6 +14,7 @@ namespace LexincorpApp.Models
         [Required(ErrorMessage = "La descripción es requerida")]
         public string Description { get; set; }
         [Required(ErrorMessage = "La fecha del paquete es requerida")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime? RealizationDate { get; set; }
         [Required(ErrorMessage = "El monto acordado de honorarios es requerido")]
         public decimal Amount { get; set; }

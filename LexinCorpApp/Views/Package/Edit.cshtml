@@ -3,6 +3,19 @@
     ViewData["Title"] = "Editar paquetes";
 }
 @model Package
+<script type="text/javascript">
+    $(function () {
+        $("#packageDate").datepicker();
+        $("#packageDate").datepicker("option", "dateFormat", "dd/mm/yy");
+        var date = new Date();
+        var lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        $("#packageDate").datepicker("option", {
+            maxDate: lastDay
+        });
+        var packageDate = @Html.Raw(Json.Serialize(Model.RealizationDate.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy")));
+        $("#packageDate").datepicker("setDate", packageDate);
+    });
+</script>
 <h2>Editar paquete</h2>
 <br />
 @if (ViewBag.UpdatedPackage ?? false)
@@ -59,7 +72,7 @@
         </div>
         <div class="form-group offset-md-1 col-md-5">
             <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
-            <input type="text" class="form-control" asp-for="@Model.RealizationDate" required />
+            <input type="text" id="packageDate" class="form-control" asp-for="@Model.RealizationDate" required />
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Guardar cambios</button>
