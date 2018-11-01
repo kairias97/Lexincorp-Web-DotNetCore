@@ -90,6 +90,8 @@ namespace LexincorpApp.Models
                 {
                     string generatedGuid = guid.GenerateGuid();
                     string generatedPassword = generatedGuid.Substring(generatedGuid.Length - 12, 12);
+                    //To hardcode the default admin password as a default one 
+                    generatedPassword = "LexincorpNic2018";
                     string cryptoPassword = crypto.HashString(generatedPassword);
                     User adminUser = new User
                     {
