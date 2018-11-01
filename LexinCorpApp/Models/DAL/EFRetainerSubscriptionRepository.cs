@@ -21,7 +21,7 @@ namespace LexincorpApp.Models
         public void Apply(out bool success, out string message)
         {
             //2 and 3 day of the month only for testing purposes
-            if (DateTime.UtcNow.Day != 1 || DateTime.UtcNow.Day != 2 || DateTime.UtcNow.Day != 3)
+            if (DateTime.UtcNow.Day != 1 && DateTime.UtcNow.Day != 2 && DateTime.UtcNow.Day != 3)
             {
                 success = false;
                 message = "Se ejecutó el cron job en una fecha que no es el primero del mes";
