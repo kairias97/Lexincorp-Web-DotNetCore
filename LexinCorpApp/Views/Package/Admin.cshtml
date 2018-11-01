@@ -8,7 +8,7 @@
 <form asp-action="Admin" method="get" asp-controller="Package">
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Descripción en español o inglés del ítem" aria-label="Descripción en español o inglés del gasto" aria-describedby="button-addon2">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del paquete o del cliente" aria-label="Nombre del paquete o del cliente" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
         </div>

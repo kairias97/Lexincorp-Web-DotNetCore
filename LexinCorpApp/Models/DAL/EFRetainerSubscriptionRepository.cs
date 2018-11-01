@@ -20,7 +20,8 @@ namespace LexincorpApp.Models
 
         public void Apply(out bool success, out string message)
         {
-            if (DateTime.UtcNow.Day != 1)
+            //2 and 3 day of the month only for testing purposes
+            if (DateTime.UtcNow.Day != 1 || DateTime.UtcNow.Day != 2 || DateTime.UtcNow.Day != 3)
             {
                 success = false;
                 message = "Se ejecutó el cron job en una fecha que no es el primero del mes";
@@ -57,7 +58,7 @@ namespace LexincorpApp.Models
 
                     context.SaveChanges();
                     var count = newBillableRetainers.Count;
-                    message = "Se aplicaron exitosamente {Count} suscripciones de retainers activas y se convirtieron en billable retainers";
+                    message = $"Se aplicaron exitosamente {count} suscripciones de retainers activas y se convirtieron en billable retainers";
                     Log.Information("Se aplicaron exitosamente {Count} suscripciones de retainers activas y se convirtieron en billable retainers", count);
                 }
                 else
