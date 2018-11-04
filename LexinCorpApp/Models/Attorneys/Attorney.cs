@@ -10,7 +10,7 @@ namespace LexincorpApp.Models
     public class Attorney
     {
         public int Id { get; set; }
-        [Required(ErrorMessage ="El nombre del abogado es requerido")]
+        [Required(ErrorMessage = "El nombre del abogado es requerido")]
         public string Name { get; set; }
         [Required(ErrorMessage = "La fecha de admisión es requerida")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
@@ -41,6 +41,7 @@ namespace LexincorpApp.Models
         [EmailAddress(ErrorMessage = "El formato del email es invalido")]
         public string Email { get; set; }
         public decimal VacationCount { get; set; }
+        public bool CanApproveVacations { get; set; }
 
         /*protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
