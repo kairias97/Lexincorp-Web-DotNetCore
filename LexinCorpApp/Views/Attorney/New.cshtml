@@ -46,11 +46,19 @@
             <input type="text" asp-for="@Model.Attorney.User.Username" class="form-control" required />
         </div>
         <div class="form-group col-md-5">
+            <label for="@Model.Attorney.User.Password">Contraseña:*</label>
+            <input type="text" asp-for="@Model.Attorney.User.Password" class="form-control" required />
+        </div>
+        <div class="form-group col-md-5">
             <label for="@Model.Attorney.User.IsAdmin">Tipo de usuario:*</label>
             <select class="form-control" asp-for="@Model.Attorney.User.IsAdmin">
                 <option value="true">Administrador</option>
                 <option value="false">Regular</option>
             </select>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Attorney.CanApproveVacations">Aprueba vacaciones:</label>
+            <input type="checkbox"  asp-for="@Model.Attorney.CanApproveVacations" class="form-control"/>
         </div>
         <div class="form-group col-md-5">
             <label for="@Model.Attorney.AdmissionDate">Fecha de admisión (dd/MM/yyyy):*</label>

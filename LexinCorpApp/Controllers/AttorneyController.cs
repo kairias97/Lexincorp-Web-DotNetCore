@@ -81,14 +81,15 @@ namespace LexincorpApp.Controllers
             }
             else
             {
-                string guidGenerated = _guidManager.GenerateGuid();
-                string passwordDefault = guidGenerated.Substring(guidGenerated.Length - 12, 12);
-                string passwordHashed = _cryptoManager.HashString(passwordDefault);
+                //string guidGenerated = _guidManager.GenerateGuid();
+                //string passwordDefault = guidGenerated.Substring(guidGenerated.Length - 12, 12);
+                string passwordOriginal = attorney.User.Password;
+                string passwordHashed = _cryptoManager.HashString(attorney.User.Password);
                 attorney.User.Password = passwordHashed;
                 _attorneysRepo.Save(attorney);
                 //Envío de password sin hash al usuario
                 string emailBody = $"Se le ha creado un acceso a la aplicación Lexincorp Nicaragua Web, su usuario es {attorney.User.Username} " +
-                    $"y su clave de acceso es {passwordDefault}. \n**Este es un mensaje autogenerado por el sistema, favor no responder**";
+                    $"y su clave de acceso es {passwordOriginal}. \n**Este es un mensaje autogenerado por el sistema, favor no responder**";
                 _mailSender.SendMail(attorney.Email, "Usuario web creado para aplicación Lexincorp Nicaragua Web", emailBody);
                 TempData["added"] = true;
                 return RedirectToAction("New");
@@ -159,7 +160,15 @@ namespace LexincorpApp.Controllers
             }
             else
             {
-                _attorneysRepo.Save(attorney);
+                bool passwordModified = false;
+                if(attorney.User.Password != null && (attorney.User.Password != " " || attorney.User.Password != ""))
+                {
+                    passwordModified = true;
+                    string passwordOriginal = attorney.User.Password;
+                    string passwordHashed = _cryptoManager.HashString(attorney.User.Password);
+                    attorney.User.Password = passwordHashed;
+                }
+                _attorneysRepo.Save(attorney, passwordModified);
                 _usersRepo.Save(attorney.User);
                 TempData["updated"] = true;
                 return RedirectToAction("Edit", new { id = attorney.Id });

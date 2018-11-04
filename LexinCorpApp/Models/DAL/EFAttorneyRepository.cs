@@ -16,7 +16,7 @@ namespace LexincorpApp.Models
             this.notificationRepository = notificationRepository;
         }
         public IQueryable<Attorney> Attorneys { get => context.Attorneys; }
-        public void Save(Attorney attorney)
+        public void Save(Attorney attorney, bool passwordModified = false)
         {
             bool isNew = attorney.Id == 0;
             if (attorney.Id == 0)
@@ -26,8 +26,10 @@ namespace LexincorpApp.Models
             {
                 context.Update(attorney);
                 context.Entry<Attorney>(attorney).Property(x => x.VacationCount).IsModified = false;
-
-                context.Entry<User>(attorney.User).Property(x => x.Password).IsModified = false;
+                if(passwordModified == false)
+                {
+                    context.Entry<User>(attorney.User).Property(x => x.Password).IsModified = false;
+                }
                 context.Entry<User>(attorney.User).Property(x => x.Username).IsModified = false;
                 //context.Attach(attorney).Context.Entry(attorney).Property(x => x.VacationCount).IsModified = false;
                 //context.Entry(attorney).State = Microsoft.EntityFrameworkCore.EntityState.Modified;

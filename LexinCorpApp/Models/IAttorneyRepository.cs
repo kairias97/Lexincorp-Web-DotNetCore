@@ -8,7 +8,7 @@ namespace LexincorpApp.Models
     public interface IAttorneyRepository
     {
         IQueryable<Attorney> Attorneys { get; }
-        void Save(Attorney attorney);
+        void Save(Attorney attorney, bool passwordModified = false);
         bool VerifyEmail(string email);
         bool VerifyNotaryCode(string notaryCode);
         bool VerifyAttorneyIDAndEmailOwnership(int attorneyID, string email);

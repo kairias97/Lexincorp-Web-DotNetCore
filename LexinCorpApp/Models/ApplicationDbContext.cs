@@ -89,6 +89,9 @@ namespace LexincorpApp.Models
                 .WithMany(u => u.Packages)
                 .HasForeignKey(p => p.CreatorUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Attorney>()
+                .Property(a => a.CanApproveVacations)
+                .HasDefaultValue(true);
 
         }
     }
