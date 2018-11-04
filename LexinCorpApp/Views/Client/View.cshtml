@@ -1,94 +1,73 @@
-﻿@model ClientFormViewModel
+﻿@model ClientDetailsViewModel
 @{
-    ViewData["Title"] = "Editar clientes";
+    ViewData["Title"] = "Ver clientes";
 }
-<h4>Actualización de cliente</h4>
+<h4>Visualización de perfil de cliente</h4>
 <br />
-@if (ViewBag.UpdatedClient ?? false)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <p>Información actualizada exitosamente!</p>
-
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
-}
 <form asp-action="Edit" asp-controller="Client" method="post" role="alert" id="@Model.Client.Id">
-    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-    {
-        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
-        <div class="alert alert-danger alert-dismissible fade show">
-            @Html.ValidationSummary(false, "Errores de validación:")
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
 
-        </div>
-    }
     <input asp-for="@Model.Client.Id" hidden />
     <div class="form-row">
 
         <div class="form-group col-md-4">
             <label for="Client_Name">Nombre del cliente*:</label>
-            <input type="text" asp-for="@Model.Client.Name" class="form-control" required>
+            <input type="text" asp-for="@Model.Client.Name" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_Contact">Contacto (Atención a)*:</label>
-            <input type="text" asp-for="@Model.Client.Contact" class="form-control" required>
+            <input type="text" asp-for="@Model.Client.Contact" class="form-control" readonly>
         </div>
         <div class="form-group  col-md-4">
             <label for="Client_ContactEmail">Email del contacto:</label>
-            <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control">
+            <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control" readonly>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="Client_ContactPhone">Teléfono del contacto:</label>
-            <input type="tel" asp-for="@Model.Client.ContactPhone" class="form-control">
+            <input type="tel" asp-for="@Model.Client.ContactPhone" class="form-control" readonly>
         </div>
         <div class="form-group  col-md-4">
             <label for="Client_ContactJobName">Cargo del contacto:</label>
-            <input type="text" asp-for="@Model.Client.ContactJobName" class="form-control">
+            <input type="text" asp-for="@Model.Client.ContactJobName" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_Address">Dirección:</label>
-            <input type="text" asp-for="@Model.Client.Address" class="form-control">
+            <input type="text" asp-for="@Model.Client.Address" class="form-control" readonly>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group  col-md-4">
             <label for="Client_ContactPhone">Referido por:</label>
-            <input type="tel" asp-for="@Model.Client.ReferredBy" class="form-control">
+            <input type="tel" asp-for="@Model.Client.ReferredBy" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_TributaryId">Identificación tributaria*:</label>
-            <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" required>
+            <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_PhoneNumber">Teléfono del cliente:</label>
-            <input type="tel" asp-for="@Model.Client.PhoneNumber" class="form-control">
+            <input type="tel" asp-for="@Model.Client.PhoneNumber" class="form-control" readonly>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="Client_Fax">Fax del cliente:</label>
-            <input type="text" asp-for="@Model.Client.Fax" class="form-control">
+            <input type="text" asp-for="@Model.Client.Fax" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_CellPhoneNumber">Móvil del cliente:</label>
-            <input type="tel" asp-for="@Model.Client.CellPhoneNumber" class="form-control">
+            <input type="tel" asp-for="@Model.Client.CellPhoneNumber" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_Email">Email del cliente:</label>
-            <input type="email" asp-for="@Model.Client.Email" class="form-control">
+            <input type="email" asp-for="@Model.Client.Email" class="form-control" readonly>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="Client_ClientTypeId">Tipo de cliente:</label>
-            <select class="form-control" asp-for="@Model.Client.ClientTypeId">
+            <select class="form-control" asp-for="@Model.Client.ClientTypeId" disabled>
                 @foreach (var ct in @Model.ClientTypes)
                 {
 
@@ -106,11 +85,11 @@
         </div>
         <div class="form-group col-md-4">
             <label for="Client_FixedCostPerHour">Tarifa por hora personalizada (USD):</label>
-            <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" />
+            <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" readonly />
         </div>
         <div class="form-group col-md-4">
             <label for="Client_BillingModeId">Facturar en:</label>
-            <select class="form-control" asp-for="@Model.Client.BillingModeId">
+            <select class="form-control" asp-for="@Model.Client.BillingModeId" disabled>
                 @foreach (var bm in @Model.BillingModes)
                 {
 
@@ -131,11 +110,11 @@
     <div class="form-row">
         <div class="form-group col-md-2">
             <label for="@Model.Client.IsHourBilled">Se factura en horas:</label>
-            <input type="checkbox" class="form-control" asp-for="@Model.Client.IsHourBilled" />
+            <input type="checkbox" class="form-control" asp-for="@Model.Client.IsHourBilled" disabled />
         </div>
         <div class="form-group offset-md-2 col-md-4">
             <label for="Client_DocumentDeliveryMethodId">Enviar documentos vía:</label>
-            <select class="form-control" asp-for="@Model.Client.DocumentDeliveryMethodId">
+            <select class="form-control" asp-for="@Model.Client.DocumentDeliveryMethodId" disabled>
                 @foreach (var dm in @Model.DocumentDeliveryMethods)
                 {
 
@@ -155,13 +134,13 @@
         <div class="form-group col-md-4">
             <label for="Client_IsInternational">Origen del cliente:</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="true" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="true" } disabled>
                 <label class="form-check-label" for="Client_IsInternational">
                     Internacional
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="false" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="false" } disabled>
                 <label class="form-check-label" for="Client_IsInternational">
                     Nacional
                 </label>
@@ -172,13 +151,13 @@
         <div class="form-group col-md-4">
             <label for="Client_PayTaxes">Impuestos:</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="true" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="true" } disabled>
                 <label class="form-check-label" for="Client_PayTaxes">
                     Sí
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="false" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="false" } disabled>
                 <label class="form-check-label" for="Client_PayTaxes">
                     No
                 </label>
@@ -187,24 +166,69 @@
         <div class="form-group col-md-4">
             <label for="Client_BillingInEnglish">Facturación en:</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="true" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="true" } disabled>
                 <label class="form-check-label" for="Client_IsInternational">
                     Inglés
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="false" }>
+                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="false" } disabled>
                 <label class="form-check-label" for="Client_IsInternational">
                     Español
                 </label>
             </div>
         </div>
     </div>
-    <div class="form-row">
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
-    </div>
     <br />
 </form>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre en español del retainer</th>
+                <th>Honorario acordado USD</th>
+                <th>Horas acordadas</th>
+                <th>Tarifa adicional por hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscription in Model.RetainerSubscriptions)
+            {
+                <tr>
+                    <td>@subscription.Retainer?.SpanishName</td>
+                    <td>@subscription.AgreedFee</td>
+                    <td>@subscription.AgreedHours</td>
+                    <td>@subscription.AdditionalFeePerHour</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 <br />
 
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Honorarios (USD)</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var package in Model.Packages)
+            {
+                <tr>
+                    <td>@package.Name</td>
+                    <td>@package.Description</td>
+                    <td>@package.Amount</td>
+                    <td>@(package.IsFinished ? "Finalizado" : "En curso")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
 
