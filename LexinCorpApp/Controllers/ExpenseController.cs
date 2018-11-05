@@ -106,8 +106,9 @@ namespace LexincorpApp.Controllers
         {
             var list = new List<ActivityExpense>();
             list = _activityRepo.Expenses.Include(a => a.Expense).Include(a => a.Activity).ThenInclude(b => b.Package)
+                .Include(a => a.Activity).ThenInclude(b => b.Service)
                 .Include(a => a.Activity).ThenInclude(b => b.BillableRetainer)
-                .Include(a => a.Activity).ThenInclude(b => b.Item)
+                .Include(a => a.Activity).ThenInclude(b => b.Client)
                 .Where(a => a.Activity.RealizationDate >= newExpenseReport.InitialDate && a.RealizationDate <= newExpenseReport.FinalDate
                     &&( newExpenseReport.UserId == null || a.Activity.CreatorId == newExpenseReport.UserId)
                     && (newExpenseReport.ActivityType == null || a.Activity.ActivityType == newExpenseReport.ActivityType)
@@ -119,8 +120,9 @@ namespace LexincorpApp.Controllers
                 expenseQuantity = g.Quantity,
                 expensePrice = g.UnitAmount,
                 expenseSubtotal = g.TotalAmount,
+                expenseClient = g.Activity?.Client?.Name ?? "",
                 expenseAssociatedTo = g.Activity.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : g.Activity.ActivityType == ActivityTypeEnum.Item ?
-                $"Ítem - {g.Activity?.Item?.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? 
+                $"Ítem - {g.Activity?.Service?.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Package ? 
                 $"Paquete - {g.Activity?.Package?.Name}" : g.Activity.ActivityType == ActivityTypeEnum.Retainer ? 
                 $"Retainer - {g.Activity?.BillableRetainer?.Name}" : ""
             }).ToList();

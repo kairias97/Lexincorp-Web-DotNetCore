@@ -12,7 +12,7 @@
   <xs:element name="ActivitiesDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ActivitiesDS" msprop:Generator_UserDSName="ActivitiesDS">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Activities" msprop:Generator_TableClassName="ActivitiesDataTable" msprop:Generator_TableVarName="tableActivities" msprop:Generator_RowChangedName="ActivitiesRowChanged" msprop:Generator_TablePropName="Activities" msprop:Generator_RowDeletingName="ActivitiesRowDeleting" msprop:Generator_RowChangingName="ActivitiesRowChanging" msprop:Generator_RowEvHandlerName="ActivitiesRowChangeEventHandler" msprop:Generator_RowDeletedName="ActivitiesRowDeleted" msprop:Generator_RowClassName="ActivitiesRow" msprop:Generator_UserTableName="Activities" msprop:Generator_RowEvArgName="ActivitiesRowChangeEvent">
+        <xs:element name="Activities" msprop:Generator_TableClassName="ActivitiesDataTable" msprop:Generator_TableVarName="tableActivities" msprop:Generator_TablePropName="Activities" msprop:Generator_RowDeletingName="ActivitiesRowDeleting" msprop:Generator_RowChangingName="ActivitiesRowChanging" msprop:Generator_RowEvHandlerName="ActivitiesRowChangeEventHandler" msprop:Generator_RowDeletedName="ActivitiesRowDeleted" msprop:Generator_UserTableName="Activities" msprop:Generator_RowChangedName="ActivitiesRowChanged" msprop:Generator_RowEvArgName="ActivitiesRowChangeEvent" msprop:Generator_RowClassName="ActivitiesRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="activityService" msprop:Generator_ColumnVarNameInTable="columnactivityService" msprop:Generator_ColumnPropNameInRow="activityService" msprop:Generator_ColumnPropNameInTable="activityServiceColumn" msprop:Generator_UserColumnName="activityService" type="xs:string" minOccurs="0" />
@@ -21,6 +21,7 @@
               <xs:element name="activityHoursWorked" msprop:Generator_ColumnVarNameInTable="columnactivityHoursWorked" msprop:Generator_ColumnPropNameInRow="activityHoursWorked" msprop:Generator_ColumnPropNameInTable="activityHoursWorkedColumn" msprop:Generator_UserColumnName="activityHoursWorked" type="xs:decimal" minOccurs="0" />
               <xs:element name="activityClient" msprop:Generator_ColumnVarNameInTable="columnactivityClient" msprop:Generator_ColumnPropNameInRow="activityClient" msprop:Generator_ColumnPropNameInTable="activityClientColumn" msprop:Generator_UserColumnName="activityClient" type="xs:string" minOccurs="0" />
               <xs:element name="activityDate" msprop:Generator_ColumnVarNameInTable="columnactivityDate" msprop:Generator_ColumnPropNameInRow="activityDate" msprop:Generator_ColumnPropNameInTable="activityDateColumn" msprop:Generator_UserColumnName="activityDate" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="activityTotalFee" msprop:Generator_ColumnVarNameInTable="columnactivityTotalFee" msprop:Generator_ColumnPropNameInRow="activityTotalFee" msprop:Generator_ColumnPropNameInTable="activityTotalFeeColumn" msprop:Generator_UserColumnName="activityTotalFee" type="xs:decimal" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

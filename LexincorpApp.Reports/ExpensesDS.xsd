@@ -12,7 +12,7 @@
   <xs:element name="ExpensesDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ExpensesDS" msprop:Generator_UserDSName="ExpensesDS">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Expenses" msprop:Generator_TableClassName="ExpensesDataTable" msprop:Generator_TableVarName="tableExpenses" msprop:Generator_TablePropName="Expenses" msprop:Generator_RowDeletingName="ExpensesRowDeleting" msprop:Generator_RowChangingName="ExpensesRowChanging" msprop:Generator_RowEvHandlerName="ExpensesRowChangeEventHandler" msprop:Generator_RowDeletedName="ExpensesRowDeleted" msprop:Generator_UserTableName="Expenses" msprop:Generator_RowChangedName="ExpensesRowChanged" msprop:Generator_RowEvArgName="ExpensesRowChangeEvent" msprop:Generator_RowClassName="ExpensesRow">
+        <xs:element name="Expenses" msprop:Generator_TableClassName="ExpensesDataTable" msprop:Generator_TableVarName="tableExpenses" msprop:Generator_RowChangedName="ExpensesRowChanged" msprop:Generator_TablePropName="Expenses" msprop:Generator_RowDeletingName="ExpensesRowDeleting" msprop:Generator_RowChangingName="ExpensesRowChanging" msprop:Generator_RowEvHandlerName="ExpensesRowChangeEventHandler" msprop:Generator_RowDeletedName="ExpensesRowDeleted" msprop:Generator_RowClassName="ExpensesRow" msprop:Generator_UserTableName="Expenses" msprop:Generator_RowEvArgName="ExpensesRowChangeEvent">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="expenseName" msprop:Generator_ColumnVarNameInTable="columnexpenseName" msprop:Generator_ColumnPropNameInRow="expenseName" msprop:Generator_ColumnPropNameInTable="expenseNameColumn" msprop:Generator_UserColumnName="expenseName" type="xs:string" minOccurs="0" />
@@ -21,6 +21,7 @@
               <xs:element name="expensePrice" msprop:Generator_ColumnVarNameInTable="columnexpensePrice" msprop:Generator_ColumnPropNameInRow="expensePrice" msprop:Generator_ColumnPropNameInTable="expensePriceColumn" msprop:Generator_UserColumnName="expensePrice" type="xs:decimal" minOccurs="0" />
               <xs:element name="expenseSubtotal" msprop:Generator_ColumnVarNameInTable="columnexpenseSubtotal" msprop:Generator_ColumnPropNameInRow="expenseSubtotal" msprop:Generator_ColumnPropNameInTable="expenseSubtotalColumn" msprop:Generator_UserColumnName="expenseSubtotal" type="xs:decimal" minOccurs="0" />
               <xs:element name="expenseAssociatedTo" msprop:Generator_ColumnVarNameInTable="columnexpenseAssociatedTo" msprop:Generator_ColumnPropNameInRow="expenseAssociatedTo" msprop:Generator_ColumnPropNameInTable="expenseAssociatedToColumn" msprop:Generator_UserColumnName="expenseAssociatedTo" type="xs:string" minOccurs="0" />
+              <xs:element name="expenseClient" msprop:Generator_ColumnVarNameInTable="columnexpenseClient" msprop:Generator_ColumnPropNameInRow="expenseClient" msprop:Generator_ColumnPropNameInTable="expenseClientColumn" msprop:Generator_UserColumnName="expenseClient" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

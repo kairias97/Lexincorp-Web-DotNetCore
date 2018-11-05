@@ -41,10 +41,14 @@
           <DataField>expenseAssociatedTo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="expenseClient">
+          <DataField>expenseClient</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ExpensesDS</rd:DataSetName>
-        <rd:SchemaPath>D:\Github\DotNet\DotNET Core\LexinCorpApp\LexincorpApp.Reports\ExpensesDS.xsd</rd:SchemaPath>
+        <rd:SchemaPath>D:\Github\DotNet\DotNET Core\Lexincorp-Web-DotNetCore\LexincorpApp.Reports\ExpensesDS.xsd</rd:SchemaPath>
         <rd:TableName>Expenses</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -60,27 +64,30 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.44572in</Width>
+                  <Width>1.23546in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.07292in</Width>
+                  <Width>1.91136in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.67173in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.5104in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.72917in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>2.97752in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.25in</Height>
+                  <Height>0.41667in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -91,7 +98,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Nombre del gasto</Value>
+                                  <Value>Fecha</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -117,6 +124,70 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cliente</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Asociado a </Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox5">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -124,7 +195,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Fecha</Value>
+                                  <Value>Nombre del gasto</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -190,7 +261,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Monto (USD)</Value>
+                                  <Value>Costo Unitario (USD)</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -223,7 +294,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Subtotal (USD)</Value>
+                                  <Value>Total (USD)</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -233,39 +304,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox11</rd:DefaultName>
-                          <RepeatWith>Tablix1</RepeatWith>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox13">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Asociado a </Value>
-                                  <Style>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox13</rd:DefaultName>
                           <RepeatWith>Tablix1</RepeatWith>
                           <Style>
                             <Border>
@@ -294,7 +332,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!expenseName.Value</Value>
+                                  <Value>=CDate(Fields!expenseDate.Value).ToString("dd/MM/yyyy")</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -317,21 +355,81 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="expenseDate">
+                        <Textbox Name="expenseClient">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=CDate(Fields!expenseDate.Value).ToString("dd/MM/yyyy")</Value>
+                                  <Value>=Fields!expenseClient.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>expenseDate</rd:DefaultName>
+                          <rd:DefaultName>expenseClient</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="expenseAssociatedTo1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!expenseAssociatedTo.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>expenseAssociatedTo1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="expenseName1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!expenseName.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>expenseName1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -441,42 +539,13 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="expenseAssociatedTo">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!expenseAssociatedTo.Value</Value>
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>expenseAssociatedTo</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -499,8 +568,8 @@
             <RepeatColumnHeaders>true</RepeatColumnHeaders>
             <RepeatRowHeaders>true</RepeatRowHeaders>
             <DataSetName>ExpensesDataSet</DataSetName>
-            <Height>0.5in</Height>
-            <Width>8.49616in</Width>
+            <Height>0.66667in</Height>
+            <Width>10.05812in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -526,8 +595,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox39</rd:DefaultName>
-            <Top>1.27cm</Top>
-            <Left>8.93735cm</Left>
+            <Top>1.71979cm</Top>
+            <Left>20.50762cm</Left>
             <Height>0.6cm</Height>
             <Width>2.54cm</Width>
             <ZIndex>1</ZIndex>
@@ -562,8 +631,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox40</rd:DefaultName>
-            <Top>1.27cm</Top>
-            <Left>11.47735cm</Left>
+            <Top>1.71979cm</Top>
+            <Left>23.04762cm</Left>
             <Height>0.6cm</Height>
             <Width>2.5cm</Width>
             <ZIndex>2</ZIndex>
@@ -579,10 +648,10 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>1.87cm</Height>
+        <Height>2.39917cm</Height>
         <Style />
       </Body>
-      <Width>21.74024cm</Width>
+      <Width>25.99816cm</Width>
       <Page>
         <PageHeader>
           <Height>2.42086cm</Height>
@@ -778,8 +847,8 @@ Parameters!ActivityType.Value = 4, "Ítem")</Value>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Top>0.4494cm</Top>
-              <Left>17.11143cm</Left>
+              <Top>0.17639cm</Top>
+              <Left>20.9588cm</Left>
               <Height>0.6cm</Height>
               <Width>4.58882cm</Width>
               <Style>
@@ -801,8 +870,8 @@ Parameters!ActivityType.Value = 4, "Ítem")</Value>
         </PageFooter>
         <PageHeight>21.59cm</PageHeight>
         <PageWidth>27.94cm</PageWidth>
-        <LeftMargin>2.54cm</LeftMargin>
-        <RightMargin>2.54cm</RightMargin>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>0cm</RightMargin>
         <TopMargin>2.54cm</TopMargin>
         <BottomMargin>2.54cm</BottomMargin>
         <ColumnSpacing>1.27cm</ColumnSpacing>

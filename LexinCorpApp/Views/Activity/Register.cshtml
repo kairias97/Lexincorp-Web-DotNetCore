@@ -100,7 +100,14 @@
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 
                 $("#seeClient").attr("data-content", ui.item.clientName + " (" + (ui.item.isEnglish ? "Inglés" : "Español") + ")")
-                
+
+                //For setup of service if selected earlier than the client
+                var isEnglish = ui.item.isEnglish;
+                var attrSelector = isEnglish ? "data-en-description" : "data-es-description";
+                var description = $("#services").find(":selected").attr(attrSelector);
+                $("#description").val(description);
+
+
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
@@ -127,7 +134,6 @@
                         alert(err.Message);
                     }
                 });
-                console.log($("#activityDate").val());
                 $.ajax({
                 url: "@Url.Action("GetByClientAndDate", "RetainerSubscription")",
                     type: "GET",
@@ -245,9 +251,10 @@
                     success: function (data) {
                         $("#services").empty().append("<option value=''>Seleccionar servicio</option>").val('null');
                         $.each(data, function (i, item) {
-                                var isEnglish = $("#isEnglish").val();
+                            var isEnglish = $("#isEnglish").prop('checked');
+                            
                                 var description = isEnglish ? item.englishDescription : item.spanishDescription;
-                                var options = "<option value='" + item.id + "' data-description='" + description + "'>" + item.name + "</option>";
+                                var options = "<option value='" + item.id + "' data-en-description='" + item.englishDescription + "' data-es-description='"+item.spanishDescription+"'>" + item.name + "</option>";
                             $("#services").append(options);
                             });
                         $("#services").prop("disabled", false);
@@ -263,7 +270,10 @@
                 $("#description").prop("disabled", true);
                 }
             else {
-                    var description = $("#services").find(":selected").attr("data-description");
+                var isEnglish = $("#isEnglish").prop('checked');
+                var attrSelector = isEnglish ? "data-en-description" : "data-es-description";
+                var description = $("#services").find(":selected").attr(attrSelector);
+
                 $("#description").val(description);
                 $("#description").prop("disabled", false);
                 //dismiss the modal
@@ -577,7 +587,7 @@
 <div class="container-fluid" style="width:100%">
     <form>
         <input type="number" hidden asp-for="@Model.ClientId" id="ClientId" />
-        <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
+        <input type="checkbox"  asp-for="@Model.IsEnglish" id="isEnglish" />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
         <input type="checkbox" hidden id="IsAdmin" />
         <div id="placeholderSuccess" tabindex="">

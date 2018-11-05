@@ -291,6 +291,8 @@ namespace LexincorpApp.Reports {
             
             private global::System.Data.DataColumn columnactivityDate;
             
+            private global::System.Data.DataColumn columnactivityTotalFee;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ActivitiesDataTable() {
@@ -374,6 +376,14 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn activityTotalFeeColumn {
+                get {
+                    return this.columnactivityTotalFee;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -409,7 +419,7 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ActivitiesRow AddActivitiesRow(string activityService, string activityCategory, string activityAssociatedTo, decimal activityHoursWorked, string activityClient, System.DateTime activityDate) {
+            public ActivitiesRow AddActivitiesRow(string activityService, string activityCategory, string activityAssociatedTo, decimal activityHoursWorked, string activityClient, System.DateTime activityDate, decimal activityTotalFee) {
                 ActivitiesRow rowActivitiesRow = ((ActivitiesRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         activityService,
@@ -417,7 +427,8 @@ namespace LexincorpApp.Reports {
                         activityAssociatedTo,
                         activityHoursWorked,
                         activityClient,
-                        activityDate};
+                        activityDate,
+                        activityTotalFee};
                 rowActivitiesRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowActivitiesRow);
                 return rowActivitiesRow;
@@ -446,6 +457,7 @@ namespace LexincorpApp.Reports {
                 this.columnactivityHoursWorked = base.Columns["activityHoursWorked"];
                 this.columnactivityClient = base.Columns["activityClient"];
                 this.columnactivityDate = base.Columns["activityDate"];
+                this.columnactivityTotalFee = base.Columns["activityTotalFee"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -463,6 +475,8 @@ namespace LexincorpApp.Reports {
                 base.Columns.Add(this.columnactivityClient);
                 this.columnactivityDate = new global::System.Data.DataColumn("activityDate", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnactivityDate);
+                this.columnactivityTotalFee = new global::System.Data.DataColumn("activityTotalFee", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnactivityTotalFee);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -701,6 +715,22 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public decimal activityTotalFee {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableActivities.activityTotalFeeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'activityTotalFee\' in table \'Activities\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableActivities.activityTotalFeeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsactivityServiceNull() {
                 return this.IsNull(this.tableActivities.activityServiceColumn);
             }
@@ -769,6 +799,18 @@ namespace LexincorpApp.Reports {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetactivityDateNull() {
                 this[this.tableActivities.activityDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsactivityTotalFeeNull() {
+                return this.IsNull(this.tableActivities.activityTotalFeeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetactivityTotalFeeNull() {
+                this[this.tableActivities.activityTotalFeeColumn] = global::System.Convert.DBNull;
             }
         }
         

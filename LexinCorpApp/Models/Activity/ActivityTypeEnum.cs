@@ -15,6 +15,8 @@ namespace LexincorpApp.Models
         [Display(Name = "Retainer")]
         Retainer = 3,
         [Display(Name = "Item")]
-        Item = 4
+        Item = 4,
+        [Display(Name = "No cobrable")]
+        NoBillable = 5
     }
 }
