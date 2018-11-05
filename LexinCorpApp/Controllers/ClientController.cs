@@ -17,18 +17,24 @@ namespace LexincorpApp.Controllers
         private readonly IClientTypeRepository _clientTypesRepo;
         private readonly IBillingModeRepository _billingModesRepo;
         private readonly IDocumentDeliveryMethodRepository _documentDeliveryMethodsRepo;
+        private readonly IRetainerSubscriptionRepository _retainerSubscriptionRepo;
+        private readonly IPackageRepository _packageRepo;
         public int PageSize = 5;
 
         public ClientController(
             IClientRepository _clientsRepo,
             IClientTypeRepository _clientTypesRepo,
             IBillingModeRepository _billingModesRepo,
-            IDocumentDeliveryMethodRepository _documentDeliveryMethodsRepo)
+            IDocumentDeliveryMethodRepository _documentDeliveryMethodsRepo,
+            IRetainerSubscriptionRepository retainerSubscriptionRepository,
+            IPackageRepository packageRepository)
         {
             this._clientsRepo = _clientsRepo;
             this._clientTypesRepo = _clientTypesRepo;
             this._billingModesRepo = _billingModesRepo;
             this._documentDeliveryMethodsRepo = _documentDeliveryMethodsRepo;
+            this._retainerSubscriptionRepo = retainerSubscriptionRepository;
+            this._packageRepo = packageRepository;
         }
         [Authorize]
         public IActionResult Index()
@@ -153,6 +159,22 @@ namespace LexincorpApp.Controllers
                 .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish,
                 FeePerHour = c.FixedCostPerHour, Packages = c.Packages.Where(p => p.IsFinished == false)});
             return Json(list);
+        }
+        [Authorize]
+        public IActionResult View(int id)
+        {
+            ClientDetailsViewModel viewModel = new ClientDetailsViewModel
+            {
+                Client = _clientsRepo.Clients
+                    .Where(c => c.Id == id)
+                    .First(),
+                BillingModes = _billingModesRepo.BillingModes.ToList(),
+                ClientTypes = _clientTypesRepo.ClientTypes.ToList(),
+                DocumentDeliveryMethods = _documentDeliveryMethodsRepo.DocumentDeliveryMethods.ToList()
+            };
+            viewModel.RetainerSubscriptions = _retainerSubscriptionRepo.Subscriptions.Where(s => s.ClientId == id).OrderBy(c => c.Id);
+            viewModel.Packages = _packageRepo.Packages.Where(p => p.ClientId == id && p.IsFinished == false).OrderBy(c => c.Id);
+            return View(viewModel);
         }
 
     }
