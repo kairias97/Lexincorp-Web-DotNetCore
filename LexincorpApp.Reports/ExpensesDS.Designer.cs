@@ -291,6 +291,8 @@ namespace LexincorpApp.Reports {
             
             private global::System.Data.DataColumn columnexpenseAssociatedTo;
             
+            private global::System.Data.DataColumn columnexpenseClient;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ExpensesDataTable() {
@@ -374,6 +376,14 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn expenseClientColumn {
+                get {
+                    return this.columnexpenseClient;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -409,7 +419,7 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ExpensesRow AddExpensesRow(string expenseName, System.DateTime expenseDate, int expenseQuantity, decimal expensePrice, decimal expenseSubtotal, string expenseAssociatedTo) {
+            public ExpensesRow AddExpensesRow(string expenseName, System.DateTime expenseDate, int expenseQuantity, decimal expensePrice, decimal expenseSubtotal, string expenseAssociatedTo, string expenseClient) {
                 ExpensesRow rowExpensesRow = ((ExpensesRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         expenseName,
@@ -417,7 +427,8 @@ namespace LexincorpApp.Reports {
                         expenseQuantity,
                         expensePrice,
                         expenseSubtotal,
-                        expenseAssociatedTo};
+                        expenseAssociatedTo,
+                        expenseClient};
                 rowExpensesRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExpensesRow);
                 return rowExpensesRow;
@@ -446,6 +457,7 @@ namespace LexincorpApp.Reports {
                 this.columnexpensePrice = base.Columns["expensePrice"];
                 this.columnexpenseSubtotal = base.Columns["expenseSubtotal"];
                 this.columnexpenseAssociatedTo = base.Columns["expenseAssociatedTo"];
+                this.columnexpenseClient = base.Columns["expenseClient"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -463,6 +475,8 @@ namespace LexincorpApp.Reports {
                 base.Columns.Add(this.columnexpenseSubtotal);
                 this.columnexpenseAssociatedTo = new global::System.Data.DataColumn("expenseAssociatedTo", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnexpenseAssociatedTo);
+                this.columnexpenseClient = new global::System.Data.DataColumn("expenseClient", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnexpenseClient);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -701,6 +715,22 @@ namespace LexincorpApp.Reports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string expenseClient {
+                get {
+                    try {
+                        return ((string)(this[this.tableExpenses.expenseClientColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'expenseClient\' in table \'Expenses\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExpenses.expenseClientColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsexpenseNameNull() {
                 return this.IsNull(this.tableExpenses.expenseNameColumn);
             }
@@ -769,6 +799,18 @@ namespace LexincorpApp.Reports {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetexpenseAssociatedToNull() {
                 this[this.tableExpenses.expenseAssociatedToColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsexpenseClientNull() {
+                return this.IsNull(this.tableExpenses.expenseClientColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetexpenseClientNull() {
+                this[this.tableExpenses.expenseClientColumn] = global::System.Convert.DBNull;
             }
         }
         

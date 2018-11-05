@@ -67,7 +67,8 @@ namespace LexincorpApp.Controllers
                 Services = _serviceRepo.Services,
                 Attorneys = _attorneysRepo.Attorneys
                 .Where(a => a.User.Active)
-                .Select(a => new AttorneySelection{
+                .Select(a => new AttorneySelection
+                {
                     UserId = a.UserId,
                     AttorneyName = a.Name
                 }).OrderBy(a => a.AttorneyName),
@@ -83,19 +84,20 @@ namespace LexincorpApp.Controllers
             var user = HttpContext.User;
             int id;
             bool wasClosed;
-            if(User.IsInRole("Administrador"))
+            if (User.IsInRole("Administrador"))
             {
                 id = body.UserId ?? Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            } else
+            }
+            else
             {
                 id = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             }
-            if(packageClosed && body.PackageId != null)
+            if (packageClosed && body.PackageId != null)
             {
                 var u = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
                 _notificationRepo.RequestPackageClosure(body.PackageId ?? 0, u, out wasClosed);
             }
-            
+
             _activityRepo.Save(body, id);
             return Json(new { message = "Actividad ingresada exitosamente", success = true });
         }
@@ -133,13 +135,63 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Report(NewActivityReport newActivityReport)
         {
+            Func<Activity, decimal, decimal> GetFeeByActivity = (activity, ratePerHour) =>
+            {
+                switch (activity.ActivityType)
+                {
+                    case ActivityTypeEnum.Hourly:
+                        return activity.Subtotal;
+                    case ActivityTypeEnum.Item:
+                        return activity.Subtotal;
+                    case ActivityTypeEnum.NoBillable:
+                        return (decimal)(0.00);
+                    case ActivityTypeEnum.Package:
+                        if (activity.Package.IsFinished)
+                        {
+                            return ratePerHour * activity.HoursWorked;
+                        }
+                        else
+                        {
+                            return (decimal)(0.00);
+                        }
+                    case ActivityTypeEnum.Retainer:
+                        //Under working the hours
+                        if (activity.BillableQuantity == 0)
+                        {
+                            return ratePerHour * activity.HoursWorked;
+                        }
+                        //Is normal billed as excedent of the agreed hours
+                        else if (activity.BillableQuantity == activity.HoursWorked)
+                        {
+                            return activity.Subtotal;
+                        }
+                        else
+                        {
+                            return activity.Subtotal + ((activity.HoursWorked - activity.BillableQuantity) * activity.BillableRate);
+                        }
+                    default:
+                        return (decimal)(0.00);
+
+                }
+            };
             var list = new List<Activity>();
             list = _activityRepo.Activities.Include(a => a.Service).ThenInclude(s => s.Category)
                 .Include(a => a.Client)
+                .Include(a => a.Package)
+                .Include(a => a.BillableRetainer)
                 .Where(a => a.RealizationDate >= newActivityReport.InitialDate && a.RealizationDate <= newActivityReport.FinalDate
                     && (newActivityReport.UserId == null || a.CreatorId == newActivityReport.UserId)
                     && (newActivityReport.ActivityType == null || a.ActivityType == newActivityReport.ActivityType)
                 ).ToList();
+
+            //To get all the packages amount involved
+            var involvedPackagesRates = list.Where(a => a.ActivityType == ActivityTypeEnum.Package
+            && a.Package.IsFinished).Select(a => a.Package)
+                .Distinct()
+                .Select(package =>
+                    new { package.Id, rate = (package.Amount / (_activityRepo.Activities.Where(act => act.PackageId == package.Id).Sum(act => act.HoursWorked))) })
+                    .ToList();
+
             var activities = list.Select(a => new
             {
                 activityClient = a.Client.Name,
@@ -149,9 +201,14 @@ namespace LexincorpApp.Controllers
                 activityAssociatedTo = a.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : a.ActivityType == ActivityTypeEnum.Item ?
                 $"Ítem - {a?.Item?.Name}" : a.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {a.Package?.Name}" : a.ActivityType == ActivityTypeEnum.Retainer ?
                 $"Retainer - {a?.BillableRetainer?.Name}" : "",
-                activityDate = a.RealizationDate
+                activityDate = a.RealizationDate,
+                activityTotalFee = GetFeeByActivity(a, a.ActivityType == ActivityTypeEnum.Package ?
+                    (involvedPackagesRates.Where(ip => ip.Id == a.PackageId).FirstOrDefault()?.rate ?? (decimal)0.00)
+                    : a.ActivityType == ActivityTypeEnum.Retainer ?
+                    a.BillableRetainer.AgreedFee / a.BillableRetainer.AgreedHours
+                    : (decimal)0.00)
             }).ToList();
-            
+
             string basePath = _hostingEnvironment.ContentRootPath;
             string fullPath = basePath + @"/Reports/Activities.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
@@ -180,16 +237,22 @@ namespace LexincorpApp.Controllers
             ReportParameter activityTypeParam = new ReportParameter();
             activityTypeParam.Name = "ActivityType";
             activityTypeParam.Values = new List<string>() { newActivityReport.ActivityType == null ? "0" : ((int)newActivityReport.ActivityType).ToString() };
-            //TotalExpense
-            ReportParameter totalExpenseParam = new ReportParameter();
-            totalExpenseParam.Name = "TotalHours";
-            totalExpenseParam.Values = new List<string>() { activities.Sum(a => a.activityHoursWorked).ToString() };
+            //TotalHours
+            ReportParameter totalHoursParam = new ReportParameter();
+            totalHoursParam.Name = "TotalHours";
+            totalHoursParam.Values = new List<string>() { activities.Sum(a => a.activityHoursWorked).ToString() };
+            //Total Amount
+            ReportParameter totalAmountParam = new ReportParameter();
+            totalAmountParam.Name = "TotalAmount";
+            totalAmountParam.Values = new List<string>() { activities.Sum(a => a.activityTotalFee).ToString() };
+
 
             parameters.Add(startDateParam);
             parameters.Add(endDateParam);
             parameters.Add(attorneyParam);
             parameters.Add(activityTypeParam);
-            parameters.Add(totalExpenseParam);
+            parameters.Add(totalHoursParam);
+            parameters.Add(totalAmountParam);
             writer.SetParameters(parameters);
             MemoryStream memoryStream = new MemoryStream();
             writer.Save(memoryStream, WriterFormat.PDF);
