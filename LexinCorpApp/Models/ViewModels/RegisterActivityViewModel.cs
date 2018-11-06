@@ -9,7 +9,6 @@ namespace LexincorpApp.Models.ViewModels
     {
         public IEnumerable<Client> Clients { get; set; }
         public IEnumerable<AttorneySelection> Attorneys { get; set; }
-        public IEnumerable<Item> Items { get; set; }
         public IEnumerable<Expense> Expenses { get; set; }
         public IEnumerable<Category> Categories { get; set; }
         public IEnumerable<Service> Services { get; set; }
@@ -17,8 +16,6 @@ namespace LexincorpApp.Models.ViewModels
         public bool IsClientSelected { get; set; }
         public string ClientName { get; set; }
         public decimal? FeePerHour { get; set; }
-        public IEnumerable<Package> Packages { get; set; }
-        public IEnumerable<Retainer> Retainers { get; set; }
         public int ClientId { get; set; }
     }
 }

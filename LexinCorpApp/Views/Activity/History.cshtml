@@ -2,6 +2,14 @@
 @{
     ViewData["Title"] = "Historial de actividades";
 }
+<script type="text/javascript">
+    $(function () {
+        $("#dateStart").datepicker();
+        $("#dateStart").datepicker("option", "dateFormat", "dd/mm/yy");
+        $("#dateEnd").datepicker();
+        $("#dateEnd").datepicker("option", "dateFormat", "dd/mm/yy");
+    });
+</script>
 <h2>Historial de actividades</h2>
 <form asp-controller="Activity" asp-action="History" method="get">
     <label for="filter">Filtro de búsqueda:</label>
@@ -9,6 +17,14 @@
         <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
+        </div>
+    </div>
+    <label>Filtro por rango de fechas:</label>
+    <div class="input-group mb-3">
+        <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon3" />
+        <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon3" />
+        <div class="input-group-append">
+            <button class="btn btn-outline-info" type="submit" id="button-addon3">Buscar</button>
         </div>
     </div>
     <br />
@@ -49,7 +65,7 @@
                         {
                             <td>Hora</td>
                         }
-                        else if(activity.ActivityType == ActivityTypeEnum.NoBillable)
+                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
                         {
                             <td>No cobrable</td>
                         }
@@ -63,10 +79,10 @@
         </table>
     </div>
 
-    <div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
+    <div page-model="@Model.PagingInfo" page-action="History" page-classes-enabled="true"
          page-class="btn" page-class-normal="btn-outline-info"
          page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
-         page-number-url-key="pageNumber"
+         page-number-url-key="pageNumber" page-url-dateStart="@Model.CurrentStartDate" page-url-dateEnd="@Model.CurrentEndDate"
          class="btn-group float-right m-1">
 
     </div>
