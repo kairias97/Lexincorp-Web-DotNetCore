@@ -20,6 +20,7 @@
         //Para setear idioma inicial
         //$("#Package_Description").prop("lang", $("#IsEnglish").value ? "en" : "es");
         $("div.container-fluid").css("background-color", "#D3D3D3");
+        $("div.container-fluid").css("min-height", "94vh");
         $("#activityDate").datepicker();
         $("#activityDate").datepicker("option", "dateFormat", "dd/mm/yy");
         $("#activityDate").datepicker("setDate", new Date());
@@ -76,7 +77,8 @@
                                 clientId: item.id,
                                 isEnglish: item.billingInEnglish,
                                 feePerHour: item.feePerHour,
-                                packages: item.packages
+                                packages: item.packages,
+                                isHourBilled: item.isHourBilled,
                                     }
                                 }))
                     },
@@ -90,23 +92,36 @@
             minLength: 1,
             select: function (event, ui) {
                 //$("#Package_ClientId").val(ui.item.clientId);
+                $("#activityType").empty().append("<option value='4'>Item</option>");
+                $("#activityType").append("<option value='5'>No cobrable</option>");
                 $("#ClientId").val(ui.item.clientId);
+                setTableData(ui.item.clientId);
                 $("#ClientName").val(ui.item.clientName);
                 $("#IsEnglish").prop('checked', ui.item.isEnglish);
 
                 $("#IsClientSelected").prop('checked', true);
                 $("#FeePerHour").val(ui.item.feePerHour);
                 $("#FeePerHour").prop("disabled", false);
+                console.log(ui.item.isHourBilled);
+                if (ui.item.isHourBilled == "Permite") {
+                    console.log("Valida true")
+                    $("#isHourlyBilled").prop("checked", true);
+                    $("#activityType").append("<option value='1'>Hora</option>")
+                }
+                else {
+                    $("#isHourlyBilled").prop("checked", false);
+                }
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 
+                
                 $("#seeClient").attr("data-content", ui.item.clientName + " (" + (ui.item.isEnglish ? "Inglés" : "Español") + ")")
+
 
                 //For setup of service if selected earlier than the client
                 var isEnglish = ui.item.isEnglish;
                 var attrSelector = isEnglish ? "data-en-description" : "data-es-description";
                 var description = $("#services").find(":selected").attr(attrSelector);
                 $("#description").val(description);
-
 
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
@@ -124,6 +139,7 @@
                         });
                         if ($("#Packages").children().length > 1) {
                             $("#Packages").prop("disabled", false);
+                            $("#activityType").append("<option value='2'>Paquete</option>")
                         } else {
                             $("#Packages").prop("disabled", true);
                         }
@@ -151,6 +167,7 @@
                         });
                         if ($("#retainers").children().length > 1) {
                             $("#retainers").prop("disabled", false);
+                            $("#activityType").append("<option value='3'>Retainer</option>")
                         } else {
                             $("#retainers").prop("disabled", true);
                         }
@@ -161,20 +178,30 @@
                     }
                 });
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
-                $("#Packages").prop("disabled", false);
-                $("#retainers").prop("disabled", false);
-                $("#items").prop("disabled", false);
+                //$("#Packages").prop("disabled", false);
+                //$("#retainers").prop("disabled", false);
+                $("#activityType").prop("disabled", false);
                 $("#description").prop("lang", ui.item.isEnglish ? "en" : "es");
+                $("#divItemsPrice").prop("hidden", false);
+                $("#labelItemsPrice").prop("hidden", false);
+                $("#itemsPrice").prop("hidden", false);
+                $("#divItemsQuantity").prop("hidden", false);
+                $("#labelItemsQuantity").prop("hidden", false);
+                $("#itemsQuantity").prop("hidden", false);
+                $("#itemsPrice").prop("disabled", false);
+                $("#itemsQuantity").prop("disabled", false);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
                 //$("#Package_Description").prop("lang", ui.item.isEnglish ? "en" : "es");
 
 
             }
 
             });
-        $("#Packages").change(function () {
+        /*$("#Packages").change(function () {
             if ($("#Packages").val() === "" || $("#Packages").val() === undefined) {
                     $("#retainers").prop("disabled", false);
-                    $("#items").prop("disabled", false);
+                    $("#activityType").prop("disabled", false);
                     $("#packageClose").prop("checked", false);
                     $("#packageClose").prop("disabled", true);
                     activateSelect2ById('#items')
@@ -186,7 +213,7 @@
                 $("#itemsPrice").val("");
                 $("#itemsQuantity").val("");
                     $("#retainers").prop("disabled", true);
-                    $("#items").prop("disabled", true);
+                    $("#activityType").prop("disabled", true);
                     $("#packageClose").prop("disabled", false);
                 disableSelect2ById('#items')
 
@@ -196,7 +223,7 @@
         $("#retainers").change(function () {
             if ($("#retainers").val() === "" || $("#retainers").val() === undefined) {
                 $("#Packages").prop("disabled", false);
-                $("#items").prop("disabled", false);
+                $("#activityType").prop("disabled", false);
 
                 $("#FeePerHour").prop("disabled", false)
                     activateSelect2ById('#items')
@@ -208,31 +235,163 @@
                 $("#itemsQuantity").val("");
                 $("#FeePerHour").prop("disabled", true)
                 $("#Packages").prop("disabled", true);
-                    $("#items").prop("disabled", true);
+                $("#activityType").prop("disabled", true);
                     disableSelect2ById('#items')
                 }
-            });
-        $("#items").change(function () {
-            if ($("#items").val() === "" || $("#items").val() === undefined) {
-                $("#Packages").prop("disabled", false);
-                $("#retainers").prop("disabled", false);
+            });*/
+        $("#activityType").change(function () {
+            console.log("Entra al metodo")
+            if ($("#activityType").val() == 1 && $("#isHourlyBilled").is(":checked")) {
+                $("#divFeePerHour").prop("hidden", false);
+                $("#labelFeePerHour").prop("hidden", false);
+                $("#FeePerHour").prop("disabled", false);
+                $("#FeePerHour").prop("hidden", false);
+                $("#divPackageClose").prop("hidden", true);
+                $("#labelPackageClose").prop("hidden", true);
+                $("#packageClose").prop("disabled", true);
+                $("#packageClose").prop("hidden", true);
+                $("#divPackage").prop("hidden", true);
+                $("#labelPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").prop("hidden", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#labelRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").prop("hidden", true);
+                $("#retainers").val("");
+                $("#divItemsPrice").prop("hidden", true);
+                $("#labelItemsPrice").prop("hidden", true);
+                $("#itemsPrice").prop("hidden", true);
+                $("#divItemsQuantity").prop("hidden", true);
+                $("#labelItemsQuantity").prop("hidden", true);
+                $("#itemsQuantity").prop("hidden", true);
                 $("#itemsPrice").prop("disabled", true);
                 $("#itemsQuantity").prop("disabled", true);
                 $("#itemsPrice").val("");
                 $("#itemsQuantity").val("");
-                $("#FeePerHour").prop("disabled", false)
-                }
-            else {
-
-                $("#FeePerHour").prop("disabled", true)
-                $("#Packages").prop("disabled", true);
+            }
+            else if ($("#activityType").val() == 2) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#labelFeePerHour").prop("hidden", true);
+                $("#FeePerHour").prop("disabled", true);
+                $("#FeePerHour").prop("hidden", true);
+                $("#divPackageClose").prop("hidden", false);
+                $("#labelPackageClose").prop("hidden", false);
+                $("#packageClose").prop("disabled", false);
+                $("#packageClose").prop("hidden", false);
+                $("#divPackage").prop("hidden", false);
+                $("#labelPackage").prop("hidden", false);
+                $("#Packages").prop("disabled", false);
+                $("#Packages").prop("hidden", false);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#labelRetainers").prop("hidden", true);
                 $("#retainers").prop("disabled", true);
+                $("#retainers").prop("hidden", true);
+                $("#retainers").val("");
+                $("#divItemsPrice").prop("hidden", true);
+                $("#labelItemsPrice").prop("hidden", true);
+                $("#itemsPrice").prop("hidden", true);
+                $("#divItemsQuantity").prop("hidden", true);
+                $("#labelItemsQuantity").prop("hidden", true);
+                $("#itemsQuantity").prop("hidden", true);
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+            }
+            else if ($("#activityType").val() == 3) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#labelFeePerHour").prop("hidden", true);
+                $("#FeePerHour").prop("disabled", true);
+                $("#FeePerHour").prop("hidden", true);
+                $("#divPackageClose").prop("hidden", true);
+                $("#labelPackageClose").prop("hidden", true);
+                $("#packageClose").prop("disabled", true);
+                $("#packageClose").prop("hidden", true);
+                $("#divPackage").prop("hidden", true);
+                $("#labelPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").prop("hidden", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", false);
+                $("#labelRetainers").prop("hidden", false);
+                $("#retainers").prop("disabled", false);
+                $("#retainers").prop("hidden", false);
+                $("#retainers").val("");
+                $("#divItemsPrice").prop("hidden", true);
+                $("#labelItemsPrice").prop("hidden", true);
+                $("#itemsPrice").prop("hidden", true);
+                $("#divItemsQuantity").prop("hidden", true);
+                $("#labelItemsQuantity").prop("hidden", true);
+                $("#itemsQuantity").prop("hidden", true);
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+            }
+            else if ($("#activityType").val() == 4) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#labelFeePerHour").prop("hidden", true);
+                $("#FeePerHour").prop("disabled", true);
+                $("#FeePerHour").prop("hidden", true);
+                $("#divPackageClose").prop("hidden", true);
+                $("#labelPackageClose").prop("hidden", true);
+                $("#packageClose").prop("disabled", true);
+                $("#packageClose").prop("hidden", true);
+                $("#divPackage").prop("hidden", true);
+                $("#labelPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").prop("hidden", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#labelRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").prop("hidden", true);
+                $("#retainers").val("");
+                $("#divItemsPrice").prop("hidden", false);
+                $("#labelItemsPrice").prop("hidden", false);
+                $("#itemsPrice").prop("hidden", false);
+                $("#divItemsQuantity").prop("hidden", false);
+                $("#labelItemsQuantity").prop("hidden", false);
+                $("#itemsQuantity").prop("hidden", false);
                 $("#itemsPrice").prop("disabled", false);
                 $("#itemsQuantity").prop("disabled", false);
-                    var price = $("#items").find(":selected").attr("data-price");
-                $("#itemsPrice").val(price);
-                }
-            });
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+            }
+            else if ($("#activityType").val() == 5) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#labelFeePerHour").prop("hidden", true);
+                $("#FeePerHour").prop("disabled", true);
+                $("#FeePerHour").prop("hidden", true);
+                $("#divPackageClose").prop("hidden", true);
+                $("#labelPackageClose").prop("hidden", true);
+                $("#packageClose").prop("disabled", true);
+                $("#packageClose").prop("hidden", true); 
+                $("#divPackage").prop("hidden", true);
+                $("#labelPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").prop("hidden", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#labelRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").prop("hidden", true);
+                $("#retainers").val("");
+                $("#divItemsPrice").prop("hidden", true);
+                $("#labelItemsPrice").prop("hidden", true);
+                $("#itemsPrice").prop("hidden", true);
+                $("#divItemsQuantity").prop("hidden", true);
+                $("#labelItemsQuantity").prop("hidden", true);
+                $("#itemsQuantity").prop("hidden", true);
+                $("#itemsPrice").prop("disabled", true);
+                $("#itemsQuantity").prop("disabled", true);
+                $("#itemsPrice").val("");
+                $("#itemsQuantity").val("");
+            }
+        });
         $("#categories").change(function () {
             if ($("#categories").val() === "" || $("#categories").val() === undefined) {
                 $("#services").empty();
@@ -287,11 +446,20 @@
                 $("#expenses").prop("title", "Seleccionar gasto");
                 $("#expensesQuantity").prop("disabled", true);
                 $("#expensesPrice").prop("disabled", true);
-                }
+            }
             else {
-                    var price = $("#expenses").find(":selected").attr("data-amount");
+                var price = $("#expenses").find(":selected").attr("data-amount");
+                var isEditable = $("#expenses").find(":selected").attr("data-isReadOnly");
                 $("#expensesPrice").val(price);
-                $("#expensesPrice").prop("disabled", false);
+                console.log("Es editable es: " + isEditable);
+                if (isEditable === "Editable") {
+                    console.log("verifica si es true");
+                    $("#expensesPrice").prop("disabled", false);
+                }
+                else {
+                    console.log("verifica que es false");
+                    $("#expensesPrice").prop("disabled", true);
+                }
                 $("#expensesQuantity").prop("disabled", false);
                 }
             });
@@ -318,15 +486,15 @@
         $("#btnClear").click(function () {
             $("#Packages").val('');
             $("#retainers").val('');
-            $("#items").val('');
+            $("#activityType").val('');
 
-            if ($("#items").children().length > 1) {
+            /*if ($("#items").children().length > 1) {
                 $("#items").prop("disabled", false);
-                activateSelect2ById("#items")
+                //activateSelect2ById("#items")
             } else {
                 $("#items").prop("disabled", true);
-                disableSelect2ById("#items")
-            }
+                //disableSelect2ById("#items")
+            }*/
             if ($("#retainers").children().length > 1) {
                 $("#retainers").prop("disabled", false);
             } else {
@@ -348,13 +516,13 @@
             e.preventDefault();
             //window.scrollTo(x - coord, y - coord);
         });
-        if ($("#items").children().length > 1) {
+        /*if ($("#items").children().length > 1) {
             $("#items").prop("disabled", false);
             activateSelect2ById("#items");
         } else {
             $("#items").prop("disabled", true);
             disableSelect2ById("#items")
-        }
+        }*/
         $("#btnSubmit").click(function () {
             //var spin = loadingOverlay.activate();
                 if (validateData()) {
@@ -365,29 +533,35 @@
                     body.ServiceId = $("#services").val();
                     body.HoursWorked = $("#hours").val();
                     body.HourlyRate = $("#FeePerHour").val();
-                    
-                    if ($("#Packages").val() !== "" && $("#Packages").val() != undefined) {
+
+                    if ($("#activityType").val() == 1 && $("#isHourlyBilled").is(":checked")) {
+                        body.ActivityType = 1;
+                        body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+                    }
+                    else if ($("#activityType").val() == 2 && ($("#Packages").val() !== "" && $("#Packages").val() != undefined)) {
                         console.log("Entro a paquete")
                         body.PackageId = $("#Packages").val();
                         body.ActivityType = 2;
                     }
-                    else if ($("#retainers").val() !== "" && $("#retainers").val() != undefined) {
+                    else if ($("#activityType").val() == 3 && ($("#retainers").val() !== "" && $("#retainers").val() != undefined)) {
                         console.log("Entro a retainer")
                         body.BillableRetainerId = $("#retainers").val();
                         body.ActivityType = 3;
                     }
-                    else if ($("#items").val() !== "" && $("#items").val() != undefined) {
-                        body.ItemId = $("#items").val();
+                    else if ($("#activityType").val() == 4 && $("#itemsPrice").val() !== "" && $("#itemsQuantity").val() !== "") {
+                        //body.ItemId = $("#items").val();
                         console.log("Entro a item")
                         body.ItemUnitPrice = $("#itemsPrice").val();
                         body.ItemQuantity = $("#itemsQuantity").val();
                         body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
                         body.ActivityType = 4;
                     }
+                    else if ($("#activityType").val() == 5) {
+                        body.ActivityType = 5;
+                    }
                     else {
-                        console.log("Entro a horas")
-                        body.ActivityType = 1;
-                        body.HourSubtotal = body.HoursWorked * body.HourlyRate;
+                        showError("Debe escoger un elemento a registrar como actividad.")
+                        return;
                     }
                     var expenses = [];
                     $('#tableData tr').each(function () {
@@ -436,7 +610,45 @@
                     $("#goTop").click();
             }
             //loadingOverlay.cancel(spin);
+        });
+        function setTableData(id) {
+            $.ajax({
+                url: "@Url.Action("GetActivitiesByClient","Activity")",
+                type: "GET",
+                data: { id: id },
+                dataType: "json",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    $("#tableActivities").empty();
+                    $.each(data, function (i, item) {
+                        var tipo = "";
+                        if (item.activityType == 1) {
+                            tipo = "Horario";
+                        }
+                        else if (item.activityType == 2) {
+                            tipo = "Paquete";
+                        }
+                        else if (item.activityType == 3) {
+                            tipo = "Retainer";
+                        }
+                        else if (item.activityType == 4) {
+                            tipo = "Item";
+                        }
+                        else if (item.activityType == 5) {
+                            tipo = "No cobrable";
+                        }
+                        var row = "<tr><td>" + item.serviceName + "</td><td>" + item.hoursWorked + "</td><td>" + tipo + "</td><td>" + item.packageName + "</td><td>" + item.billableRatainerName +
+                            "</td><td>" + item.date + "</td></tr>";
+                        $("#tableActivities").append(row);
+                    });
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    var err = eval("(" + XMLHttpRequest.responseText + ")");
+                    alert(err.Message);
+                }
             });
+        }
         function showSuccess(message) {
             $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
@@ -446,7 +658,9 @@
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
             }
         $("#activityDate").change(function () {
-                if ($("#IsClientSelected").is(":checked")) {
+            if ($("#IsClientSelected").is(":checked")) {
+                $("#activityType").empty().append("<option value='4'>Item</option>");
+                $("#activityType").append("<option value='5'>No cobrable</option>");
                     var clientId = $("#ClientId").val()
                     $.ajax({
                     url: "@Url.Action("Search","Package")",
@@ -462,6 +676,7 @@
                         });
                         if ($("#Packages").children().length > 1) {
                             $("#Packages").prop("disabled", false);
+                            $("#activityType").append("<option value='2'>Paquete</option>")
                         } else {
                             $("#Packages").prop("disabled", true);
                         }
@@ -487,6 +702,7 @@
 
                         if ($("#retainers").children().length > 1) {
                             $("#retainers").prop("disabled", false);
+                            $("#activityType").append("<option value='3'>Retainer</option>")
                         } else {
                             $("#retainers").prop("disabled", true);
                         }
@@ -499,7 +715,7 @@
                     });
                 $("#Packages").prop("disabled", false);
                 $("#retainers").prop("disabled", false);
-                $("#items").prop("disabled", false);
+                $("#activityDate").prop("disabled", false);
 
                 }
             })
@@ -553,7 +769,9 @@
         $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
         //TODO in a future refresh the items list
-        $("#items").val("");
+        $("#activityType").empty().append("<option value='4'>Item</option>");
+        $("#activityType").append("<option value='5'>No cobrable</option>");
+        $("#activityType").prop("disabled", true);
         activateSelect2ById('#items')
         $("#itemsPrice").val("");
         $("#itemsQuantity").val("");
@@ -581,14 +799,45 @@
         $("#itemsQuantity").prop("disabled", false);
         $("#packageClose").prop("checked", false);
         $("#packageClose").prop("disabled", true);
+        $("#labelFeePerHour").prop("hidden", true);
+        $("#divFeePerHour").prop("hidden", true);
+        $("#labelFeePerHour").prop("hidden", true);
+        $("#FeePerHour").prop("disabled", true);
+        $("#FeePerHour").prop("hidden", true);
+        $("#divPackageClose").prop("hidden", true);
+        $("#labelPackageClose").prop("hidden", true);
+        $("#packageClose").prop("disabled", true);
+        $("#packageClose").prop("hidden", true);
+        $("#divPackage").prop("hidden", true);
+        $("#labelPackage").prop("hidden", true);
+        $("#Packages").prop("disabled", true);
+        $("#Packages").prop("hidden", true);
+        $("#Packages").val("");
+        $("#divRetainers").prop("hidden", true);
+        $("#labelRetainers").prop("hidden", true);
+        $("#retainers").prop("disabled", true);
+        $("#retainers").prop("hidden", true);
+        $("#retainers").val("");
+        $("#divItemsPrice").prop("hidden", true);
+        $("#labelItemsPrice").prop("hidden", true);
+        $("#itemsPrice").prop("hidden", true);
+        $("#divItemsQuantity").prop("hidden", true);
+        $("#labelItemsQuantity").prop("hidden", true);
+        $("#itemsQuantity").prop("hidden", true);
+        $("#itemsPrice").prop("disabled", true);
+        $("#itemsQuantity").prop("disabled", true);
+        $("#itemsPrice").val("");
+        $("#itemsQuantity").val("");
+        $("#tableActivities").empty();
     }
 </script>
 
 <div class="container-fluid" style="width:100%">
     <form>
         <input type="number" hidden asp-for="@Model.ClientId" id="ClientId" />
-        <input type="checkbox"  asp-for="@Model.IsEnglish" id="isEnglish" />
+        <input type="checkbox"  asp-for="@Model.IsEnglish" id="isEnglish" hidden />
         <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
+        <input type="checkbox" hidden id="isHourlyBilled"/>
         <input type="checkbox" hidden id="IsAdmin" />
         <div id="placeholderSuccess" tabindex="">
 
@@ -597,17 +846,15 @@
 
         </div>
         <div class="row">
-            <div class="offset-md-1 col-md-10">
+            <div class="col-md-12">
                 <div class="row rounded" style="margin-top:10px; background-color:white">
-                    <div class="offset-1 col-md-10">
-                        @*<div class="form-row" style="margin-top:10px">
-                            <h4 class="text-center text-secondary">Paso 1</h4>
-                        </div>*@
-                        @if (User.IsInRole("Administrador"))
-                        {
-                            <div class="form-row" style="margin-top:10px">
+                    <div class="col-md-12">
+                        <div class="form-row" style="margin-top:10px">
+                            @if (User.IsInRole("Administrador"))
+                            {
 
-                                <div class="form-group col-md-5">
+
+                                <div class="form-group col-md-4">
                                     <label for="attorneys">Abogado:</label>
                                     <select id="attorneys" class="form-control form-control-sm">
                                         @foreach (var a in Model.Attorneys)
@@ -626,86 +873,69 @@
                                         }
                                     </select>
                                 </div>
-                            </div>
-                        }
-                        <div class="form-row" style="margin-top:10px">
-                            <div class="form-group col-md-5">
+                            }
+                            <div class="form-group col-md-2">
                                 <label for="activityDate">Fecha:*</label>
                                 <input type="text" id="activityDate" class="form-control form-control-sm" placeholder="Fecha" aria-label="Fecha del registro" />
                             </div>
-                            <div class="form-group offset-md-1  col-md-4">
+                            <div class="form-group col-md-4">
                                 <label for="clientFilter">Búsqueda del cliente:*</label>
                                 <input type="text" id="clientFilter" class="form-control form-control-sm" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="form-group col-md-1" style="margin-top:32px;">
                                 <label for="clientFilter">Selección:</label>
                                 <a href="#" id="seeClient" class="btn btn-primary btn-sm" role="button" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="Cliente seleccionado" data-content="">Ver</a>
                             </div>
                         </div>
-                        <div class="form-row" style="margin-top:10px" hidden>
-                            <div class="form-group col-md-5">
-                                <label for="ClientName">Nombre del cliente:</label>
-                                <input type="text" readonly asp-for="@Model.ClientName" class="form-control form-control-sm" aria-label="Nombre del cliente" />
+                            <div class="form-row" style="margin-top:10px">
+
                             </div>
-                            <div class="form-group offset-md-1  col-md-5">
-                                <label for="clientName">Idioma de facturación:</label>
-                                <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control form-control-sm" aria-label="Idioma de facturación" />
+                            <div class="form-row" style="margin-top:10px" hidden>
+                                <div class="form-group col-md-5">
+                                    <label for="ClientName">Nombre del cliente:</label>
+                                    <input type="text" readonly asp-for="@Model.ClientName" class="form-control form-control-sm" aria-label="Nombre del cliente" />
+                                </div>
+                                <div class="form-group offset-md-1  col-md-5">
+                                    <label for="clientName">Idioma de facturación:</label>
+                                    <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control form-control-sm" aria-label="Idioma de facturación" />
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
                 <div class="row rounded" style="margin-top:10px;background-color:white">
-                    <div class="offset-1 col-md-10">
-                        @*<div class="form-row" style="margin-top:10px">
-                            <h4 class="text-center text-secondary">Paso 2</h4>
-                        </div>*@
+                    <div class="col-md-12">
                         <div class="form-row" style="margin-top:10px">
                             <div class="form-group col-md-4">
-                                <label for="Packages">Paquetes disponibles:</label>
-                                <select class="form-control form-control-sm" id="Packages" disabled></select>
+                                <label for="activityType">Tipo de actividad:</label>
+                                <select id="activityType" class="form-control form-control-sm" disabled></select>
                             </div>
-                            <div class="form-group col-md-1">
-                                <label for="packageClose">¿Cerrar?</label>
-                                <input type="checkbox" class="form-control form-control-sm text-left" id="packageClose" disabled/>
+                            <div class="form-group col-md-3" id="divPackage" hidden>
+                                <label id="labelPackage" for="Packages" hidden>Paquetes disponibles:</label>
+                                <select class="form-control form-control-sm" id="Packages" disabled hidden></select>
                             </div>
-                            <div class="form-group offset-md-1 col-md-5">
-                                <label for="retainers">Retainers:</label>
-                                <select id="retainers" class="form-control form-control-sm" disabled></select>
+                            <div class="form-group col-md-1" id="divPackageClose" hidden>
+                                <label id="labelPackageClose" for="packageClose" hidden>¿Cerrar?</label>
+                                <input type="checkbox" class="form-control form-control-sm text-left" id="packageClose" disabled hidden />
                             </div>
-                        </div>
-                       
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                <label for="items">Items:</label>
-                                <select id="items" class="form-control form-control-sm" disabled>
-                                    <option value="" data-price="">Seleccionar Item</option>
-                                    @foreach (var i in Model.Items)
-                                    {
-                                        <option value="@i.Id" data-price="@i.Amount">@i.Name</option>
-                                    }
-                                </select>
+                            <div class="form-group col-md-4" id="divRetainers" hidden>
+                                <label id="labelRetainers" for="retainers" hidden>Retainers:</label>
+                                <select id="retainers" class="form-control form-control-sm" disabled hidden></select>
                             </div>
-                            <div class="form-group offset-1 col-md-3">
-                                <label for="itemsPrice">Precio del ítem (USD): </label>
-                                <input type="text" class="form-control form-control-sm" id="itemsPrice" disabled />
+                            <div class="form-group col-md-2" id="divItemsPrice" hidden>
+                                <label id="labelItemsPrice" for="itemsPrice" hidden>Precio del ítem (USD): </label>
+                                <input type="text" class="form-control form-control-sm" id="itemsPrice" disabled hidden />
                             </div>
-                            <div class="form-group col-md-2">
-                                <label for="itemsQuantity">Cantidad:</label>
-                                <input type="number" class="form-control form-control-sm" id="itemsQuantity" disabled />
+                            <div class="form-group col-md-2" id="divItemsQuantity" hidden>
+                                <label id="labelItemsQuantity" for="itemsQuantity" hidden>Cantidad:</label>
+                                <input type="number" class="form-control form-control-sm" id="itemsQuantity" disabled hidden />
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-md-2">
                                 <label for="hours">Horas:*</label>
                                 <input type="number" class="form-control form-control-sm" id="hours" />
                             </div>
-                            <div class="form-group col-md-3">
-                                <label for="FeePerHour">Precio por hora (USD):</label>
-                                <input type="text" asp-for="@Model.FeePerHour" class="form-control form-control-sm" id="FeePerHour" disabled />
-                            </div>
-                            <div class="form-group offset-md-1 col-md-5">
-                                <label for="btnClear">&nbsp;</label><br />
-                                <button class="btn btn-primary btn-sm" id="btnClear" type="button">Limpiar selección</button>
+                            <div class="form-group col-md-2" id="divFeePerHour" hidden>
+                                <label id="labelFeePerHour" for="FeePerHour" hidden>Precio por hora (USD):</label>
+                                <input type="text" asp-for="@Model.FeePerHour" class="form-control form-control-sm" id="FeePerHour" disabled hidden />
                             </div>
                         </div>
 
@@ -713,14 +943,14 @@
                     </div>
                 </div>
                 <div class="row rounded" style="margin-top:10px; background-color:white">
-                    <div class="offset-1 col-sm-10" style="margin-top:10px">
+                    <div class="col-md-12" style="margin-top:10px">
                         <div class="form-row">
-                            <div class="form-group col-2">
+                            <div class="form-group col-2" style="margin-top:40px;">
                                 <label for="description">&nbsp;</label>
                                 <button type="button"  id="selectService" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#servicesForm">Seleccionar servicio</button>
                             </div>
                             
-                            <div class="form-group offset-1 col-8">
+                            <div class="form-group col-10">
                                 <label for="description">Descripción:*</label>
                                 <textarea id="description" class="form-control form-control-sm" spellcheck="true" lang="es" disabled></textarea>
                             </div>
@@ -787,22 +1017,19 @@
                     </div>
                 </div>
                 <div class="row rounded" style="margin-top:10px;margin-bottom:10px; background-color:white">
-                    <div class="offset-1 col-md-10">
-                        @*<div class="form-row" style="margin-top:10px">
-            <h4 class="text-center text-secondary">Paso 4</h4>
-        </div>*@
+                    <div class="col-md-12">
                         <div class="form-row" style="margin-top:10px">
-                            <div class="form-group col-md-5">
+                            <div class="form-group col-md-4">
                                 <label for="expenses">Gastos:*</label>
                                 <select id="expenses" class="form-control form-control-sm">
                                     <option data-amount="" value="">Seleccionar gasto</option>
                                     @foreach (var e in Model.Expenses)
                                     {
-                                        <option data-amount="@e.Amount" value="@e.Id">@e.Name</option>
+                                        <option data-amount="@e.Amount" data-isReadOnly="@(e.IsReadOnly ? "Editable" : "No Editable")" value="@e.Id">@e.Name</option>
                                     }
                                 </select>
                             </div>
-                            <div class="form-group offset-md-1  col-md-2">
+                            <div class="form-group col-md-2">
                                 <label for="expensesQuantity">Cantidad:*</label>
                                 <input type="number" class="form-control form-control-sm" id="expensesQuantity" disabled />
                             </div>
@@ -815,10 +1042,10 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-5">
+                            <div class="form-group col-md-4">
                                 <a href="#" id="seeExpenses" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#elegantModalForm">Ver gastos incluidos</a>
                             </div>
-                            <div class="form-group offset-1 col-md-5">
+                            <div class="form-group col-md-5">
                                 <button class="btn btn-primary btn-sm" id="btnSubmit" type="button">Registrar actividad</button>
                             </div>
                             <a href="#placeholderSuccess" id="goTop" hidden></a>
@@ -896,6 +1123,26 @@
             </div>
         </div>
     </form>
+    <div class="row rounded" style="margin-top:10px; background-color:white">
+        <div style="margin-top:10px">
+            <h4 class="text-center text-secondary">Últimas actividades registradas para este cliente</h4>
+        </div>
+        <div class="table-responsive" style="margin-top:10px;">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Horas</th>
+                        <th>Tipo de actividad</th>
+                        <th>Paquete</th>
+                        <th>Retainer</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="tableActivities"></tbody>
+            </table>
+        </div>
+    </div>
     <script type="text/javascript">
         $(document).ready(function () {
             $('#seeClient').popover({

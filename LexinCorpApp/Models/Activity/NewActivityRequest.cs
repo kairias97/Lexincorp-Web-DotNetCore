@@ -22,7 +22,6 @@ namespace LexincorpApp.Models
         public decimal HoursWorked { get; set; }
         public int? PackageId { get; set; }
         public int? BillableRetainerId { get; set; }
-        public int? ItemId { get; set; }
         public decimal? ItemUnitPrice { get; set; }
         public int? ItemQuantity { get; set; }
         public decimal? ItemSubTotal { get; set; }

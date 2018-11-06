@@ -25,5 +25,7 @@ namespace LexincorpApp.Models
         public int CreatorUserId { get; set; }
         public virtual User CreatorUser { get; set; }
         public bool IsBilled { get; set; }
+        [Required(ErrorMessage = "Se debe indicar un monto de gastos acordado en USD")]
+        public decimal AgreedExpensesAmount { get; set; }
     }
 }

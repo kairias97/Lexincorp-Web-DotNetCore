@@ -21,5 +21,6 @@ namespace LexincorpApp.Models
         [NotMapped]
         public string DisplayName { get { return $"{EnglishDescription} / {SpanishDescription}"; } }
         public bool Active { get; set; } = true;
+        public bool IsReadOnly { get; set; }
     }
 }

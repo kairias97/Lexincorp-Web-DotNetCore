@@ -261,5 +261,21 @@ namespace LexincorpApp.Controllers
             fileStreamResult.FileDownloadName = $"ReporteDeActividadesDel{newActivityReport.InitialDate.ToString("ddMMyyyy")}Al{newActivityReport.FinalDate.ToString("ddMMyyyy")}.pdf";
             return fileStreamResult;
         }
+        [Authorize]
+        public JsonResult GetActivitiesByClient(int id)
+        {
+            var results = _activityRepo.Activities.Where(a => a.ClientId == id).OrderByDescending(a => a.RealizationDate).Take(10)
+                .Select(a => new
+                {
+                    serviceName = a.Service.Name,
+                    hoursWorked = Math.Round(a.HoursWorked, 2),
+                    activityType = a.ActivityType,
+                    packageName = a.Package != null ? a.Package.Name : "-",
+                    billableRatainerName = a.BillableRetainer != null ? a.BillableRetainer.Name : "-",
+                    itemName = a.Item != null ? a.Item.Name : "-",
+                    date = a.RealizationDate.ToString("dd/MM/yyyy")
+                });            
+            return Json(results);
+        }
     }
 }

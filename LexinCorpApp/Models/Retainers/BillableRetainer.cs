@@ -23,5 +23,6 @@ namespace LexincorpApp.Models
         public bool IsBilled { get; set; } = false;
         public int Month { get; set; }
         public int Year { get; set; }
+        public bool IsVisibleForActivities { get; set; }
     }
 }

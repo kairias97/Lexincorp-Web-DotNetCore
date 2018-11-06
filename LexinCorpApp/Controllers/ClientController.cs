@@ -157,7 +157,8 @@ namespace LexincorpApp.Controllers
                 .OrderBy(c => c.Name)
                 .Take(10)
                 .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish,
-                FeePerHour = c.FixedCostPerHour, Packages = c.Packages.Where(p => p.IsFinished == false)});
+                FeePerHour = c.FixedCostPerHour, Packages = c.Packages.Where(p => p.IsFinished == false),
+                IsHourBilled = c.IsHourBilled ? "Permite" : "No Permite"});
             return Json(list);
         }
         [Authorize]
