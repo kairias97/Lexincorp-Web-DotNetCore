@@ -23,6 +23,7 @@ namespace LexincorpApp.Models
         public decimal AdditionalFeePerHour { get; set; }
         public int CreatorId { get; set; }
         public virtual User Creator { get; set; }
+        public bool IsVisibleForActivities { get; set; }
 
     }
 }

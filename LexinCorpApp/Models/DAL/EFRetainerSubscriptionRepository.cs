@@ -49,7 +49,8 @@ namespace LexincorpApp.Models
                         Name = $"{rs.Retainer.SpanishName} - {spanishMonth} {DateTime.Now.Year}",
                         BillingDescription = rs.Client.BillingInEnglish ? $"{rs.Retainer.EnglishName} - {englishMonth} {DateTime.Now.Year}" : $"{rs.Retainer.SpanishName} - {spanishMonth} {DateTime.Now.Year}",
                         Month = DateTime.Now.Month,
-                        Year = DateTime.Now.Year
+                        Year = DateTime.Now.Year,
+                        IsVisibleForActivities = rs.IsVisibleForActivities
                     }).ToList();
                     context.BillableRetainers.AddRange(newBillableRetainers);
                     //To clean up the subscriptions

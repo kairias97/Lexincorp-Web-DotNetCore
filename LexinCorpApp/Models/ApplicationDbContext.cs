@@ -92,7 +92,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Attorney>()
                 .Property(a => a.CanApproveVacations)
                 .HasDefaultValue(true);
-
+            modelBuilder.Entity<Package>()
+                .Property(p => p.AgreedExpensesAmount)
+                .HasDefaultValue(0);
         }
     }
 }

@@ -58,13 +58,19 @@ namespace LexincorpApp.Models
                 activity.BillableQuantity = Convert.ToDecimal(newActivityRequest.ItemQuantity);
                 activity.BillableRate = Convert.ToDecimal(newActivityRequest.ItemUnitPrice);
                 activity.Subtotal = Convert.ToDecimal(newActivityRequest.ItemSubTotal);
-                activity.ItemId = newActivityRequest.ItemId;
+                //activity.ItemId = newActivityRequest.ItemId;
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.Hourly)
             {
                 activity.BillableQuantity = Convert.ToDecimal(newActivityRequest.HoursWorked);
                 activity.BillableRate = Convert.ToDecimal(newActivityRequest.HourlyRate);
                 activity.Subtotal = Convert.ToDecimal(newActivityRequest.HourlySubtotal);
+            }
+            else if(newActivityRequest.ActivityType == ActivityTypeEnum.NoBillable)
+            {
+                activity.BillableQuantity = 0;
+                activity.BillableRate = 0;
+                activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
             }
             decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
             var client = context.Clients.Where(c => c.Id == newActivityRequest.ClientId).FirstOrDefault();

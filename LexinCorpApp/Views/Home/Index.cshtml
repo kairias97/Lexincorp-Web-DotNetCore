@@ -145,6 +145,10 @@
                                                     {
                                                         <td>Hora</td>
                                                     }
+                                                    else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
+                                                    {
+                                                        <td>No cobrable</td>
+                                                    }
                                                     <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
                                                 </tr>
                                             }
