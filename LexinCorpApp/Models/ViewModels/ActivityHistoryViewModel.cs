@@ -12,5 +12,6 @@ namespace LexincorpApp.Models.ViewModels
         public IEnumerable<Activity> Activities { get; set; }
         public string CurrentStartDate { get; set; }
         public string CurrentEndDate { get; set; }
+        public IEnumerable<Expense> Expenses { get; set; }
     }
 }

@@ -32,5 +32,6 @@ namespace LexincorpApp.Models
         public virtual ICollection<ActivityExpense> ActivityExpenses { get; set; }
         public int CreatorId { get; set; }
         public virtual User Creator { get; set; }
+        public bool IsBillable { get; set; }
     }
 }

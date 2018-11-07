@@ -146,6 +146,7 @@ namespace LexincorpApp.Controllers
                 ItemsPerPage = PageSize,
                 TotalItems = _activityRepo.Activities.Where(a => a.CreatorId == Convert.ToInt32(id)).Count(filterFunction)
             };
+            viewModel.Expenses = _expenseRepo.Expenses;
             return View(viewModel);
         }
         [Authorize]
@@ -301,6 +302,42 @@ namespace LexincorpApp.Controllers
                     date = a.RealizationDate.ToString("dd/MM/yyyy")
                 });            
             return Json(results);
+        }
+        [Authorize]
+        public JsonResult GetActivityDataById(int id)
+        {
+            var result = _activityRepo.Activities.Where(a => a.Id == id).FirstOrDefault();
+            var activity = new
+            {
+                id = result.Id,
+                date = result.RealizationDate.ToString("dd/MM/yyyy"),
+                type = result.ActivityType,
+                package = result.PackageId != null ? result.Package.Name : "",
+                retainer = result.BillableRetainerId != null ? result.BillableRetainer.Name : "",
+                description = result.Description,
+                hoursWorked = result.HoursWorked,
+                clientName = result.Client.Name,
+                service = result.Service.Name,
+                quantity = result.BillableQuantity,
+                rate = result.BillableRate,
+                expenses = result.ActivityExpenses.Select(e => new
+                {
+                    id = e.ExpenseId,
+                    spanishDescription = e.Expense.SpanishDescription,
+                    englishDescription = e.Expense.EnglishDescription,
+                    quantity = e.Quantity,
+                    unitAmount = e.UnitAmount,
+                    totalAmount = e.TotalAmount,
+                }),
+            };
+            return Json(activity);
+        }
+        [Authorize]
+        [HttpPost]
+        public JsonResult Update(UpdateActivityRequest body)
+        {
+            _activityRepo.Update(body);
+            return Json(new { message = "Actividad ingresada exitosamente", success = true });
         }
     }
 }

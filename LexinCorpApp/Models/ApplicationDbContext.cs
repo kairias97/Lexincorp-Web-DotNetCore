@@ -95,6 +95,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Package>()
                 .Property(p => p.AgreedExpensesAmount)
                 .HasDefaultValue(0);
+            modelBuilder.Entity<Activity>()
+                .Property(a => a.IsBillable)
+                .HasDefaultValue(false);
         }
     }
 }
