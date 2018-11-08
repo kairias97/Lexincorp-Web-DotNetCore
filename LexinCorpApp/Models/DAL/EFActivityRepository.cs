@@ -240,6 +240,17 @@ namespace LexincorpApp.Models
             }
             context.SaveChanges();
         }
+
+        public void MarkActivitiesAsBillable(List<int> list)
+        {
+            foreach (var item in list)
+            {
+                var activity = context.Activities.Where(a => a.Id == item).FirstOrDefault();
+                activity.IsBillable = true;
+            }
+            context.SaveChanges();
+        }
+
         public IQueryable<ActivityExpense> Expenses { get => context.ActivityExpenses; }
     }
 }

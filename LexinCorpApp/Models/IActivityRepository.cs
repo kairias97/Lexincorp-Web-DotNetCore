@@ -11,5 +11,6 @@ namespace LexincorpApp.Models
         void Save(NewActivityRequest newActivityRequest, int creatorId);
         IQueryable<ActivityExpense> Expenses { get; }
         void Update(UpdateActivityRequest updateActivityRequest);
+        void MarkActivitiesAsBillable(List<int> list);
     }
 }

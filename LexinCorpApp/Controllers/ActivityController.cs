@@ -32,12 +32,13 @@ namespace LexincorpApp.Controllers
         private readonly IActivityRepository _activityRepo;
         private readonly IAttorneyRepository _attorneyRepo;
         private readonly INotificationRepository _notificationRepo;
+        private readonly IBillableRetainerRepository _billableRetainerRepo;
         public int PageSize = 5;
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
         public ActivityController(IItemRepository _itemsRepo, IExpenseRepository _expenseRepo, ICategoryRepository _categoryRepo,
             IServiceRepository _serviceRepo, IPackageRepository _packageRepo, IRetainerRepository _retainerRepo, IClientRepository _clientRepo,
             IActivityRepository _activityRepo, IAttorneyRepository attorneyRepository, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment,
-            IAttorneyRepository _attorneysRepo, INotificationRepository notificationRepository)
+            IAttorneyRepository _attorneysRepo, INotificationRepository notificationRepository, IBillableRetainerRepository billableRetainerRepository)
         {
             this._itemsRepo = _itemsRepo;
             this._attorneysRepo = _attorneysRepo;
@@ -51,6 +52,7 @@ namespace LexincorpApp.Controllers
             this._attorneyRepo = attorneyRepository;
             _hostingEnvironment = hostingEnvironment;
             this._notificationRepo = notificationRepository;
+            this._billableRetainerRepo = billableRetainerRepository;
         }
         public IActionResult Index()
         {
@@ -147,6 +149,108 @@ namespace LexincorpApp.Controllers
                 TotalItems = _activityRepo.Activities.Where(a => a.CreatorId == Convert.ToInt32(id)).Count(filterFunction)
             };
             viewModel.Expenses = _expenseRepo.Expenses;
+            return View(viewModel);
+        }
+        [Authorize]
+        public IActionResult DetailCheck(string filter, string dateStart, string dateEnd, int id)
+        {
+            Func<Activity, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.ClientId == id;
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            DateTime date1 = new DateTime();
+            DateTime date2 = new DateTime();
+            if (dateStart != null && dateStart != "")
+            {
+                date1 = DateTime.ParseExact(dateStart, "dd/MM/yyyy", provider);
+            }
+            if (dateEnd != null && dateEnd != "")
+            {
+                date2 = DateTime.ParseExact(dateEnd, "dd/MM/yyyy", provider);
+            }
+            Func<Activity, bool> filterFunctionDate = a => a.RealizationDate >= date1 && a.RealizationDate <= date2;
+            ActivityDetailCheckViewModel viewModel = new ActivityDetailCheckViewModel();
+            viewModel.CurrentFilter = filter;
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (!String.IsNullOrEmpty(dateStart) && !String.IsNullOrEmpty(dateEnd))
+                {
+                    List<Activity> activities = _activityRepo.Activities
+                    .Where(a => a.IsBillable == false && a.IsBilled == false && a.ActivityType != ActivityTypeEnum.NoBillable)
+                    .Where(filterFunction)
+                    .Where(filterFunctionDate)
+                    .OrderBy(a => a.RealizationDate).ToList();
+                    List<Package> packages = new List<Package>();
+                    List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
+                    foreach(var a in activities)
+                    {
+                        if(a.PackageId != null)
+                        {
+                            var package = _packageRepo.Packages.Where(p => p.Id == a.PackageId).FirstOrDefault();
+                            bool contains = packages.Any(pa => pa.Id == package.Id);
+                            if(contains == false)
+                            {
+                                packages.Add(package);
+                            }
+                        }
+                        else if(a.BillableRetainerId != null)
+                        {
+                            var retainer = _billableRetainerRepo.BillableRetainers.Where(b => b.Id == a.BillableRetainerId).FirstOrDefault();
+                            bool contains = billableRetainers.Any(bi => bi.Id == retainer.Id);
+                            if(contains == false)
+                            {
+                                billableRetainers.Add(retainer);
+                            }
+                        }
+                        
+                    }
+                    viewModel.Activities = activities;
+                    viewModel.CurrentStartDate = date1.ToString("dd/MM/yyyy");
+                    viewModel.CurrentEndDate = date2.ToString("dd/MM/yyyy");
+                    viewModel.Packages = packages;
+                    viewModel.BillableRetainers = billableRetainers;
+                }
+                else
+                {
+                    List<Activity> activities = _activityRepo.Activities
+                    .Where(a => a.IsBillable == false && a.IsBilled == false && a.ActivityType != ActivityTypeEnum.NoBillable)
+                    .Where(filterFunction)
+                    .OrderBy(a => a.RealizationDate).ToList();
+                    List<Package> packages = new List<Package>();
+                    List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
+                    foreach (var a in activities)
+                    {
+                        if (a.PackageId != null)
+                        {
+                            var package = _packageRepo.Packages.Where(p => p.Id == a.PackageId).FirstOrDefault();
+                            bool contains = packages.Any(pa => pa.Id == package.Id);
+                            if (contains == false)
+                            {
+                                packages.Add(package);
+                            }
+                        }
+                        else if (a.BillableRetainerId != null)
+                        {
+                            var retainer = _billableRetainerRepo.BillableRetainers.Where(b => b.Id == a.BillableRetainerId).FirstOrDefault();
+                            bool contains = billableRetainers.Any(bi => bi.Id == retainer.Id);
+                            if (contains == false)
+                            {
+                                billableRetainers.Add(retainer);
+                            }
+                        }
+
+                    }
+                    viewModel.Activities = activities;
+                    viewModel.Packages = packages;
+                    viewModel.BillableRetainers = billableRetainers;
+                }
+            }
+            else
+            {
+                viewModel.Activities = new List<Activity>();
+                viewModel.Packages = new List<Package>();
+                viewModel.BillableRetainers = new List<BillableRetainer>();
+            }
+            viewModel.Expenses = _expenseRepo.Expenses;
+            viewModel.CurrentId = id;
             return View(viewModel);
         }
         [Authorize]
@@ -337,8 +441,14 @@ namespace LexincorpApp.Controllers
         public JsonResult Update(UpdateActivityRequest body)
         {
             _activityRepo.Update(body);
-            //return RedirectToAction("History", new { filter = filter, dateStart = dateStart, dateEnd = dateEnd, pageNumber = pageNumber });
-            return Json(new { message = "Actividad ingresada exitosamente", success = true });
+            return Json(new { message = "Actividad actualizada exitosamente", success = true });
+        }
+        [Authorize]
+        [HttpPost]
+        public JsonResult MarkActivities(List<int> body)
+        {
+            _activityRepo.MarkActivitiesAsBillable(body);
+            return Json(new { message = "Actividades marcadas como facturables exitosamente", success = true });
         }
     }
 }
