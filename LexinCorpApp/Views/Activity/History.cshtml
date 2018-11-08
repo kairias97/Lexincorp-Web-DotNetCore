@@ -2,13 +2,264 @@
 @{
     ViewData["Title"] = "Historial de actividades";
 }
+<script type="text/javascript">
+    $(function () {
+        $("#dateStart").datepicker();
+        $("#dateStart").datepicker("option", "dateFormat", "dd/mm/yy");
+        $("#dateEnd").datepicker();
+        $("#dateEnd").datepicker("option", "dateFormat", "dd/mm/yy");
+
+        $("#expenses").change(function () {
+            if ($("#expenses").val() === "" || $("#expenses").val() === undefined) {
+                $("#expensesQuantity").val("");
+                $("#expensesPrice").val("");
+                $("#expenses").prop("title", "Seleccionar gasto");
+                $("#expensesQuantity").prop("disabled", true);
+                $("#expensesPrice").prop("disabled", true);
+            }
+            else {
+                var price = $("#expenses").find(":selected").attr("data-amount");
+                var isEditable = $("#expenses").find(":selected").attr("data-isReadOnly");
+                $("#expensesPrice").val(price);
+                if (isEditable === "Editable") {
+                    $("#expensesPrice").prop("disabled", false);
+                }
+                else {
+                    console.log("verifica que es false");
+                    $("#expensesPrice").prop("disabled", true);
+                }
+                $("#expensesQuantity").prop("disabled", false);
+            }
+        });
+        $("#btnAddExpense").click(function () {
+            if ($("#expenses").val() !== "" && $("#expensesPrice").val() !== "" && $("#expensesQuantity").val() !== "") {
+                var expense = $("#expenses").find(":selected").text();
+                var id = $("#expenses").val();
+                var amount = $("#expensesPrice").val();
+                var quantity = $("#expensesQuantity").val();
+                var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
+                    "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
+                $("#tableData").append(row);
+                $("#expenses").val("");
+                $("#expensesPrice").val("");
+
+                $("#expensesQuantity").val("");
+                $("#expensesQuantity").prop("disabled", true);
+
+                $("#expensesPrice").prop("disabled", true);
+                calculateTotalExpenses();
+            }
+            $("#expenses").prop("title", "Seleccionar gastos")
+        });
+        $("#btnSubmit").click(function () {
+            console.log(validateData());
+            if (validateData()) {
+                var body = {};
+                body.Id = $("#activityId").val();
+                body.ActivityType = $("#type").val();
+                body.HoursWorked = $("#hours").val();
+                body.HourlyRate = $("#feePerHour").val();
+                body.ItemUnitPrice = $("#itemPrice").val();
+                body.ItemQuantity = $("#itemQuantity").val();
+                body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
+                var expenses = [];
+                $('#tableData tr').each(function () {
+                    var newExpense = {};
+                    var cells = $(this).find("td");
+                    newExpense.ExpenseId = cells[0].innerHTML;
+                    newExpense.Quantity = cells[2].innerHTML;
+                    newExpense.UnitCost = cells[3].innerHTML;
+                    newExpense.SubTotal = cells[4].innerHTML;
+                    expenses.push(newExpense);
+                });
+                body.Expenses = expenses;
+                body.Description = $("#description").val();
+                $.ajax({
+                    url: '@Url.Action("Update","Activity")',
+                    type: "POST",
+                    data: { body: body },
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        showSuccess("Actividad actualizada exitosamente");
+                        $("#editForm").modal("hide");
+                        clean();
+                        setTimeout(
+                            function () {
+                                location.reload();
+                            }, 2000);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        loadingOverlay.cancel(newActivitySpinHandle);
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            }
+            else {
+                showError("Datos inválidos");
+            }
+        });
+    });
+    function validateData() {
+        if ($("#hours").val() !== "" && $("#description").val() !== "") {
+            if ($("#type").val() == 4) {
+                if ($("#itemPrice").val() !== "" && $("#itemQuantity").val() !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if ($("#type").val() == 1) {
+                if($("#feePerHour").val() !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    function showSuccess(message) {
+        $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    function showError(message) {
+        $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    function handleEdit(id) {
+        var newActivitySpinHandle = loadingOverlay.activate();
+        clean();
+        $("#activityId").val(id);
+            $.ajax({
+                url: '@Url.Action("GetActivityDataById","Activity")',
+                type: "GET",
+                data: {id: id},
+                dataType: "json",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    $("#type").val(data.type);
+                    $("#clientName").val(data.clientName);
+                    if (data.type == 1) {
+                        $("#activityType").val("Horario");
+                        $("#divFeePerHour").prop("hidden", false);
+                        $("#feePerHour").val(data.rate);
+                    }
+                    else if (data.type == 2) {
+                        $("#activityType").val("Paquete");
+                        $("#packageName").val(data.package);
+                        $("#divPackageName").prop("hidden", false);
+                    }
+                    else if (data.type == 3) {
+                        $("#activityType").val("Retainer");
+                        $("#retainerName").val(data.retainer);
+                        $("#divRetainerName").prop("hidden", false);
+                    }
+                    else if (data.type == 4) {
+                        $("#activityType").val("Ítem");
+                        $("#itemPrice").val(data.rate);
+                        $("#divItemPrice").prop("hidden", false);
+                        $("#itemQuantity").val(data.quantity);
+                        $("#divItemQuantity").prop("hidden", false);
+                    }
+                    else if (data.type == 5) {
+                        $("#activityType").val("No cobrable");
+                    }
+                    $("#activityDate").val(data.date);
+                    $("#hours").val(data.hoursWorked);
+                    $("#service").val(data.service);
+                    $("#description").val(data.description);
+
+                    $("#tableData").empty();
+                    $.each(data.expenses, function (i, item) {
+                        var id = item.id;
+                        var expense = item.spanishDescription;
+                        var quantity = item.quantity;
+                        var amount = item.unitAmount;
+
+                        var row = "<tr><td hidden>" + id + "</td><td>" + expense + "</td><td>" + quantity + "</td><td>" + amount + "</td><td>" + amount * quantity + "</td><td>" +
+                            "<a onclick='deleteRow(this)' href='#'><i class='fas fa-trash' data-toggle='tooltip' data-placement='top' title='Borrar'></i></a></td>";
+                        $("#tableData").append(row);
+                    });
+
+                    calculateTotalExpenses();
+                    loadingOverlay.cancel(newActivitySpinHandle);
+                    $("#editForm").modal("show");
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    loadingOverlay.cancel(newActivitySpinHandle);
+                    var err = eval("(" + XMLHttpRequest.responseText + ")");
+                    alert(err.Message)
+                    // console.log("Ajax Error!");
+                }
+            })
+    }
+
+    function clean() {
+        $("#activityId").val("");
+        $("#type").val("");
+        $("#activityType").val("");
+        $("#divFeePerHour").prop("hidden", true);
+        $("#feePerHour").val("");
+        $("#packageName").val("");
+        $("#divPackageName").prop("hidden", true);
+        $("#retainerName").val("");
+        $("#divRetainerName").prop("hidden", true);
+        $("#itemPrice").val("");
+        $("#divItemPrice").prop("hidden", true);
+        $("#itemQuantity").val("");
+        $("#divItemQuantity").prop("hidden", true);
+        $("#activityDate").val("");
+        $("#hours").val("");
+        $("#service").val("");
+        $("#description").val("");
+        $("#tableData").empty();
+    }
+    function deleteRow(button) {
+        $(button).closest("tr").remove();
+        $('tfoot tr td:last-child').html("");
+        calculateTotalExpenses();
+    }
+    function calculateTotalExpenses() {
+        //To get the total sum of the <td> that contains each subtotal
+        var total = $('#tableData tr td:nth-last-child(2)')
+            .map(function () {
+                return parseFloat($(this).html());
+            })
+            .get()
+            .reduce(function (total, currentValue) { return total + currentValue; });
+        //To set the html content of <td> that contains total
+        $('tfoot tr td:last-child').html(total);
+    }
+</script>
 <h2>Historial de actividades</h2>
 <form asp-controller="Activity" asp-action="History" method="get">
+    <input type="number" hidden id="activityId" />
+    <input type="number" hidden id="type" />
+    <div id="placeholderSuccess" tabindex="">
+
+    </div>
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
+        <input type="text" class="form-control" id="filter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
+        </div>
+    </div>
+    <label>Filtro por rango de fechas:</label>
+    <div class="input-group mb-3">
+        <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon3" />
+        <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon3" />
+        <div class="input-group-append">
+            <button class="btn btn-outline-info" type="submit" id="button-addon3">Buscar</button>
         </div>
     </div>
     <br />
@@ -24,6 +275,7 @@
                     <th>Retainer</th>
                     <th>Ítem</th>
                     <th>Fecha</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +301,7 @@
                         {
                             <td>Hora</td>
                         }
-                        else if(activity.ActivityType == ActivityTypeEnum.NoBillable)
+                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
                         {
                             <td>No cobrable</td>
                         }
@@ -57,17 +309,147 @@
                         <td>@(activity.BillableRetainer?.Name ?? "-")</td>
                         <td>@(activity.Item?.Name ?? "-")</td>
                         <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                        @if (activity.IsBillable == false && activity.IsBilled == false)
+                        {
+                            <td><a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a></td>
+
+                        }
+                        else
+                        {
+                            <td>-</td>
+                        }
+
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 
-    <div page-model="@Model.PagingInfo" page-action="Admin" page-classes-enabled="true"
+    <div page-model="@Model.PagingInfo" page-action="History" page-classes-enabled="true"
          page-class="btn" page-class-normal="btn-outline-info"
          page-class-selected="btn-info" page-url-filter="@Model.CurrentFilter"
-         page-number-url-key="pageNumber"
+         page-number-url-key="pageNumber" page-url-dateStart="@Model.CurrentStartDate" page-url-dateEnd="@Model.CurrentEndDate"
          class="btn-group float-right m-1">
 
+    </div>
+
+    <!--Modal begin for edit-->
+    <!-- Modal -->
+    <div class="modal fade" id="editForm" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <!--Content-->
+            <div class="modal-content form-elegant">
+                <!--Header-->
+                <div class="modal-header text-center">
+                    <h3 class="modal-title dark-grey-text font-weight-bold my-3" id="editModalLabel"><strong>Edición de actividad</strong></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!--Body-->
+                <div class="modal-body mx-4">
+                    <div id="placeholderError">
+
+                    </div>
+                    <div class="form-row" style="margin-top:10px">
+                        <div class="form-group col-md-4">
+                            <label for="clientName">Cliente: </label>
+                            <input type="text" id="clientName" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="activityType">Tipo de actividad: </label>
+                            <input type="text" id="activityType" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="activityDate">Fecha:</label>
+                            <input type="text" id="activityDate" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-4" id="divPackageName" hidden>
+                            <label for="packageName">Paquete: </label>
+                            <input type="text" id="packageName" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-4" id="divRetainerName" hidden>
+                            <label for="retainerName">Retainer: </label>
+                            <input type="text" id="retainerName" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-4" id="divItemPrice" hidden>
+                            <label for="itemPrice">Precio del ítem:</label>
+                            <input type="text" id="itemPrice" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-4" id="divItemQuantity" hidden>
+                            <label for="itemQuantity">Cantidad del ítem:</label>
+                            <input type="text" id="itemQuantity" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="hours">Horas trabajadas:</label>
+                            <input type="number" min="1" id="hours" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group col-md-4" id="divFeePerHour" hidden>
+                            <label for="feePerHour">Precio por hora:</label>
+                            <input type="text" id="feePerHour" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label for="service">Servicio:</label>
+                            <input type="text" id="service" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group col-md-7">
+                            <label for="description">Descripción:</label>
+                            <textarea id="description" class="form-control form-control-sm" spellcheck="true" lang="es"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="expenses">Gastos:*</label>
+                            <select id="expenses" class="form-control form-control-sm">
+                                <option data-amount="" value="">Seleccionar gasto</option>
+                                @foreach (var e in Model.Expenses)
+                                {
+                                    <option data-amount="@e.Amount" data-isReadOnly="@(e.IsReadOnly ? "Editable" : "No Editable")" value="@e.Id">@e.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="expensesQuantity">Cantidad:*</label>
+                            <input type="number" class="form-control form-control-sm" id="expensesQuantity" disabled />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="expensesPrice">Monto:*</label>
+                            <input type="text" class="form-control form-control-sm" id="expensesPrice" disabled />
+                        </div>
+                        <div class="form-group col-md-1">
+                            <button class="btn btn-primary btn-sm" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
+                        </div>
+                    </div>
+                    <div id="containerTable" class="form-row table-responsive table-striped">
+                        <table id="expensesTable" class="table table-stribed table-bordered">
+                            <thead>
+                                <tr>
+                                    <th hidden>ID</th>
+                                    <th>Gasto</th>
+                                    <th>Cantidad</th>
+                                    <th>Monto</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableData"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-right">Total (USD):</td>
+                                    <td class="text-right"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="form-row">
+                        <button class="btn btn-primary btn-sm" id="btnSubmit" type="button">Actualizar</button>
+                    </div>
+                </div>
+
+            </div>
+            <!--/.Content-->
+        </div>
     </div>
 </form>

@@ -451,9 +451,7 @@
                 var price = $("#expenses").find(":selected").attr("data-amount");
                 var isEditable = $("#expenses").find(":selected").attr("data-isReadOnly");
                 $("#expensesPrice").val(price);
-                console.log("Es editable es: " + isEditable);
                 if (isEditable === "Editable") {
-                    console.log("verifica si es true");
                     $("#expensesPrice").prop("disabled", false);
                 }
                 else {
