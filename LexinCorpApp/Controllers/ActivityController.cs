@@ -152,9 +152,9 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize]
-        public IActionResult DetailCheck(string filter, string dateStart, string dateEnd)
+        public IActionResult DetailCheck(string filter, string dateStart, string dateEnd, int id)
         {
-            Func<Activity, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Client.Name.Contains(filter);
+            Func<Activity, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.ClientId == id;
             CultureInfo provider = CultureInfo.InvariantCulture;
             DateTime date1 = new DateTime();
             DateTime date2 = new DateTime();
@@ -250,6 +250,7 @@ namespace LexincorpApp.Controllers
                 viewModel.BillableRetainers = new List<BillableRetainer>();
             }
             viewModel.Expenses = _expenseRepo.Expenses;
+            viewModel.CurrentId = id;
             return View(viewModel);
         }
         [Authorize]
@@ -440,8 +441,14 @@ namespace LexincorpApp.Controllers
         public JsonResult Update(UpdateActivityRequest body)
         {
             _activityRepo.Update(body);
-            //return RedirectToAction("History", new { filter = filter, dateStart = dateStart, dateEnd = dateEnd, pageNumber = pageNumber });
-            return Json(new { message = "Actividad ingresada exitosamente", success = true });
+            return Json(new { message = "Actividad actualizada exitosamente", success = true });
+        }
+        [Authorize]
+        [HttpPost]
+        public JsonResult MarkActivities(List<int> body)
+        {
+            _activityRepo.MarkActivitiesAsBillable(body);
+            return Json(new { message = "Actividades marcadas como facturables exitosamente", success = true });
         }
     }
 }

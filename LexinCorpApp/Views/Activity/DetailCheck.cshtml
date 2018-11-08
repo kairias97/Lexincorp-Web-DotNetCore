@@ -10,7 +10,44 @@
         $("#dateEnd").datepicker();
         $("#dateEnd").datepicker("option", "dateFormat", "dd/mm/yy");
 
+        $("#clientFilter").autocomplete({
+                source: function (request, response) {
+                $.ajax({
+                        url: "@Url.Action("Search","Client")",
+                    type: "GET",
+                    data: request,
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                                //console.log(data);
+                                response($.map(data, function (item) {
+                                    return {
+                                    value: item.name,
+                                label: item.name,
+                                clientName: item.name,
+                                clientId: item.id,
+                                isEnglish: item.billingInEnglish,
+                                feePerHour: item.feePerHour,
+                                packages: item.packages,
+                                isHourBilled: item.isHourBilled,
+                                    }
+                                }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                var err = eval("(" + XMLHttpRequest.responseText + ")");
+                                alert(err.Message)
+                        // console.log("Ajax Error!");
+                    }
+                        });
+                    },
+            minLength: 1,
+            select: function (event, ui) {
+                //$("#Package_ClientId").val(ui.item.clientId);
+                $("#clientId").val(ui.item.clientId);
+                $("#button-addon2").click();    
+            }
 
+            });
         $("#expenses").change(function () {
             if ($("#expenses").val() === "" || $("#expenses").val() === undefined) {
                 $("#expensesQuantity").val("");
@@ -101,6 +138,30 @@
             else {
                 showError("Datos inválidos");
             }
+        });
+        $("#btnMark").click(function () {
+            var newActivitySpinHandle = loadingOverlay.activate();
+            $.ajax({
+                url: '@Url.Action("MarkActivities","Activity")',
+                type: "POST",
+                data: { body: ids },
+                dataType: "json",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    loadingOverlay.cancel(newActivitySpinHandle);
+                    showSuccess(data.message);
+                    setTimeout(
+                        function () {
+                            location.reload();
+                        }, 2000);
+                }
+                ,
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    loadingOverlay.cancel(newActivitySpinHandle);
+                    var err = eval("(" + XMLHttpRequest.responseText + ")");
+                    alert(err.Message);
+                }
+            })
         });
         $("#packages").change(function () {
             var value = $("#packages").val();
@@ -236,9 +297,13 @@
     }
     function handleCheck(element) {
         var id = $(element).attr("data-id");
-        console.log($(element).prop("checked"));
         if ($(element).prop("checked")) {
-            ids.push(id);
+            if (ids.includes(id)) {
+
+            }
+            else {
+                ids.push(id);
+            }
             var row = $(element).closest("tr");
             if (row.attr("data-packageId") !== "") {
                 row.addClass("table-primary");
@@ -269,7 +334,6 @@
                 row.removeClass("table-danger");
             }
         }
-        console.log(ids);
     }
     function handleEdit(id) {
         var newActivitySpinHandle = loadingOverlay.activate();
@@ -385,7 +449,8 @@
     </div>
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" id="filter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
+        <input type="text" class="form-control" id="clientFilter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
+        <input type="text" class="form-control" id="clientId" name="id" hidden value="@Model.CurrentId"/>
         <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon2" />
         <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon2" />
         <div class="input-group-append">

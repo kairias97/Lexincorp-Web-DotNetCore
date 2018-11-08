@@ -16,5 +16,6 @@ namespace LexincorpApp.Models
         public IEnumerable<Expense> Expenses { get; set; }
         public IEnumerable<Package> Packages { get; set; }
         public IEnumerable<BillableRetainer> BillableRetainers { get; set; }
+        public int CurrentId { get; set; }
     }
 }
