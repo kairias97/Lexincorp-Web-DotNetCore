@@ -72,7 +72,8 @@ namespace LexincorpApp.Controllers
                         {
                             new Claim(ClaimTypes.Name, user.Username),
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                            new Claim(ClaimTypes.Role, user.IsAdmin ? "Administrador" : "Regular")
+                            new Claim(ClaimTypes.Role, user.IsAdmin ? "Administrador" : "Regular"),
+                            new Claim("CanApproveVacations", user.Attorney.CanApproveVacations ? "true" : "false")
                         };
 
                         var claimsIdentity = new ClaimsIdentity(
@@ -130,6 +131,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult ChangePassword()
         {
+            return NotFound();
             ChangePasswordViewModel viewModel = new ChangePasswordViewModel();
             viewModel.PasswordUser = new NewPasswordUser();
             ViewBag.Updated = TempData["Updated"];
@@ -141,6 +143,7 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult ChangePassword(NewPasswordUser PasswordUser)
         {
+            return NotFound();
             if (!ModelState.IsValid)
             {
                 ChangePasswordViewModel vm = new ChangePasswordViewModel();

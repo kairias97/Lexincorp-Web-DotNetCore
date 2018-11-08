@@ -7,7 +7,7 @@ namespace LexincorpApp.Models
 {
     public interface IVacationsMovementRepository
     {
-        void Save(VacationsMovement vacationsMovement);
+        void Save(VacationsMovement vacationsMovement, int userId);
         bool ValidateMovement(VacationsMovement vacationsMovement);
     }
 }

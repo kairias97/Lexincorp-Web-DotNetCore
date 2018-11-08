@@ -63,17 +63,17 @@
         </div>
     </div>
     <br />
-    @if ((ViewBag.Answered ?? false) && (bool)ViewBag.Approved)
+    @if ((ViewBag.Answered ?? false))
     {
         <div class="alert alert-success alert-dismissible fade show">
-            Solicitud de vacaciones aprobada exitosamente!
+            @ViewBag.Message
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
     }
-    else if ((ViewBag.Answered ?? false) && !(bool)ViewBag.Approved)
+    @*else if ((ViewBag.Answered ?? false) && !(bool)ViewBag.Approved)
     {
         <div class="alert alert-success alert-dismissible fade show">
             Solicitud de vacaciones rechazada exitosamente!
@@ -82,7 +82,7 @@
             </button>
         </div>
 
-    }
+    }*@
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead>
@@ -105,7 +105,7 @@
                         <td>
                             @if (vacation.IsApproved == null)
                             {
-                                <a asp-action="Edit" asp-controller="VacationsRequest" asp-route-id="@vacation.VacationsRequestId"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Responder"></i></a>
+                                <a asp-action="Answer" asp-controller="VacationsRequest" asp-route-id="@vacation.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Responder"></i></a>
                             }
                             else
                             {

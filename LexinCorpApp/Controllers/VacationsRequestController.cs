@@ -14,6 +14,7 @@ using System.Security.Claims;
 
 namespace LexincorpApp.Controllers
 {
+    [Authorize(Roles ="Administrador,Regular")]
     public class VacationsRequestController : Controller
     {
         private readonly IAttorneyRepository _attorneysRepo;
@@ -33,11 +34,10 @@ namespace LexincorpApp.Controllers
         public IActionResult New()
         {
             var user = HttpContext.User;
-            var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
+            var userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel
             {
-                DaysAvailable = attorney.VacationCount,
+                DaysAvailable = _vacationsRequestRepo.GetAvailableVacationCount(userId),
                 VacationsRequest = new VacationsRequest()
             };
             ViewBag.AddedRequest = TempData["added"];
@@ -63,13 +63,12 @@ namespace LexincorpApp.Controllers
             else
             {
                 var user = HttpContext.User;
-                var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-                var attorney = _attorneysRepo.Attorneys.Where(x => x.UserId == Convert.ToInt32(id)).FirstOrDefault();
-                vacationsRequest.AttorneyId = attorney.Id;
-                if (_vacationsRequestRepo.ValidateRequest(vacationsRequest))
+                var userId = Convert.ToInt32(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                
+                if (_vacationsRequestRepo.ValidateRequest(userId, vacationsRequest.Quantity))
                 {
                     //vacationsRequest.AttorneyId = attorney.AttorneyId;
-                    _vacationsRequestRepo.Save(vacationsRequest);
+                    _vacationsRequestRepo.Save(vacationsRequest, userId);
                     ViewBag.DaysInvalid = false;
                     TempData["added"] = true;
                     return RedirectToAction("New");
@@ -80,7 +79,7 @@ namespace LexincorpApp.Controllers
                     ViewBag.DaysInvalid = true;
                     NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel
                     {
-                        DaysAvailable = attorney.VacationCount,
+                        DaysAvailable = _vacationsRequestRepo.GetAvailableVacationCount(userId),
                         VacationsRequest = vacationsRequest
                     };
                     return View(viewModel);
@@ -113,10 +112,11 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Roles ="Administrador")]
         public IActionResult Admin(bool? filter, string filterText, int pageNumber = 1)
         {
-            Func<VacationsRequest, bool> filterFunction = c => c.IsApproved == filter;
+            int currentUserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            Func<VacationsRequest, bool> filterFunction = r =>(r.IsApproved == filter && filter == null && r.VacationsRequestAnswers.Any(vra => vra.ApproverId == currentUserId && vra.IsApproved == null)) ||  (r.IsApproved == filter && filter != null);
             Func<VacationsRequest, bool> filterFunctionText = c => String.IsNullOrEmpty(filterText)  || c.Attorney.Name.CaseInsensitiveContains(filterText) || c.StartDate.ToString("dd/MM/yyyy").Contains(filterText);
             VacationsRequestListViewModel viewModel = new VacationsRequestListViewModel();
             viewModel.CurrentFilter = filter;
@@ -134,15 +134,15 @@ namespace LexincorpApp.Controllers
                 TotalItems = _vacationsRequestRepo.VacationsRequests().Count(filterFunction)
             };
             ViewBag.Answered = TempData["answered"];
-            ViewBag.Approved = TempData["approved"];
+            ViewBag.Message = TempData["message"];
             return View(viewModel);
         }
         [Authorize]
-        public IActionResult Edit(int id)
+        public IActionResult Answer(int id)
         {
             ViewBag.UpdatedVacationRequest = TempData["updated"];
             NewVacationsRequestViewModel viewModel = new NewVacationsRequestViewModel();
-            var vacations = _vacationsRequestRepo.VacationsRequests().Include(v => v.Attorney).Where(v => v.VacationsRequestId == id).FirstOrDefault();
+            var vacations = _vacationsRequestRepo.VacationsRequests().Include(v => v.Attorney).Where(v => v.Id == id).FirstOrDefault();
             viewModel.VacationsRequest = vacations;
             viewModel.AttorneyName = vacations.Attorney.Name;
             if (viewModel.VacationsRequest == null)
@@ -153,7 +153,7 @@ namespace LexincorpApp.Controllers
         }
         [Authorize]
         [HttpPost]
-        public IActionResult Edit(VacationsRequest vacationsRequest)
+        public IActionResult Answer(VacationsRequest vacationsRequest)
         {
             if (vacationsRequest.IsApproved == null)
             {
@@ -171,11 +171,35 @@ namespace LexincorpApp.Controllers
             }
             else
             {
-                _vacationsRequestRepo.Update(vacationsRequest);
+                int currentUserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                string message;
+                _vacationsRequestRepo.Approve(vacationsRequest, currentUserId, out message);
                 TempData["answered"] = true;
-                TempData["approved"] = vacationsRequest.IsApproved;
+                TempData["message"] = message;
                 return RedirectToAction("Admin");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ApplyMonthlyCredits()
+        {
+            string message;
+            bool success;
+            _vacationsRequestRepo.ApplyMonthlyVacationsCredit(out message, out success);
+   
+            return Json(new { success, message });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ApplyApprovals()
+        {
+            string message;
+            bool success;
+
+            _vacationsRequestRepo.ApplyApprovedVacationsRequests(out message, out success);
+            return Json(new { success, message });
         }
     }
 }

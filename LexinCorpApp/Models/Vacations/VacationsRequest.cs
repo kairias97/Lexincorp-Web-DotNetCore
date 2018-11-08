@@ -8,7 +8,7 @@ namespace LexincorpApp.Models
 {
     public class VacationsRequest
     {
-        public int VacationsRequestId { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage = "Se debe indicar una cantidad de días")]
         public decimal Quantity { get; set; }
         [Required(ErrorMessage = "Se debe indicar una razón para la solicitud")]
@@ -21,5 +21,8 @@ namespace LexincorpApp.Models
         public DateTime StartDate { get; set; }
         public int AttorneyId { get; set; }
         public virtual Attorney Attorney { get; set; }
+        public bool IsApplied { get; set; } = false;
+        public string RejectReason { get; set; }
+        public virtual ICollection<VacationsRequestAnswer> VacationsRequestAnswers { get; set; }
     }
 }

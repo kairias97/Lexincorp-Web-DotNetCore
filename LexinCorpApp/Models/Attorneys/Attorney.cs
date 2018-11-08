@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LexincorpApp.Models
 {
@@ -42,6 +43,8 @@ namespace LexincorpApp.Models
         public string Email { get; set; }
         public decimal VacationCount { get; set; }
         public bool CanApproveVacations { get; set; }
+        [NotMapped]
+        public decimal AvailableVacationCount { get; set; }
 
         /*protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
