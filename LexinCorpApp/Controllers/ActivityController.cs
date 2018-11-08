@@ -337,6 +337,7 @@ namespace LexincorpApp.Controllers
         public JsonResult Update(UpdateActivityRequest body)
         {
             _activityRepo.Update(body);
+            //return RedirectToAction("History", new { filter = filter, dateStart = dateStart, dateEnd = dateEnd, pageNumber = pageNumber });
             return Json(new { message = "Actividad ingresada exitosamente", success = true });
         }
     }

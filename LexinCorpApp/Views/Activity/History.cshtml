@@ -84,6 +84,10 @@
                         showSuccess("Actividad actualizada exitosamente");
                         $("#editForm").modal("hide");
                         clean();
+                        setTimeout(
+                            function () {
+                                location.reload();
+                            }, 2000);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         loadingOverlay.cancel(newActivitySpinHandle);
@@ -243,12 +247,9 @@
     <div id="placeholderSuccess" tabindex="">
 
     </div>
-    <div id="placeholderError">
-
-    </div>
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
+        <input type="text" class="form-control" id="filter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
         </div>
@@ -347,6 +348,9 @@
                 </div>
                 <!--Body-->
                 <div class="modal-body mx-4">
+                    <div id="placeholderError">
+
+                    </div>
                     <div class="form-row" style="margin-top:10px">
                         <div class="form-group col-md-4">
                             <label for="clientName">Cliente: </label>
