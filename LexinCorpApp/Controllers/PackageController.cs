@@ -79,6 +79,8 @@ namespace LexincorpApp.Controllers
         [Authorize(Roles = "Administrador")]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             //Setting up the messages passed through temp data from closure request
             ViewBag.IsClosureProcessed = TempData["IsClosureProcessed"];
             ViewBag.ClosureRequestMessage = TempData["ClosureRequestMessage"];
@@ -134,6 +136,7 @@ namespace LexincorpApp.Controllers
         [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             var package = _packagesRepo.Packages.Include(p=> p.Client).Where(p => p.Id == id).FirstOrDefault();
             if (package == null)
             {
@@ -147,13 +150,14 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Package package)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 return View(package);
             }
             _packagesRepo.Save(package);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit), new { id = package.Id});
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
         [Authorize(Roles = "Administrador, Regular")]
         public JsonResult Search(int clientId)

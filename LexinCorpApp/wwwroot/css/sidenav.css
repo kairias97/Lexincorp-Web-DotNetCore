@@ -15,7 +15,7 @@
     background-color: lightgray;
 }
 
-.transiton-div{
+/*.transiton-div{
 
 }
 
@@ -24,4 +24,8 @@
 }
 .transiton-div .collapsed .fas {
     transform: rotate(270deg);
+}*/
+
+.transiton-div:hover {
+   background-color: lightgray
 }

@@ -55,6 +55,8 @@ namespace LexincorpApp.Controllers
         [Authorize(Roles = "Administrador")]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             Func<Service, bool> filterFunction = service => String.IsNullOrEmpty(filter) || service.Name.CaseInsensitiveContains(filter);
             ServiceListViewModel vm = new ServiceListViewModel
             {
@@ -78,7 +80,7 @@ namespace LexincorpApp.Controllers
         [Authorize(Roles = "Administrador")]
         public IActionResult Edit(int id)
         {
-            
+            TempData.Keep();
             Service service = _servicesRepo.Services.Where(s => s.Id == id).FirstOrDefault();
             if (service == null)
             {
@@ -97,6 +99,7 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Service service)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 EditServiceViewModel vm = new EditServiceViewModel
@@ -109,7 +112,7 @@ namespace LexincorpApp.Controllers
             }
             _servicesRepo.Save(service);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit), new { id = service.Id });
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
         [Authorize(Roles = "Administrador, Regular")]
         public JsonResult GetByCategory(int categoryId)

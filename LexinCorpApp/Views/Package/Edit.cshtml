@@ -29,56 +29,57 @@
     </div>
 
 }
-<form asp-action="New" asp-controller="Package" role="alert">
-    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-    {
-        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
-        <div class="alert alert-danger alert-dismissible fade show">
-            @Html.ValidationSummary(false, "Errores de validación:")
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+    <form asp-action="Edit" asp-controller="Package" role="alert">
+        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+        {
+            // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+            <div class="alert alert-danger alert-dismissible fade show">
+                @Html.ValidationSummary(false, "Errores de validación:")
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+        }
+        <input asp-for="Id" hidden />
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="ClientName">Nombre del cliente:</label>
+                <input type="text" readonly class="form-control" value="@Model.Client?.Name" aria-label="Nombre del cliente">
+
+            </div>
+            <div class="form-group offset-md-1 col-md-5">
+
+                <label for="clientName">Idioma de facturación:</label>
+                <input type="text" readonly class="form-control" id="clientLanguage" value="@(Model.Client?.BillingInEnglish ?? false ?"Inglés" : "Español")" aria-label="Idioma de facturación">
+
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="Package_Name">Título del paquete para la lista*:</label>
+                <input type="text" class="form-control" asp-for="@Model.Name" required />
+            </div>
+            <div class="form-group offset-md-1 col-md-5">
+                <label for="Package_Description">Descripción*:</label>
+                <textarea class="form-control" asp-for="@Model.Description" required spellcheck="true"></textarea>
+            </div>
 
         </div>
-    }
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <label for="ClientName">Nombre del cliente:</label>
-            <input type="text" readonly  class="form-control" value="@Model.Client?.Name" aria-label="Nombre del cliente">
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="Package_Amount">Honorario Acordado (USD)*:</label>
+                <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Amount" />
+            </div>
+            <div class="form-group offset-md-1 col-md-5">
+                <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
+                <input type="text" id="packageDate" class="form-control" asp-for="@Model.RealizationDate" required />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
 
-        </div>
-        <div class="form-group offset-md-1 col-md-5">
-
-            <label for="clientName">Idioma de facturación:</label>
-            <input type="text" readonly class="form-control" id="clientLanguage" value="@(Model.Client?.BillingInEnglish ?? false ?"Inglés" : "Español")" aria-label="Idioma de facturación">
-
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <label for="Package_Name">Título del paquete para la lista*:</label>
-            <input type="text" class="form-control" asp-for="@Model.Name" required />
-        </div>
-        <div class="form-group offset-md-1 col-md-5">
-            <label for="Package_Description">Descripción*:</label>
-            <textarea class="form-control" asp-for="@Model.Description" required spellcheck="true"></textarea>
-        </div>
-
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <label for="Package_Amount">Honorario Acordado (USD)*:</label>
-            <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Amount" />
-        </div>
-        <div class="form-group offset-md-1 col-md-5">
-            <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
-            <input type="text" id="packageDate" class="form-control" asp-for="@Model.RealizationDate" required />
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-
-    <br />
-</form>
+        <br />
+    </form>
 <br />
 
 

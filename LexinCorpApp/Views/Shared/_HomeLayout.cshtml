@@ -26,6 +26,7 @@
     <link href="~/lib/@@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
     @*<script src="~/js/loadingOverlay.js"></script>*@
 
 
@@ -139,21 +140,22 @@
                     </ul>
                     <div class="transiton-div">
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseActivities" aria-expanded="false" aria-controls="collapseActivities">
-                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
-                                Actividades
-                                <i class="fas fa-arrow-circle-down"></i>
-                            </h6>
+                            <i class="fas fa-clipboard fa-fw"></i>&nbsp; Actividades
+                            @*<h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+            Actividades
+            <i class="fas fa-arrow-circle-down"></i>
+        </h6>*@
                         </a>
                     </div>
-                    <div class="collapse" id="collapseActivities">
+                    <div class="collapse" id="collapseActivities" style="background-color:slategray">
                         <ul class="nav flex-column">
                             <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="Register">
+                                <a class="nav-link" style="color:white" asp-controller="Activity" asp-action="Register">
                                     <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="Activity" asp-action="History">
+                                <a class="nav-link" style="color:white"  asp-controller="Activity" asp-action="History">
                                     <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
                                 </a>
                             </li>
@@ -164,21 +166,22 @@
                     {
                         <div class="transiton-div">
                             <a class="nav-link text-muted" data-toggle="collapse" href="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
-                                <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
-                                    Reportes
-                                    <i class="fas fa-arrow-circle-down fa-fw"></i>
-                                </h6>
+                                <i class="fas fa-chart-line fa-w"></i>&nbsp; Reportes
+                                @*<h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+            Reportes
+            <i class="fas fa-arrow-circle-down fa-fw"></i>
+        </h6>*@
                             </a>
                         </div>
-                        <div class="collapse" id="collapseReports">
+                        <div class="collapse" id="collapseReports" style="background-color:slategrey">
                             <ul class="nav flex-column">
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="Expense" asp-action="Report">
+                                    <a class="nav-link" style="color:white"  asp-controller="Expense" asp-action="Report">
                                         <i class="fas fa-money-bill fa-fw"></i>&nbsp; Gastos
                                     </a>
                                 </li>
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="Activity" asp-action="Report">
+                                    <a class="nav-link" style="color:white"  asp-controller="Activity" asp-action="Report">
                                         <i class="fas fa-clipboard fa-fw"></i>&nbsp; Actividades
                                     </a>
                                 </li>
@@ -188,28 +191,30 @@
 
                     <div class="transiton-div">
                         <a class="nav-link text-muted" data-toggle="collapse" href="#collapseVacations" aria-expanded="false" aria-controls="collapseVacations">
-                            <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
-                                Vacaciones
-                                <i class="fas fa-arrow-circle-down fa-fw"></i>
-                            </h6>
+                            <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Vacaciones
+                            @*<h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+            Vacaciones
+            <i class="fas fa-arrow-circle-down fa-fw"></i>
+        </h6>*@
+
                         </a>
                     </div>
-                    <div class="collapse" id="collapseVacations">
+                    <div class="collapse" id="collapseVacations" style="background-color:slategray">
                         <ul class="nav flex-column">
                             @if (User.IsInRole("Administrador"))
                             {
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="VacationsMovement" asp-action="Add">
+                                    <a class="nav-link" style="color:white"  asp-controller="VacationsMovement" asp-action="Add">
                                         <i class="fas fa-plus-circle fa-fw"></i>&nbsp; Registrar movimiento
                                     </a>
                                 </li>
 
 
                             }
-                            @if (User.HasClaim(claim => claim.Type == "CanApproveVacations" && claim.Value == "true"))
+                            @if (User.IsInRole("Administrador") || User.HasClaim(claim => claim.Type == "CanApproveVacations" && claim.Value == "true"))
                             {
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="Admin">
+                                    <a class="nav-link" style="color:white"  asp-controller="VacationsRequest" asp-action="Admin">
                                         <i class="fas fa-bookmark fa-fw"></i>&nbsp; Administración de solicitudes
                                     </a>
                                 </li>
@@ -217,12 +222,12 @@
                             }
 
                             <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="New">
+                                <a class="nav-link" style="color:white"  asp-controller="VacationsRequest" asp-action="New">
                                     <i class="fas fa-umbrella-beach fa-fw"></i>&nbsp; Nueva solicitud
                                 </a>
                             </li>
                             <li class="nav-item sidebar-li">
-                                <a class="nav-link text-muted" asp-controller="VacationsRequest" asp-action="History">
+                                <a class="nav-link" style="color:white"  asp-controller="VacationsRequest" asp-action="History">
                                     <i class="fas fa-archive fa-fw"></i>&nbsp; Mi historial de solicitudes
                                 </a>
                             </li>
@@ -232,26 +237,27 @@
                     {
                         <div class="transiton-div">
                             <a class="nav-link text-muted" data-toggle="collapse" href="#collapseBills" aria-expanded="false" aria-controls="collapseBills">
-                                <h6 class="sidebar-heading d-flex justify-content-between text-black-50">
-                                    Facturación
-                                    <i class="fas fa-arrow-circle-down fa-fw"></i>
-                                </h6>
+                                @*<h6 class="sidebar-heading d-flex justify-content-between text-black-50">
+            Facturación
+            <i class="fas fa-arrow-circle-down fa-fw"></i>
+        </h6>*@
+                                <i class="fas fa-file-invoice-dollar fa-fw"></i>&nbsp; Facturación
                             </a>
                         </div>
-                        <div class="collapse" id="collapseBills">
+                        <div class="collapse" id="collapseBills" style="background-color:slategray">
                             <ul class="nav flex-column">
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="Bill" asp-action="PreBilling">
+                                    <a class="nav-link" style="color:white"  asp-controller="Bill" asp-action="PreBilling">
                                         <i class="fas fa-file-alt fa-fw"></i>&nbsp; Prefacturar
                                     </a>
                                 </li>
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="Bill" asp-action="Billing">
+                                    <a class="nav-link" style="color:white"  asp-controller="Bill" asp-action="Billing">
                                         <i class="fas fa-file-archive fa-fw"></i>&nbsp; Facturar
                                     </a>
                                 </li>
                                 <li class="nav-item sidebar-li">
-                                    <a class="nav-link text-muted" asp-controller="Bill" asp-action="History">
+                                    <a class="nav-link" style="color:white"  asp-controller="Bill" asp-action="History">
                                         <i class="fas fa-archive fa-fw"></i>&nbsp; Historial
                                     </a>
                                 </li>
@@ -260,7 +266,7 @@
 
                     }
 
-                    <ul class="nav flex-column centered" style="padding-top:15px;">
+                    <ul class="nav flex-column centered">
 
                         <li class="nav-item sidebar-li">
                             <a class="nav-link text-muted" asp-action="Index" asp-controller="Notification">

@@ -11,8 +11,7 @@
 *.userprefs
 
 #Logs
-applogs*.txt
-
+*.txt
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

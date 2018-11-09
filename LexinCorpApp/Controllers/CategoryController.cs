@@ -39,6 +39,8 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             Func<Category, bool> filterFunction = category => String.IsNullOrEmpty(filter) || category.Name.CaseInsensitiveContains(filter);
             CategoryListViewModel vm = new CategoryListViewModel
             {
@@ -55,12 +57,14 @@ namespace LexincorpApp.Controllers
                     TotalItems = _categoriesRepo.Categories.Count(filterFunction)
                 }
             };
+            TempData["filter"] = filter;
             return View(vm);
 
         }
 
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             Category category = _categoriesRepo.Categories.Where(c => c.Id == id).FirstOrDefault();
             if (category == null)
             {
@@ -73,13 +77,14 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Category category)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 return View(category);
             }
             _categoriesRepo.Save(category);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit), new { id = category.Id});
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
     }
 }

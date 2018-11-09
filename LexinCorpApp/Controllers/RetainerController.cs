@@ -40,6 +40,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             var retainer = _retainersRepo.Retainers.Where(r => r.Id == id).FirstOrDefault();
             if (retainer == null)
             {
@@ -53,17 +54,20 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Retainer retainer)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 return View(retainer);
             }
             _retainersRepo.Save(retainer);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit), new { id = retainer.Id});
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            ViewBag.Updated = TempData["updated"];
+            TempData["filter"] = filter;
             Func<Retainer, bool> filterFunction = r => String.IsNullOrEmpty(filter) || r.SpanishName.CaseInsensitiveContains(filter)
                 || r.EnglishName.CaseInsensitiveContains(filter);
             RetainerListViewModel vm = new RetainerListViewModel

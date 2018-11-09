@@ -15,6 +15,17 @@
     </div>
 </form>
 <br />
+@if (ViewBag.Updated ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Paquete actualizado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
 @if (ViewBag.IsClosureProcessed != null && ViewBag.ClosureRequestMessage != null)
 {
     <div class="alert alert-@((bool)ViewBag.IsClosureProcessed ? "success" : "warning") alert-dismissible fade show">
