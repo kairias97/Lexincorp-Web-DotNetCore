@@ -2,6 +2,16 @@
 @{
     ViewData["Title"] = "Agregar nueva solicitud de vacaciones";
 }
+<script type="text/javascript">
+    $(function() {
+        $("#VacationsRequest_StartDate").datepicker();
+        $("#VacationsRequest_StartDate").datepicker("option", "dateFormat", "dd/mm/yy");
+        $("#VacationsRequest_StartDate").datepicker("option", {
+            minDate: new Date()
+        });
+
+    });
+</script>
 <h4>Agregar nueva solicitud de vacaciones</h4>
 <br />
 @if (ViewBag.AddedRequest ?? false)

@@ -36,6 +36,8 @@ namespace LexincorpApp.Models
         public DbSet<BillDetail> BillDetails { get; set; }
         public DbSet<ClosureNotification> ClosureNotifications { get; set; }
         public DbSet<NotificationAnswer> NotificationAnswers { get; set; }
+        public DbSet<VacationsRequestAnswer> VacationsRequestAnswers { get; set; }
+        public DbSet<VacationsMonthlyCredit> VacationsMonthlyCredits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,6 +94,16 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Attorney>()
                 .Property(a => a.CanApproveVacations)
                 .HasDefaultValue(true);
+            modelBuilder.Entity<VacationsRequest>()
+                .Property(vr => vr.IsApplied)
+                .HasDefaultValue(false);
+
+            modelBuilder.Entity<VacationsRequestAnswer>()
+                .HasOne(vra => vra.Request)
+                .WithMany(request => request.VacationsRequestAnswers)
+                .HasForeignKey(vra => vra.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Package>()
                 .Property(p => p.AgreedExpensesAmount)
                 .HasDefaultValue(0);

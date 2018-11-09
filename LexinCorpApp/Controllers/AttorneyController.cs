@@ -98,6 +98,8 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+
+            ViewBag.Updated = TempData["updated"];
             Func<Attorney, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.IdentificationNumber.CaseInsensitiveContains(filter);
             ViewBag.ResetedPassword = TempData["ResetedPassword"];
             AttorneyListViewModel viewModel = new AttorneyListViewModel();
@@ -121,6 +123,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             ViewBag.UpdatedAttorney = TempData["updated"];
             NewAttorneyViewModel viewModel = new NewAttorneyViewModel
             {
@@ -137,6 +140,7 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Attorney attorney)
         {
+            TempData.Keep();
             if (!_usersRepo.VerifyUsername(attorney.User.Username) && !_usersRepo.VerifyAttorneyIDAndUsername(attorney.Id, attorney.UserId))
             {
                 ModelState.AddModelError("uqUsername", "El usuario ingresado ya existe");
@@ -171,7 +175,7 @@ namespace LexincorpApp.Controllers
                 _attorneysRepo.Save(attorney, passwordModified);
                 _usersRepo.Save(attorney.User);
                 TempData["updated"] = true;
-                return RedirectToAction("Edit", new { id = attorney.Id });
+                return RedirectToAction("Admin", new { filter = TempData["filter"]});
             }
         }
 

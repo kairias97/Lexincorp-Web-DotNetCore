@@ -19,10 +19,12 @@ namespace LexincorpApp.Controllers
     {
         private readonly IActivityRepository _activityRepo;
         private readonly IAttorneyRepository _attorneyRepo;
-        public HomeController(IActivityRepository _activityRepo, IAttorneyRepository _attorneyRepo)
+        private readonly IVacationsRequestRepository _vacationsRequestRepository;
+        public HomeController(IActivityRepository _activityRepo, IAttorneyRepository _attorneyRepo, IVacationsRequestRepository vacationsRequestRepository)
         {
             this._activityRepo = _activityRepo;
             this._attorneyRepo = _attorneyRepo;
+            this._vacationsRequestRepository = vacationsRequestRepository;
         }
         [AllowAnonymous]
         public IActionResult Error()
@@ -46,8 +48,27 @@ namespace LexincorpApp.Controllers
             var hoursWorked = listHours.Sum(h => h.HoursWorked);
             viewModel.Vacations = Math.Round(vacations,2);
             viewModel.Activities = list;
+            viewModel.AvailableVacations = _vacationsRequestRepository.GetAvailableVacationCount(Convert.ToInt32(id));
+            viewModel.ReservedVacations = _vacationsRequestRepository.GetReservedVacationCount(Convert.ToInt32(id));
             viewModel.HoursWorked = Math.Round(hoursWorked);
             return View(viewModel);
+        }
+        [HttpGet]
+        public JsonResult GetDashboardChartInfo()
+        {
+            var attorneys = _attorneyRepo.Attorneys.Where(a => a.User.Active).Select(a => new { a.UserId, a.Name }).ToList();
+            var namesArray = attorneys.Select(a => a.Name).ToList();
+            var currentDate = DateTime.Now;
+            var orderedWorkedHours = new List<decimal>();
+            foreach (var a in attorneys)
+            {
+                var hoursWorked = _activityRepo.Activities.Where(act => act.CreatorId == a.UserId
+                && (act.RealizationDate.Day >= 1 || act.RealizationDate.Day <= currentDate.Day)
+                && act.RealizationDate.Month == currentDate.Month
+                && act.RealizationDate.Year == currentDate.Year).Sum(act => act.HoursWorked);
+                orderedWorkedHours.Add(hoursWorked);
+            }
+            return Json(new { labels= namesArray, data = orderedWorkedHours});
         }
     }
 }

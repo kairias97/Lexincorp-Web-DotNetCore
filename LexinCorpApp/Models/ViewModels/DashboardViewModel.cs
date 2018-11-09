@@ -9,6 +9,8 @@ namespace LexincorpApp.Models
     {
         public decimal HoursWorked { get; set; }
         public decimal Vacations { get; set; }
+        public decimal AvailableVacations { get; set; }
+        public decimal ReservedVacations { get; set; }
         public ICollection<Activity> Activities { get; set; }
     }
 }

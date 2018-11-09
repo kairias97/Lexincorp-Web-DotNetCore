@@ -795,7 +795,8 @@
 Parameters!ActivityType.Value = 1, "Hora",
 Parameters!ActivityType.Value = 2, "Paquete",
 Parameters!ActivityType.Value = 3, "Retainer",
-Parameters!ActivityType.Value = 4, "Ítem")</Value>
+Parameters!ActivityType.Value = 4, "Ítem",
+Parameters!ActivityType.Value = 5, "No cobrable")</Value>
                       <Style />
                     </TextRun>
                   </TextRuns>

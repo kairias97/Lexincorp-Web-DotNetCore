@@ -44,6 +44,8 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Name.CaseInsensitiveContains(filter) || c.Contact.CaseInsensitiveContains(filter) || c.ContactEmail == filter;
 
             ClientsListViewModel viewModel = new ClientsListViewModel();
@@ -105,6 +107,7 @@ namespace LexincorpApp.Controllers
         [Authorize]
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             ViewBag.UpdatedClient = TempData["updated"];
             ClientFormViewModel vm = new ClientFormViewModel
             {
@@ -125,6 +128,7 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Client client)
         {
+            TempData.Keep();
             if (!_clientsRepo.VerifyTributaryId(client.TributaryId) && !_clientsRepo.VerifyTributaryIdOwnership(client.Id, client.TributaryId))
             {
                 ModelState.AddModelError("uqTributaryId", "La identificación tributaria especificada ya está asociada a otro cliente registrado");
@@ -144,7 +148,7 @@ namespace LexincorpApp.Controllers
             {
                 _clientsRepo.Save(client);
                 TempData["updated"] = true;
-                return RedirectToAction("Edit", new { id = client.Id });
+                return RedirectToAction("Admin", new { filter = TempData["filter"] });
             }
             
         }

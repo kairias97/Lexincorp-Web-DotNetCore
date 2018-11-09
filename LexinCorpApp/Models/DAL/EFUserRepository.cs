@@ -50,7 +50,7 @@ namespace LexincorpApp.Models
 
         public User GetUserByUsername(string username)
         {
-            return context.Users.Where(x => x.Username == username && (bool)x.Active).FirstOrDefault();
+            return context.Users.Include(u => u.Attorney).Where(x => x.Username == username && (bool)x.Active).FirstOrDefault();
         }
         public void UpdateUserPassword(User user)
         {

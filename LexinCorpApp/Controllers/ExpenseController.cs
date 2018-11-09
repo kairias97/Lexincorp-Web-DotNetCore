@@ -52,6 +52,8 @@ namespace LexincorpApp.Controllers
 
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
+            TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             Func<Expense, bool> filterFunction = e => String.IsNullOrEmpty(filter) || e.SpanishDescription.CaseInsensitiveContains(filter) || e.EnglishDescription.CaseInsensitiveContains(filter);
             ExpenseListViewModel vm = new ExpenseListViewModel
             {
@@ -71,6 +73,7 @@ namespace LexincorpApp.Controllers
         }
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             ViewBag.UpdatedExpense = TempData["updated"];
             Expense expense = _expensesRepo.Expenses.Where(e => e.Id == id).FirstOrDefault();
             if (expense == null)
@@ -82,13 +85,14 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(Expense expense)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 return View(expense);
             }
             _expensesRepo.Save(expense);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit));
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
         [Authorize]
         public IActionResult Report()

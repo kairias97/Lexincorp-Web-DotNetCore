@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181106000539_VacationsRequestAnswers")]
+    partial class VacationsRequestAnswers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,10 +42,6 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Description");
 
                     b.Property<decimal>("HoursWorked");
-
-                    b.Property<bool>("IsBillable")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsBilled");
 
@@ -193,8 +191,6 @@ namespace LexincorpApp.Migrations
                     b.Property<int>("CreatorId");
 
                     b.Property<bool>("IsBilled");
-
-                    b.Property<bool>("IsVisibleForActivities");
 
                     b.Property<int>("Month");
 
@@ -457,8 +453,6 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("EnglishDescription")
                         .IsRequired();
 
-                    b.Property<bool>("IsReadOnly");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -522,10 +516,6 @@ namespace LexincorpApp.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("AgreedExpensesAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(0m);
 
                     b.Property<decimal>("Amount");
 
@@ -594,8 +584,6 @@ namespace LexincorpApp.Migrations
                     b.Property<int>("ClientId");
 
                     b.Property<int>("CreatorId");
-
-                    b.Property<bool>("IsVisibleForActivities");
 
                     b.Property<int>("RetainerId");
 

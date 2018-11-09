@@ -17,7 +17,7 @@
 @if (ViewBag.DaysInvalid ?? false)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <p>Los días ingresados para solicitar vacaciones, son mayores a los que tiene disponibles!</p>
+        <p>Los días ingresados para debitar vacaciones, son mayores a los que tiene disponible el usuario seleccionado!</p>
 
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -58,11 +58,11 @@
                 {
                     if (Model.VacationsMovement.AttorneyId == o.Id)
                     {
-                        @:<option value="@o.Id" selected>@o.Name</option>
+                        @:<option value="@o.Id" selected>@($"{o.Name} (Disponible: {o.AvailableVacationCount} día(s)")</option>
                     }
                     else
                     {
-                        @:<option value="@o.Id">@o.Name</option>
+                        @:<option value="@o.Id">@($"{o.Name} (Disponible: {o.AvailableVacationCount} día(s)")</option>
                     }
                 }
             </select>

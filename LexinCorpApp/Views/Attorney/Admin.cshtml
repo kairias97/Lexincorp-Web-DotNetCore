@@ -13,6 +13,17 @@
     </div>
     <br />
 </form>
+@if (ViewBag.Updated ?? false)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Abogado actualizado exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
 @if (ViewBag.ResetedPassword ?? false)
 {
     <div class="alert alert-success alert-dismissible fade show">
@@ -52,7 +63,7 @@
                     }
                     <td>@attorney.NotaryCode</td>
                     <td>
-                      
+
                         <form asp-action="Edit" asp-controller="Attorney" method="get" style="display:inline">
                             <input value="@attorney.Id" name="id" hidden />
                             <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar">

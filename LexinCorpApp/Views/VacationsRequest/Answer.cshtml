@@ -2,6 +2,24 @@
 @{
     ViewData["Title"] = "Respuesta de solicitud de vacaciones";
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#reasonContainer").attr("hidden", "hidden");
+        $("#VacationsRequest_IsApproved").on('change', function () {
+            $("#VacationsRequest_RejectReason").val("");
+            if ($(this).val() == "true") {
+                $("#reasonContainer").attr("hidden", "hidden");
+                $("#VacationsRequest_RejectReason").removeAttr("required");
+            } else {
+                $("#reasonContainer").removeAttr("hidden");
+                $("#VacationsRequest_RejectReason").attr("required", "required");
+
+            }
+
+        });
+
+    });
+</script>
 <h4>Respuesta de solicitud de vacaciones</h4>
 <br />
 @if (ViewBag.UpdatedVacationRequest ?? false)
@@ -15,7 +33,7 @@
     </div>
 
 }
-<form asp-action="Edit" asp-controller="VacationsRequest" method="post" role="alert" id="@Model.VacationsRequest.VacationsRequestId">
+<form asp-action="Answer" asp-controller="VacationsRequest" method="post" role="alert" id="@Model.VacationsRequest.Id">
     @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
     {
         <div class="alert alert-danger alert-dismissible fade show">
@@ -25,7 +43,7 @@
             </button>
         </div>
     }
-    <input asp-for="@Model.VacationsRequest.VacationsRequestId" hidden />
+    <input asp-for="@Model.VacationsRequest.Id" hidden />
     <input asp-for="@Model.VacationsRequest.AttorneyId" hidden />
     <div class="form-row">
         <div class="form-group col-md-5">
@@ -53,7 +71,7 @@
             <input type="text" asp-for="@Model.VacationsRequest.Created" class="form-control" readonly />
         </div>
         <div class="form-group col-md-5">
-            <label for="@Model.VacationsRequest.IsApproved">Estado:*</label>
+            <label for="@Model.VacationsRequest.IsApproved">Respuesta:*</label>
             @if (Model.VacationsRequest.IsApproved != null)
             {
                 <select class="form-control" asp-for="@Model.VacationsRequest.IsApproved" required disabled>
@@ -83,26 +101,32 @@
                 <select class="form-control" asp-for="@Model.VacationsRequest.IsApproved" required >
                     @if (Model.VacationsRequest.IsApproved == null)
                     {
-                        <option value="" selected>Pendiente de aprobación</option>
-                        <option value="true">Aprobado</option>
-                        <option value="false">Rechazado</option>
+                        @*<option value="" selected>Pendiente de aprobación</option>*@
+                        <option value="true">Aprobar</option>
+                        <option value="false">Rechazar</option>
                     }
                     else if (Model.VacationsRequest.IsApproved == true)
                     {
-                        <option value="">Pendiente de aprobación</option>
-                        <option value="true" selected>Aprobado</option>
-                        <option value="false">Rechazado</option>
+                        @*<option value="">Pendiente de aprobación</option>*@
+                        <option value="true" selected>Aprobar</option>
+                        <option value="false">Rechazar</option>
                     }
                     else if (Model.VacationsRequest.IsApproved == false)
                     {
-                        <option value="">Pendiente de aprobación</option>
-                        <option value="true">Aprobado</option>
-                        <option value="false" selected>Rechazado</option>
+                        @*<option value="">Pendiente de aprobación</option>*@
+                        <option value="true">Aprobar</option>
+                        <option value="false" selected>Rechazar</option>
                     }
                 </select>
 
             }
 
+        </div>
+    </div>
+    <div id="reasonContainer" class="form-row">
+        <div class="form-group col-md-5">
+            <label for="@Model.VacationsRequest.RejectReason">Razón del rechazo*:</label>
+            <input type="text" asp-for="@Model.VacationsRequest.RejectReason" class="form-control"  />
         </div>
     </div>
     <div class="form-row">

@@ -329,8 +329,8 @@ namespace LexincorpApp.Controllers
                 activityCategory = a.Service.Category.Name,
                 activityHoursWorked = Math.Round(a.HoursWorked, 2),
                 activityAssociatedTo = a.ActivityType == ActivityTypeEnum.Hourly ? "Horario" : a.ActivityType == ActivityTypeEnum.Item ?
-                $"Ítem - {a?.Item?.Name}" : a.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {a.Package?.Name}" : a.ActivityType == ActivityTypeEnum.Retainer ?
-                $"Retainer - {a?.BillableRetainer?.Name}" : "",
+                $"Ítem" : a.ActivityType == ActivityTypeEnum.Package ? $"Paquete - {a.Package?.Name}" : a.ActivityType == ActivityTypeEnum.Retainer ?
+                $"Retainer - {a?.BillableRetainer?.Name}" : a.ActivityType == ActivityTypeEnum.NoBillable ?"No cobrable" :"",
                 activityDate = a.RealizationDate,
                 activityTotalFee = GetFeeByActivity(a, a.ActivityType == ActivityTypeEnum.Package ?
                     (involvedPackagesRates.Where(ip => ip.Id == a.PackageId).FirstOrDefault()?.rate ?? (decimal)0.00)

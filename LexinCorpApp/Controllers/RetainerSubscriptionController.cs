@@ -130,6 +130,7 @@ namespace LexincorpApp.Controllers
         public IActionResult Admin(string filter, int pageNumber = 1)
         {
             TempData["filter"] = filter;
+            ViewBag.Updated = TempData["updated"];
             ViewBag.Deleted = TempData["deleted"];
             Func<RetainerSubscription, bool> filterFunction = rs => String.IsNullOrEmpty(filter) || rs.Client.Name.CaseInsensitiveContains(filter);
             RetainerSubscriptionListViewModel vm = new RetainerSubscriptionListViewModel
@@ -153,6 +154,7 @@ namespace LexincorpApp.Controllers
         }
         public IActionResult Edit(int id)
         {
+            TempData.Keep();
             var subscription = _retainerSubscriptionRepository.Subscriptions
                 .Include(s => s.Client)
                 .Include(s => s.Retainer)
@@ -170,13 +172,14 @@ namespace LexincorpApp.Controllers
         [HttpPost]
         public IActionResult Edit(RetainerSubscription retainerSubscription)
         {
+            TempData.Keep();
             if (!ModelState.IsValid)
             {
                 return View(retainerSubscription);
             }
             _retainerSubscriptionRepository.Save(retainerSubscription);
             TempData["updated"] = true;
-            return RedirectToAction(nameof(Edit), new { id = retainerSubscription.Id });
+            return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
         [Authorize(Roles = "Administrador")]
         [HttpPost]
