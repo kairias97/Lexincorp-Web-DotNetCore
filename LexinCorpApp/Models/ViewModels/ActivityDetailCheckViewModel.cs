@@ -1,11 +1,12 @@
-﻿using System;
+﻿using LexincorpApp.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LexincorpApp.Models.ViewModels
+namespace LexincorpApp.Models
 {
-    public class ActivityHistoryViewModel
+    public class ActivityDetailCheckViewModel
     {
         public string CurrentFilter { get; set; }
         public PagingInfo PagingInfo { get; set; }
@@ -13,5 +14,8 @@ namespace LexincorpApp.Models.ViewModels
         public string CurrentStartDate { get; set; }
         public string CurrentEndDate { get; set; }
         public IEnumerable<Expense> Expenses { get; set; }
+        public IEnumerable<Package> Packages { get; set; }
+        public IEnumerable<BillableRetainer> BillableRetainers { get; set; }
+        public int CurrentId { get; set; }
     }
 }

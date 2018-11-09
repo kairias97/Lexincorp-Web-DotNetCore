@@ -104,6 +104,12 @@ namespace LexincorpApp.Models
                 .HasForeignKey(vra => vra.RequestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Package>()
+                .Property(p => p.AgreedExpensesAmount)
+                .HasDefaultValue(0);
+            modelBuilder.Entity<Activity>()
+                .Property(a => a.IsBillable)
+                .HasDefaultValue(false);
         }
     }
 }

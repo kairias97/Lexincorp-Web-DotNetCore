@@ -86,7 +86,7 @@ namespace LexincorpApp.Controllers
         {
             DateTime d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             var results = _billableRetainerRepo.BillableRetainers
-                .Where(b => b.ClientId == clientId && b.Year == d.Year && b.Month == d.Month)
+                .Where(b => b.ClientId == clientId && b.IsVisibleForActivities && b.Year == d.Year && b.Month == d.Month)
                 .Select(b => new
                 {
                     id = b.Id,

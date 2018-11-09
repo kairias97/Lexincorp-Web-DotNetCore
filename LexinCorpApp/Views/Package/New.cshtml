@@ -124,12 +124,16 @@
             <label for="Package_Amount">Honorario Acordado (USD)*:</label>
             <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Package.Amount" />
         </div>
-        <div class="form-group offset-md-1 col-md-5">
-            <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
-            <input type="text" id="packageDate" class="form-control" asp-for="@Model.Package.RealizationDate" required />
+        <div class="form-group col-md-5">
+            <label for="Package_Amount">Gastos Acordados (USD)*:</label>
+            <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Package.AgreedExpensesAmount" />
         </div>
     </div>
     <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
+            <input type="text" id="packageDate" class="form-control" asp-for="@Model.Package.RealizationDate" required />
+        </div>
         <div class="form-group col-md-5">
             <label for="OnlyAdminNotification">Notificar de creación a:</label>
             <div class="form-check">

@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181105180843_CambiosActivity")]
+    partial class CambiosActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,10 +42,6 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Description");
 
                     b.Property<decimal>("HoursWorked");
-
-                    b.Property<bool>("IsBillable")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsBilled");
 
@@ -523,10 +521,6 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("AgreedExpensesAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(0m);
-
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("ClientId");
@@ -663,23 +657,6 @@ namespace LexincorpApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.VacationsMonthlyCredit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<int>("Month");
-
-                    b.Property<int>("Year");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VacationsMonthlyCredits");
-                });
-
             modelBuilder.Entity("LexincorpApp.Models.VacationsMovement", b =>
                 {
                     b.Property<int>("VacationsMovementId")
@@ -708,7 +685,7 @@ namespace LexincorpApp.Migrations
 
             modelBuilder.Entity("LexincorpApp.Models.VacationsRequest", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("VacationsRequestId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -718,10 +695,6 @@ namespace LexincorpApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("getdate()");
 
-                    b.Property<bool>("IsApplied")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
-
                     b.Property<bool?>("IsApproved");
 
                     b.Property<decimal>("Quantity");
@@ -729,36 +702,13 @@ namespace LexincorpApp.Migrations
                     b.Property<string>("Reason")
                         .IsRequired();
 
-                    b.Property<string>("RejectReason");
-
                     b.Property<DateTime>("StartDate");
 
-                    b.HasKey("Id");
+                    b.HasKey("VacationsRequestId");
 
                     b.HasIndex("AttorneyId");
 
                     b.ToTable("VacationsRequests");
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.VacationsRequestAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ApproverId");
-
-                    b.Property<bool?>("IsApproved");
-
-                    b.Property<int>("RequestId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApproverId");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("VacationsRequestAnswers");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.Activity", b =>
@@ -952,19 +902,6 @@ namespace LexincorpApp.Migrations
                         .WithMany()
                         .HasForeignKey("AttorneyId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("LexincorpApp.Models.VacationsRequestAnswer", b =>
-                {
-                    b.HasOne("LexincorpApp.Models.User", "Approver")
-                        .WithMany()
-                        .HasForeignKey("ApproverId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("LexincorpApp.Models.VacationsRequest", "Request")
-                        .WithMany("VacationsRequestAnswers")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }
