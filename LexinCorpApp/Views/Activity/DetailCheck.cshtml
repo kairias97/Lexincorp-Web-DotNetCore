@@ -95,12 +95,14 @@
             if (validateData()) {
                 var body = {};
                 body.Id = $("#activityId").val();
-                body.ActivityType = $("#type").val();
+                body.ActivityType = $("#activityType").val();
                 body.HoursWorked = $("#hours").val();
                 body.HourlyRate = $("#feePerHour").val();
                 body.ItemUnitPrice = $("#itemPrice").val();
                 body.ItemQuantity = $("#itemQuantity").val();
                 body.ItemSubTotal = body.ItemUnitPrice * body.ItemQuantity;
+                body.PackageId = $("#Packages").val();
+                body.BillableRetainerId = $("#retainers").val();
                 var expenses = [];
                 $('#tableData tr').each(function () {
                     var newExpense = {};
@@ -163,6 +165,99 @@
                 }
             })
         });
+        $("#activityType").change(function () {
+            console.log("Entra al metodo")
+            if ($("#activityType").val() == 1) {
+                $("#divFeePerHour").prop("hidden", false);
+                $("#feePerHour").prop("disabled", false);
+                $("#divPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").val("");
+                $("#divItemPrice").prop("hidden", true);
+                $("#itemPrice").prop("hidden", true);
+                $("#divItemQuantity").prop("hidden", true);
+                $("#itemQuantity").prop("hidden", true);
+                $("#itemPrice").prop("disabled", true);
+                $("#itemQuantity").prop("disabled", true);
+                $("#itemPrice").val("");
+                $("#itemQuantity").val("");
+            }
+            else if ($("#activityType").val() == 2) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#feePerHour").prop("disabled", true);
+                $("#divPackage").prop("hidden", false);
+                $("#Packages").prop("disabled", false);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").val("");
+                $("#divItemPrice").prop("hidden", true);
+                $("#itemPrice").prop("hidden", true);
+                $("#divItemQuantity").prop("hidden", true);
+                $("#itemQuantity").prop("hidden", true);
+                $("#itemPrice").prop("disabled", true);
+                $("#itemQuantity").prop("disabled", true);
+                $("#itemPrice").val("");
+                $("#itemQuantity").val("");
+            }
+            else if ($("#activityType").val() == 3) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#feePerHour").prop("disabled", true);
+                $("#divPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", false);
+                $("#retainers").prop("disabled", false);
+                $("#retainers").val("");
+                $("#divItemPrice").prop("hidden", true);
+                $("#itemPrice").prop("hidden", true);
+                $("#divItemQuantity").prop("hidden", true);
+                $("#itemQuantity").prop("hidden", true);
+                $("#itemPrice").prop("disabled", true);
+                $("#itemQuantity").prop("disabled", true);
+                $("#itemPrice").val("");
+                $("#itemQuantity").val("");
+            }
+            else if ($("#activityType").val() == 4) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#feePerHour").prop("disabled", true);
+                $("#divPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").val("");
+                $("#divItemPrice").prop("hidden", false);
+                $("#itemPrice").prop("hidden", false);
+                $("#divItemQuantity").prop("hidden", false);
+                $("#itemQuantity").prop("hidden", false);
+                $("#itemPrice").prop("disabled", false);
+                $("#itemQuantity").prop("disabled", false);
+                $("#itemPrice").val("");
+                $("#itemQuantity").val("");
+            }
+            else if ($("#activityType").val() == 5) {
+                $("#divFeePerHour").prop("hidden", true);
+                $("#feePerHour").prop("disabled", true);
+                $("#divPackage").prop("hidden", true);
+                $("#Packages").prop("disabled", true);
+                $("#Packages").val("");
+                $("#divRetainers").prop("hidden", true);
+                $("#retainers").prop("disabled", true);
+                $("#retainers").val("");
+                $("#divItemPrice").prop("hidden", true);
+                $("#itemPrice").prop("hidden", true);
+                $("#divItemQuantity").prop("hidden", true);
+                $("#itemQuantity").prop("hidden", true);
+                $("#itemPrice").prop("disabled", true);
+                $("#itemQuantity").prop("disabled", true);
+                $("#itemPrice").val("");
+                $("#itemQuantity").val("");
+            }
+        });
         $("#packages").change(function () {
             var value = $("#packages").val();
             console.log(value);
@@ -183,8 +278,8 @@
                 });
             }
         });
-        $("#retainers").change(function () {
-            var value = $("#retainers").val();
+        $("#retainersCheck").change(function () {
+            var value = $("#retainersCheck").val();
             if (value !== "") {
                 var rows = $("#tableActivities tbody tr[data-retainerId = " + value + "]");
                 rows.each(function (index, val) {
@@ -263,7 +358,7 @@
     });
     function validateData() {
         if ($("#hours").val() !== "" && $("#description").val() !== "") {
-            if ($("#type").val() == 4) {
+            if ($("#activityType").val() == 4) {
                 if ($("#itemPrice").val() !== "" && $("#itemQuantity").val() !== "") {
                     return true;
                 }
@@ -271,8 +366,24 @@
                     return false;
                 }
             }
-            else if ($("#type").val() == 1) {
-                if($("#feePerHour").val() !== "") {
+            else if ($("#activityType").val() == 1) {
+                if ($("#feePerHour").val() !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if ($("#activityType").val() == 2) {
+                if ($("#Packages").val() !== "") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if ($("#activityType").val() == 3) {
+                if ($("#retainers").val() !== "") {
                     return true;
                 }
                 else {
@@ -348,30 +459,56 @@
                 success: function (data) {
                     $("#type").val(data.type);
                     $("#clientName").val(data.clientName);
+                    $("#activityType").empty().append("<option value='4'>Item</option>");
+                    $("#activityType").append("<option value='5'>No cobrable</option>");
+                    if (data.isHourBilled == "hora") {
+                        $("#activityType").append("<option value='1'>Hora</option>");
+                    }
+                    if (data.packages.length > 0) {
+                        $("#activityType").append("<option value='2'>Paquete</option>");
+                        $("#Packages").prop("disabled", false);
+                    }
+                    else {
+                        $("#Packages").prop("disabled", true);
+                    }
+                    if (data.retainers.length > 0) {
+                        $("#activityType").append("<option value='3'>Retainer</option>");
+                        $("#retainers").prop("disabled", false);
+                    }
+                    else {
+                        $("#retainers").prop("disabled", true);
+                    }
+                    $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>");
+                    $.each(data.packages, function (i, item) {
+                        var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                        $("#Packages").append(options);
+                    });
+                    $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>");
+                    $.each(data.retainers, function (i, item) {
+                        var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                        $("#retainers").append(options);
+                    });
+                    $("#activityType").val(data.type);
+                    $("#feePerHour").val(data.feePerHour);
                     if (data.type == 1) {
-                        $("#activityType").val("Horario");
                         $("#divFeePerHour").prop("hidden", false);
-                        $("#feePerHour").val(data.rate);
                     }
                     else if (data.type == 2) {
-                        $("#activityType").val("Paquete");
-                        $("#packageName").val(data.package);
-                        $("#divPackageName").prop("hidden", false);
+                        $("#Packages").val(data.packageId);
+                        $("#divPackage").prop("hidden", false);
                     }
                     else if (data.type == 3) {
-                        $("#activityType").val("Retainer");
-                        $("#retainerName").val(data.retainer);
-                        $("#divRetainerName").prop("hidden", false);
+                        $("#retainers").val(data.billableRetainerId);
+                        $("#divRetainers").prop("hidden", false);
                     }
                     else if (data.type == 4) {
-                        $("#activityType").val("Ítem");
                         $("#itemPrice").val(data.rate);
                         $("#divItemPrice").prop("hidden", false);
                         $("#itemQuantity").val(data.quantity);
                         $("#divItemQuantity").prop("hidden", false);
                     }
                     else if (data.type == 5) {
-                        $("#activityType").val("No cobrable");
+                        
                     }
                     $("#activityDate").val(data.date);
                     $("#hours").val(data.hoursWorked);
@@ -407,8 +544,11 @@
         $("#activityId").val("");
         $("#type").val("");
         $("#activityType").val("");
+        $("#Packages").val("");
+        $("#divPackage").prop("hidden", true);
+        $("#retainers").val("");
+        $("#divRetainers").prop("hidden", true);
         $("#divFeePerHour").prop("hidden", true);
-        $("#feePerHour").val("");
         $("#packageName").val("");
         $("#divPackageName").prop("hidden", true);
         $("#retainerName").val("");
@@ -450,7 +590,7 @@
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
         <input type="text" class="form-control" id="clientFilter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
-        <input type="text" class="form-control" id="clientId" name="id" hidden value="@Model.CurrentId"/>
+        <input type="text" class="form-control" id="clientId" name="id" hidden value="@Model.CurrentId" />
         <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon2" />
         <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon2" />
         <div class="input-group-append">
@@ -480,7 +620,7 @@
             @if (Model.BillableRetainers.Count() > 0)
             {
                 <label>Retainers disponibles para este cliente:</label>
-                <select class="form-control form-control-sm" id="retainers">
+                <select class="form-control form-control-sm" id="retainersCheck">
                     <option value="">Seleccionar retainer</option>
                     @foreach (var p in Model.BillableRetainers)
                     {
@@ -496,15 +636,15 @@
         </div>
         <div class="form-group col-md-2">
             <label>Ítems:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkItem"/>
+            <input type="checkbox" class="form-control form-control-sm" id="checkItem" />
         </div>
         <div class="form-group col-md-2">
             <label>Horas:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkHours"/>
+            <input type="checkbox" class="form-control form-control-sm" id="checkHours" />
         </div>
         <div class="form-group col-md-2">
             <label>Todo:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkAll"/>
+            <input type="checkbox" class="form-control form-control-sm" id="checkAll" />
         </div>
     </div>
     <br />
@@ -523,47 +663,47 @@
             <tbody>
                 @foreach (var activity in Model.Activities)
                 {
-                <tr data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")" 
-                    data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
-                    data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")">
-                    <td>@activity.Description</td>
-                    <td>@Math.Round(activity.HoursWorked, 2)</td>
-                    @if (activity.ActivityType == ActivityTypeEnum.Package)
-                    {
-                        <td>@(activity.Package?.Name ?? "-")</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Retainer)
-                    {
-                        <td>@(activity.BillableRetainer?.Name ?? "-")</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Item)
-                    {
-                        <td>Ítem</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.Hourly)
-                    {
-                        <td>Hora</td>
-                    }
-                    else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
-                    {
-                        <td>No cobrable</td>
-                    }
-                    <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
-                    </td>
-                    <td>
-                        <input type="checkbox" onclick="handleCheck(this)" class="form-control" data-id="@activity.Id" />
-                    </td>
+                    <tr data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
+                        data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
+                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")">
+                        <td>@activity.Description</td>
+                        <td>@Math.Round(activity.HoursWorked, 2)</td>
+                        @if (activity.ActivityType == ActivityTypeEnum.Package)
+                        {
+                            <td>@(activity.Package?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
+                        {
+                            <td>@(activity.BillableRetainer?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Item)
+                        {
+                            <td>Ítem</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
+                        {
+                            <td>Hora</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
+                        {
+                            <td>No cobrable</td>
+                        }
+                        <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                        </td>
+                        <td>
+                            <input type="checkbox" onclick="handleCheck(this)" class="form-control" data-id="@activity.Id" />
+                        </td>
 
-                </tr>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 
     <button class="btn btn-primary btn-sm" type="button" id="btnMark">Marcar como facturable las actividades seleccionadas</button>
-    
+
     <!--Modal begin for edit-->
     <!-- Modal -->
     <div class="modal fade" id="editForm" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -588,20 +728,20 @@
                             <input type="text" id="clientName" class="form-control form-control-sm" disabled />
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="activityType">Tipo de actividad: </label>
-                            <input type="text" id="activityType" class="form-control form-control-sm" disabled />
-                        </div>
-                        <div class="form-group col-md-4">
                             <label for="activityDate">Fecha:</label>
                             <input type="text" id="activityDate" class="form-control form-control-sm" disabled />
                         </div>
-                        <div class="form-group col-md-4" id="divPackageName" hidden>
-                            <label for="packageName">Paquete: </label>
-                            <input type="text" id="packageName" class="form-control form-control-sm" disabled />
+                        <div class="form-group col-md-4">
+                            <label for="activityType">Tipo de actividad: </label>
+                            <select id="activityType" class="form-control form-control-sm"></select>
                         </div>
-                        <div class="form-group col-md-4" id="divRetainerName" hidden>
-                            <label for="retainerName">Retainer: </label>
-                            <input type="text" id="retainerName" class="form-control form-control-sm" disabled />
+                        <div class="form-group col-md-3" id="divPackage" hidden>
+                            <label id="labelPackage" for="Packages">Paquetes disponibles:</label>
+                            <select class="form-control form-control-sm" id="Packages" disabled></select>
+                        </div>
+                        <div class="form-group col-md-4" id="divRetainers" hidden>
+                            <label id="labelRetainers" for="retainers">Retainers:</label>
+                            <select id="retainers" class="form-control form-control-sm" disabled></select>
                         </div>
                         <div class="form-group col-md-4" id="divItemPrice" hidden>
                             <label for="itemPrice">Precio del ítem:</label>
@@ -678,7 +818,6 @@
                         <button class="btn btn-primary btn-sm" id="btnSubmit" type="button">Actualizar</button>
                     </div>
                 </div>
-
             </div>
             <!--/.Content-->
         </div>
