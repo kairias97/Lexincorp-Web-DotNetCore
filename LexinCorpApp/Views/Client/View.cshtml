@@ -8,21 +8,18 @@
 
     <input asp-for="@Model.Client.Id" hidden />
     <div class="form-row">
-
-        <div class="form-group col-md-4">
+        <div class="form-group  col-md-4">
             <label for="Client_Name">Nombre del cliente*:</label>
-            <input type="text" asp-for="@Model.Client.Name" class="form-control" readonly>
+            <input type="text" asp-for="@Model.Client.Name" class="form-control" required readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_Contact">Contacto (Atención a)*:</label>
-            <input type="text" asp-for="@Model.Client.Contact" class="form-control" readonly>
+            <input type="text" asp-for="@Model.Client.Contact" class="form-control" required readonly>
         </div>
         <div class="form-group  col-md-4">
             <label for="Client_ContactEmail">Email del contacto:</label>
             <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control" readonly>
         </div>
-    </div>
-    <div class="form-row">
         <div class="form-group col-md-4">
             <label for="Client_ContactPhone">Teléfono del contacto:</label>
             <input type="tel" asp-for="@Model.Client.ContactPhone" class="form-control" readonly>
@@ -35,27 +32,23 @@
             <label for="Client_Address">Dirección:</label>
             <input type="text" asp-for="@Model.Client.Address" class="form-control" readonly>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group  col-md-4">
+        <div class="form-group col-md-4">
             <label for="Client_ContactPhone">Referido por:</label>
             <input type="tel" asp-for="@Model.Client.ReferredBy" class="form-control" readonly>
         </div>
         <div class="form-group col-md-4">
             <label for="Client_TributaryId">Identificación tributaria*:</label>
-            <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" readonly>
+            <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" required readonly>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_PhoneNumber">Teléfono del cliente:</label>
             <input type="tel" asp-for="@Model.Client.PhoneNumber" class="form-control" readonly>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_Fax">Fax del cliente:</label>
             <input type="text" asp-for="@Model.Client.Fax" class="form-control" readonly>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_CellPhoneNumber">Móvil del cliente:</label>
             <input type="tel" asp-for="@Model.Client.CellPhoneNumber" class="form-control" readonly>
         </div>
@@ -63,9 +56,7 @@
             <label for="Client_Email">Email del cliente:</label>
             <input type="email" asp-for="@Model.Client.Email" class="form-control" readonly>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_ClientTypeId">Tipo de cliente:</label>
             <select class="form-control" asp-for="@Model.Client.ClientTypeId" disabled>
                 @foreach (var ct in @Model.ClientTypes)
@@ -83,11 +74,11 @@
                 }
             </select>
         </div>
-        <div class="form-group col-md-4">
-            <label for="Client_FixedCostPerHour">Tarifa por hora personalizada (USD):</label>
-            <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" readonly />
+        <div class="form-group col-md-2">
+            <label for="Client_FixedCostPerHour">Tarifa por hora(USD):</label>
+            <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" readonly/>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_BillingModeId">Facturar en:</label>
             <select class="form-control" asp-for="@Model.Client.BillingModeId" disabled>
                 @foreach (var bm in @Model.BillingModes)
@@ -106,13 +97,15 @@
 
             </select>
         </div>
-    </div>
-    <div class="form-row">
         <div class="form-group col-md-2">
-            <label for="@Model.Client.IsHourBilled">Se factura en horas:</label>
-            <input type="checkbox" class="form-control" asp-for="@Model.Client.IsHourBilled" disabled />
+            <br />
+            <div class="form-check">
+                <input type="checkbox" asp-for="@Model.Client.IsHourBilled" disabled/>
+                <label for="@Model.Client.IsHourBilled">Factura por Hora</label>
+            </div>
+
         </div>
-        <div class="form-group offset-md-2 col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_DocumentDeliveryMethodId">Enviar documentos vía:</label>
             <select class="form-control" asp-for="@Model.Client.DocumentDeliveryMethodId" disabled>
                 @foreach (var dm in @Model.DocumentDeliveryMethods)
@@ -131,7 +124,7 @@
 
             </select>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_IsInternational">Origen del cliente:</label>
             <div class="form-check">
                 <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="true" } disabled>
@@ -146,9 +139,7 @@
                 </label>
             </div>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_PayTaxes">Impuestos:</label>
             <div class="form-check">
                 <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="true" } disabled>
@@ -163,7 +154,7 @@
                 </label>
             </div>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="Client_BillingInEnglish">Facturación en:</label>
             <div class="form-check">
                 <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="true" } disabled>
@@ -178,6 +169,7 @@
                 </label>
             </div>
         </div>
+
     </div>
     <br />
 </form>
@@ -210,7 +202,7 @@
 
 <br />
 <div class="row" style="margin-top:10px">
-    <h4 class="text-center text-secondary">Paquetes de este cliente</h4>
+    <h4 class="text-center text-secondary">Paquetes en curso de este cliente</h4>
 </div>
 <div class="table-responsive">
     <table class="table table-striped table-bordered">

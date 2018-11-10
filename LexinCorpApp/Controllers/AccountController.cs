@@ -29,6 +29,10 @@ namespace LexincorpApp.Controllers
         {
             return View();
         }
+        public IActionResult AccessDenied()
+        {
+            return RedirectToAction("Index", "Home");
+        }
         [AllowAnonymous]
         public IActionResult Login(bool? wrongCredentials)
         {
@@ -73,7 +77,12 @@ namespace LexincorpApp.Controllers
                             new Claim(ClaimTypes.Name, user.Username),
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim(ClaimTypes.Role, user.IsAdmin ? "Administrador" : "Regular"),
-                            new Claim("CanApproveVacations", user.Attorney.CanApproveVacations ? "true" : "false")
+                            new Claim(PermissionsEnum.CanApproveVacations.ToString(), user.Attorney.CanApproveVacations ? "true" : "false"),
+                            new Claim(PermissionsEnum.CanAdminDeposits.ToString(), user.Attorney.CanAdminDeposits ? "true" : "false"),
+                            new Claim(PermissionsEnum.CanBill.ToString(), user.Attorney.CanBill ? "true" : "false"),
+                            new Claim(PermissionsEnum.CanPreBill.ToString(), user.Attorney.CanPreBill ? "true" : "false"),
+                            new Claim(PermissionsEnum.CanReviewBillDetail.ToString(), user.Attorney.CanReviewBillDetail ? "true" : "false"),
+
                         };
 
                         var claimsIdentity = new ClaimsIdentity(

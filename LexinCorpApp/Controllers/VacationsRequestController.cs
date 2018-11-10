@@ -112,7 +112,7 @@ namespace LexincorpApp.Controllers
             };
             return View(viewModel);
         }
-        [Authorize(Roles ="Administrador")]
+        [Authorize(Roles = "Administrador,Regular")]
         public IActionResult Admin(bool? filter, string filterText, int pageNumber = 1)
         {
             int currentUserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
@@ -137,7 +137,7 @@ namespace LexincorpApp.Controllers
             ViewBag.Message = TempData["message"];
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Policy = "CanApproveVacations")]
         public IActionResult Answer(int id)
         {
             ViewBag.UpdatedVacationRequest = TempData["updated"];
@@ -151,7 +151,7 @@ namespace LexincorpApp.Controllers
             }
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Policy = "CanApproveVacations")]
         [HttpPost]
         public IActionResult Answer(VacationsRequest vacationsRequest)
         {
