@@ -16,5 +16,7 @@ namespace LexincorpApp.Models
         public ICollection<ExpenseDetail> Expenses { get; set; }
         public string Description { get; set; }
         public decimal HourlyRate { get; set; }
+        public int? PackageId { get; set; }
+        public int? BillableRetainerId { get; set; }
     }
 }

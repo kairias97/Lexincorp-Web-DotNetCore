@@ -414,6 +414,11 @@ namespace LexincorpApp.Controllers
         public JsonResult GetActivityDataById(int id)
         {
             var result = _activityRepo.Activities.Where(a => a.Id == id).FirstOrDefault();
+            var packages = _packageRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == result.ClientId && p.IsFinished == false && p.IsBilled == false)
+                .OrderBy(p => p.Name).ToList();
+            var retainers = _billableRetainerRepo.BillableRetainers
+                .Where(b => b.ClientId == result.ClientId && b.IsVisibleForActivities && b.Year == result.RealizationDate.Year && b.Month == result.RealizationDate.Month)
+                .ToList();
             var activity = new
             {
                 id = result.Id,
@@ -423,10 +428,14 @@ namespace LexincorpApp.Controllers
                 retainer = result.BillableRetainerId != null ? result.BillableRetainer.Name : "",
                 description = result.Description,
                 hoursWorked = result.HoursWorked,
+                feePerHour = result.Client.FixedCostPerHour,
                 clientName = result.Client.Name,
+                isHourBilled = result.Client.IsHourBilled ? "hora" : "",
                 service = result.Service.Name,
                 quantity = result.BillableQuantity,
                 rate = result.BillableRate,
+                packageId = result.PackageId,
+                billableRetainerId = result.BillableRetainerId,
                 expenses = result.ActivityExpenses.Select(e => new
                 {
                     id = e.ExpenseId,
@@ -436,6 +445,16 @@ namespace LexincorpApp.Controllers
                     unitAmount = e.UnitAmount,
                     totalAmount = e.TotalAmount,
                 }),
+                packages = packages.Select(p => new
+                {
+                    name = p.Name,
+                    id = p.Id
+                }),
+               retainers = retainers.Select(b => new
+               {
+                   id = b.Id,
+                   name = b.Name
+               }),
             };
             return Json(activity);
         }

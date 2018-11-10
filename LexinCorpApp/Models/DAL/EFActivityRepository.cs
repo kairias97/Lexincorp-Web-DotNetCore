@@ -112,11 +112,41 @@ namespace LexincorpApp.Models
             var client = context.Clients.Where(c => c.Id == activity.ClientId).FirstOrDefault();
             activity.HoursWorked = updateActivityRequest.HoursWorked;
             activity.Description = updateActivityRequest.Description;
+            ActivityTypeEnum typeOriginal = activity.ActivityType;
+            int billableRetainerId = 0;
+            if(typeOriginal == ActivityTypeEnum.Retainer)
+            {
+                billableRetainerId = activity.BillableRetainerId ?? 0;
+            }
+            activity.ActivityType = updateActivityRequest.ActivityType;
             if(activity.ActivityType == ActivityTypeEnum.Hourly)
             {
                 activity.BillableQuantity = Convert.ToDecimal(updateActivityRequest.HoursWorked);
                 activity.BillableRate = Convert.ToDecimal(updateActivityRequest.HourlyRate);
+                activity.PackageId = null;
+                activity.BillableRetainerId = null;
                 activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
+                if (client.PayTaxes)
+                {
+                    decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
+                    activity.TaxesAmount = activity.Subtotal * ivaValue;
+                    activity.PayTaxes = true;
+                    activity.TotalAmount = activity.Subtotal + activity.TaxesAmount;
+                }
+                else
+                {
+                    activity.TaxesAmount = 0;
+                    activity.PayTaxes = false;
+                    activity.TotalAmount = activity.Subtotal;
+                }
+            }
+            else if(activity.ActivityType == ActivityTypeEnum.Package)
+            {
+                activity.BillableRetainerId = null;
+                activity.PackageId = updateActivityRequest.PackageId;
+                activity.BillableQuantity = 0;
+                activity.BillableRate = 0;
+                activity.Subtotal = 0;
                 if (client.PayTaxes)
                 {
                     decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
@@ -133,8 +163,10 @@ namespace LexincorpApp.Models
             }
             else if(activity.ActivityType == ActivityTypeEnum.Retainer)
             {
-                var activities = context.Activities.Where(a => a.BillableRetainerId == activity.BillableRetainerId).OrderBy(a => a.RealizationDate).ToList();
-                var retainer = context.BillableRetainers.Where(r => r.Id == activity.BillableRetainerId).FirstOrDefault();
+                var activities = context.Activities.Where(a => a.BillableRetainerId == updateActivityRequest.BillableRetainerId).OrderBy(a => a.RealizationDate).ToList();
+                var retainer = context.BillableRetainers.Where(r => r.Id == updateActivityRequest.BillableRetainerId).FirstOrDefault();
+                activity.PackageId = null;
+                activity.BillableRetainerId = updateActivityRequest.BillableRetainerId;
                 retainer.ConsumedHours = 0;
                 var availablHours = retainer.AgreedHours - retainer.ConsumedHours;
                 foreach(var r in activities)
@@ -208,6 +240,29 @@ namespace LexincorpApp.Models
                 activity.BillableQuantity = Convert.ToDecimal(updateActivityRequest.ItemQuantity);
                 activity.BillableRate = Convert.ToDecimal(updateActivityRequest.ItemUnitPrice);
                 activity.Subtotal = Convert.ToDecimal(updateActivityRequest.ItemSubTotal);
+                activity.PackageId = null;
+                activity.BillableRetainerId = null;
+                if (client.PayTaxes)
+                {
+                    decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
+                    activity.TaxesAmount = activity.Subtotal * ivaValue;
+                    activity.PayTaxes = true;
+                    activity.TotalAmount = activity.Subtotal + activity.TaxesAmount;
+                }
+                else
+                {
+                    activity.TaxesAmount = 0;
+                    activity.PayTaxes = false;
+                    activity.TotalAmount = activity.Subtotal;
+                }
+            }
+            else if(activity.ActivityType == ActivityTypeEnum.NoBillable)
+            {
+                activity.BillableQuantity = 0;
+                activity.BillableRate = 0;
+                activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
+                activity.PackageId = null;
+                activity.BillableRetainerId = null;
                 if (client.PayTaxes)
                 {
                     decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
@@ -237,8 +292,48 @@ namespace LexincorpApp.Models
                 e.RealizationDate = activity.RealizationDate;
 
                 activity.ActivityExpenses.Add(e);
-            }
+            }            
             context.SaveChanges();
+            if(typeOriginal == ActivityTypeEnum.Retainer && activity.ActivityType != ActivityTypeEnum.Retainer)
+            {
+                var activities = context.Activities.Where(a => a.BillableRetainerId == billableRetainerId).OrderBy(a => a.RealizationDate).ToList();
+                var retainer = context.BillableRetainers.Where(r => r.Id == billableRetainerId).FirstOrDefault();
+
+                retainer.ConsumedHours = 0;
+                var availablHours = retainer.AgreedHours - retainer.ConsumedHours;
+                foreach (var r in activities)
+                {
+                        if (r.HoursWorked > availablHours)
+                        {
+                            r.BillableQuantity = r.HoursWorked - availablHours;
+                            r.BillableRate = retainer.AdditionalFeePerHour;
+                            r.Subtotal = r.BillableQuantity * r.BillableRate;
+                            retainer.ConsumedHours = retainer.AgreedHours;
+                        }
+                        else
+                        {
+                            r.BillableQuantity = 0;
+                            r.BillableRate = 0;
+                            r.Subtotal = r.BillableQuantity * r.BillableRate;
+                            retainer.ConsumedHours += r.HoursWorked;
+                        }
+                        if (client.PayTaxes)
+                        {
+                            decimal ivaValue = Convert.ToDecimal(configuration["LexincorpAdmin:IvaPercentage"]);
+                            r.TaxesAmount = r.Subtotal * ivaValue;
+                            r.PayTaxes = true;
+                            r.TotalAmount = r.Subtotal + r.TaxesAmount;
+                        }
+                        else
+                        {
+                            r.TaxesAmount = 0;
+                            r.PayTaxes = false;
+                            r.TotalAmount = r.Subtotal;
+                        }
+                    availablHours = retainer.AgreedHours - retainer.ConsumedHours;
+                }
+                context.SaveChanges();
+            }
         }
 
         public void MarkActivitiesAsBillable(List<int> list)
