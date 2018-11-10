@@ -15,196 +15,188 @@
     </div>
 
 }
-<form asp-action="Edit" asp-controller="Client" method="post" role="alert" id="@Model.Client.Id">
-    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-    {
-        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
-        <div class="alert alert-danger alert-dismissible fade show">
-            @Html.ValidationSummary(false, "Errores de validación:")
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+    <form asp-action="Edit" asp-controller="Client" method="post" role="alert" id="@Model.Client.Id">
+        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+        {
+            // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+            <div class="alert alert-danger alert-dismissible fade show">
+                @Html.ValidationSummary(false, "Errores de validación:")
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
 
-        </div>
-    }
-    <input asp-for="@Model.Client.Id" hidden />
-    <div class="form-row">
-
-        <div class="form-group col-md-4">
-            <label for="Client_Name">Nombre del cliente*:</label>
-            <input type="text" asp-for="@Model.Client.Name" class="form-control" required>
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_Contact">Contacto (Atención a)*:</label>
-            <input type="text" asp-for="@Model.Client.Contact" class="form-control" required>
-        </div>
-        <div class="form-group  col-md-4">
-            <label for="Client_ContactEmail">Email del contacto:</label>
-            <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
-            <label for="Client_ContactPhone">Teléfono del contacto:</label>
-            <input type="tel" asp-for="@Model.Client.ContactPhone" class="form-control">
-        </div>
-        <div class="form-group  col-md-4">
-            <label for="Client_ContactJobName">Cargo del contacto:</label>
-            <input type="text" asp-for="@Model.Client.ContactJobName" class="form-control">
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_Address">Dirección:</label>
-            <input type="text" asp-for="@Model.Client.Address" class="form-control">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group  col-md-4">
-            <label for="Client_ContactPhone">Referido por:</label>
-            <input type="tel" asp-for="@Model.Client.ReferredBy" class="form-control">
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_TributaryId">Identificación tributaria*:</label>
-            <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" required>
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_PhoneNumber">Teléfono del cliente:</label>
-            <input type="tel" asp-for="@Model.Client.PhoneNumber" class="form-control">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
-            <label for="Client_Fax">Fax del cliente:</label>
-            <input type="text" asp-for="@Model.Client.Fax" class="form-control">
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_CellPhoneNumber">Móvil del cliente:</label>
-            <input type="tel" asp-for="@Model.Client.CellPhoneNumber" class="form-control">
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_Email">Email del cliente:</label>
-            <input type="email" asp-for="@Model.Client.Email" class="form-control">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
-            <label for="Client_ClientTypeId">Tipo de cliente:</label>
-            <select class="form-control" asp-for="@Model.Client.ClientTypeId">
-                @foreach (var ct in @Model.ClientTypes)
-                {
-
-                    if (ct.ClientTypeId == Model.Client.ClientTypeId)
+            </div>
+        }
+        <input asp-for="@Model.Client.Id" hidden />
+        <div class="form-row">
+            <div class="form-group  col-md-4">
+                <label for="Client_Name">Nombre del cliente*:</label>
+                <input type="text" asp-for="@Model.Client.Name" class="form-control" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_Contact">Contacto (Atención a)*:</label>
+                <input type="text" asp-for="@Model.Client.Contact" class="form-control" required>
+            </div>
+            <div class="form-group  col-md-4">
+                <label for="Client_ContactEmail">Email del contacto:</label>
+                <input type="email" asp-for="@Model.Client.ContactEmail" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_ContactPhone">Teléfono del contacto:</label>
+                <input type="tel" asp-for="@Model.Client.ContactPhone" class="form-control">
+            </div>
+            <div class="form-group  col-md-4">
+                <label for="Client_ContactJobName">Cargo del contacto:</label>
+                <input type="text" asp-for="@Model.Client.ContactJobName" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_Address">Dirección:</label>
+                <input type="text" asp-for="@Model.Client.Address" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_ContactPhone">Referido por:</label>
+                <input type="tel" asp-for="@Model.Client.ReferredBy" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_TributaryId">Identificación tributaria*:</label>
+                <input type="text" asp-for="@Model.Client.TributaryId" class="form-control" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_PhoneNumber">Teléfono del cliente:</label>
+                <input type="tel" asp-for="@Model.Client.PhoneNumber" class="form-control">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_Fax">Fax del cliente:</label>
+                <input type="text" asp-for="@Model.Client.Fax" class="form-control">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_CellPhoneNumber">Móvil del cliente:</label>
+                <input type="tel" asp-for="@Model.Client.CellPhoneNumber" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="Client_Email">Email del cliente:</label>
+                <input type="email" asp-for="@Model.Client.Email" class="form-control">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_ClientTypeId">Tipo de cliente:</label>
+                <select class="form-control" asp-for="@Model.Client.ClientTypeId">
+                    @foreach (var ct in @Model.ClientTypes)
                     {
-                        @:<option value="@ct.ClientTypeId" selected>@ct.Name</option>
+
+                        if (ct.ClientTypeId == Model.Client.ClientTypeId)
+                        {
+                            @:<option value="@ct.ClientTypeId" selected>@ct.Name</option>
+                        }
+                        else
+                        {
+                            @:<option value="@ct.ClientTypeId">@ct.Name</option>
+                        }
+
                     }
-                    else
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_FixedCostPerHour">Tarifa por hora(USD):</label>
+                <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_BillingModeId">Facturar en:</label>
+                <select class="form-control" asp-for="@Model.Client.BillingModeId">
+                    @foreach (var bm in @Model.BillingModes)
                     {
-                        @:<option value="@ct.ClientTypeId">@ct.Name</option>
-                    }
 
-                }
-            </select>
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_FixedCostPerHour">Tarifa por hora personalizada (USD):</label>
-            <input type="number" step="0.01" min="0" asp-for="@Model.Client.FixedCostPerHour" class="form-control" />
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_BillingModeId">Facturar en:</label>
-            <select class="form-control" asp-for="@Model.Client.BillingModeId">
-                @foreach (var bm in @Model.BillingModes)
-                {
+                        if (bm.BillingModeId == Model.Client.BillingModeId)
+                        {
+                            @:<option value="@bm.BillingModeId" selected>@bm.Name</option>
+                        }
+                        else
+                        {
+                            @:<option value="@bm.BillingModeId">@bm.Name</option>
+                        }
 
-                    if (bm.BillingModeId == Model.Client.BillingModeId)
-                    {
-                        @:<option value="@bm.BillingModeId" selected>@bm.Name</option>
-                    }
-                    else
-                    {
-                        @:<option value="@bm.BillingModeId">@bm.Name</option>
                     }
 
-                }
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <br />
+                <div class="form-check">
+                    <input type="checkbox" asp-for="@Model.Client.IsHourBilled" />
+                    <label for="@Model.Client.IsHourBilled">Factura por Hora</label>
+                </div>
 
-            </select>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-2">
-            <label for="@Model.Client.IsHourBilled">Se factura en horas:</label>
-            <input type="checkbox" class="form-control" asp-for="@Model.Client.IsHourBilled" />
-        </div>
-        <div class="form-group offset-md-2 col-md-4">
-            <label for="Client_DocumentDeliveryMethodId">Enviar documentos vía:</label>
-            <select class="form-control" asp-for="@Model.Client.DocumentDeliveryMethodId">
-                @foreach (var dm in @Model.DocumentDeliveryMethods)
-                {
-
-                    if (dm.DocumentDeliveryMethodId == Model.Client.DocumentDeliveryMethodId)
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_DocumentDeliveryMethodId">Enviar documentos vía:</label>
+                <select class="form-control" asp-for="@Model.Client.DocumentDeliveryMethodId">
+                    @foreach (var dm in @Model.DocumentDeliveryMethods)
                     {
-                        @:<option value="@dm.DocumentDeliveryMethodId" selected>@dm.Name</option>
-                    }
-                    else
-                    {
-                        @:<option value="@dm.DocumentDeliveryMethodId">@dm.Name</option>
+
+                        if (dm.DocumentDeliveryMethodId == Model.Client.DocumentDeliveryMethodId)
+                        {
+                            @:<option value="@dm.DocumentDeliveryMethodId" selected>@dm.Name</option>
+                        }
+                        else
+                        {
+                            @:<option value="@dm.DocumentDeliveryMethodId">@dm.Name</option>
+                        }
+
                     }
 
-                }
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_IsInternational">Origen del cliente:</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="true" }>
+                    <label class="form-check-label" for="Client_IsInternational">
+                        Internacional
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="false" }>
+                    <label class="form-check-label" for="Client_IsInternational">
+                        Nacional
+                    </label>
+                </div>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_PayTaxes">Impuestos:</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="true" }>
+                    <label class="form-check-label" for="Client_PayTaxes">
+                        Sí
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="false" }>
+                    <label class="form-check-label" for="Client_PayTaxes">
+                        No
+                    </label>
+                </div>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Client_BillingInEnglish">Facturación en:</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="true" }>
+                    <label class="form-check-label" for="Client_IsInternational">
+                        Inglés
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="false" }>
+                    <label class="form-check-label" for="Client_IsInternational">
+                        Español
+                    </label>
+                </div>
+            </div>
 
-            </select>
         </div>
-        <div class="form-group col-md-4">
-            <label for="Client_IsInternational">Origen del cliente:</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="true" }>
-                <label class="form-check-label" for="Client_IsInternational">
-                    Internacional
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.IsInternational" value="false" }>
-                <label class="form-check-label" for="Client_IsInternational">
-                    Nacional
-                </label>
-            </div>
+        <div class="form-row">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-4">
-            <label for="Client_PayTaxes">Impuestos:</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="true" }>
-                <label class="form-check-label" for="Client_PayTaxes">
-                    Sí
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.PayTaxes" value="false" }>
-                <label class="form-check-label" for="Client_PayTaxes">
-                    No
-                </label>
-            </div>
-        </div>
-        <div class="form-group col-md-4">
-            <label for="Client_BillingInEnglish">Facturación en:</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="true" }>
-                <label class="form-check-label" for="Client_IsInternational">
-                    Inglés
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" asp-for="@Model.Client.BillingInEnglish" value="false" }>
-                <label class="form-check-label" for="Client_IsInternational">
-                    Español
-                </label>
-            </div>
-        </div>
-    </div>
-    <div class="form-row">
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
-    </div>
-    <br />
-</form>
+        <br />
+    </form>
 <br />
 
 

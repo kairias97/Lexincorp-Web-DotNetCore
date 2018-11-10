@@ -47,17 +47,19 @@
             <label for="@Model.Attorney.Name">Nombre del abogado:*</label>
             <input type="text" asp-for="@Model.Attorney.Name" class="form-control" />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="@Model.Attorney.User.Username">Nombre de usuario:*</label>
-            <input type="text" asp-for="@Model.Attorney.User.Username" class="form-control" readonly />
+            <input type="text" asp-for="@Model.Attorney.User.Username" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
+            <label for="@Model.Attorney.Alias">Alias:*</label>
+            <input type="text" asp-for="@Model.Attorney.Alias" class="form-control" required />
+        </div>
+        <div class="form-group col-md-3">
             <label for="@Model.Attorney.User.Password">Contraseña:*</label>
-            <input type="text" asp-for="@Model.Attorney.User.Password" id="passwordUser" class="form-control"/>
+            <input type="text" asp-for="@Model.Attorney.User.Password" id="passwordUser" class="form-control" />
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="@Model.Attorney.User.IsAdmin">Tipo de usuario:*</label>
             <select class="form-control" asp-for="@Model.Attorney.User.IsAdmin">
                 @if (Model.Attorney.User.IsAdmin == true)
@@ -72,51 +74,40 @@
                 }
             </select>
         </div>
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.CanApproveVacations">Aprueba vacaciones:</label>
-            <input type="checkbox" asp-for="@Model.Attorney.CanApproveVacations" class="form-control"/>
-        </div>
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.AdmissionDate">Fecha de admisión (dd/MM/yyyy):*</label>
+
+        <div class="form-group col-md-2">
+            <label for="@Model.Attorney.AdmissionDate">Fecha de admisión:*</label>
             <input type="text" id="admissionDate" asp-for="@Model.Attorney.AdmissionDate" class="form-control" />
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
             <label for="@Model.Attorney.Address">Dirección:*</label>
             <input type="text" asp-for="@Model.Attorney.Address" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.IdentificationNumber">Número de identificación (cédula):*</label>
+        <div class="form-group col-md-3">
+            <label for="@Model.Attorney.IdentificationNumber">Nº de identificación (cédula):*</label>
             <input type="text" asp-for="@Model.Attorney.IdentificationNumber" class="form-control" required />
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.AssignedPhoneNumber">Número de teléfono asignado:*</label>
+        <div class="form-group col-md-2">
+            <label for="@Model.Attorney.AssignedPhoneNumber">Nº de teléfono asignado:*</label>
             <input type="tel" asp-for="@Model.Attorney.AssignedPhoneNumber" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.PersonalPhoneNumber">Número de teléfono personal:*</label>
+        <div class="form-group col-md-2">
+            <label for="@Model.Attorney.PersonalPhoneNumber">Nº de teléfono personal:*</label>
             <input type="tel" asp-for="@Model.Attorney.PersonalPhoneNumber" class="form-control" required />
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
             <label for="@Model.Attorney.EmergencyContact">Contacto de emergencia:*</label>
             <input type="text" asp-for="@Model.Attorney.EmergencyContact" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
-            <label for="@Model.Attorney.EmergencyContactPhoneNumber">Número de teléfono del contacto de emergencia:*</label>
+        <div class="form-group col-md-3">
+            <label for="@Model.Attorney.EmergencyContactPhoneNumber">Nº de teléfono del contacto de emergencia:*</label>
             <input type="tel" asp-for="@Model.Attorney.EmergencyContactPhoneNumber" class="form-control" required />
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="@Model.Attorney.NotaryCode">Código de notario:*</label>
             <input type="number" asp-for="@Model.Attorney.NotaryCode" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="@Model.Attorney.DepartmentId">Departamento:*</label>
             <select class="form-control" asp-for="@Model.Attorney.DepartmentId">
                 @foreach (var d in Model.Departments)
@@ -133,13 +124,11 @@
                 }
             </select>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
             <label for="@Model.Attorney.Email">Email:*</label>
             <input type="email" asp-for="@Model.Attorney.Email" class="form-control" required />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
             <label for="Attorney_User_Active">Estado del usuario*:</label>
             <div class="form-check">
                 <input class="form-check-input" type="radio" asp-for="@Model.Attorney.User.Active" value="true">
@@ -154,7 +143,42 @@
                 </label>
             </div>
         </div>
+        <div class="form-group col-md-5">
+            <label>Permisos:</label>
+            <div class="form-row">
+                <div class="col-6">
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.Attorney.CanApproveVacations" />
+                        <label for="@Model.Attorney.CanApproveVacations">Aprobar vacaciones</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.Attorney.CanPreBill" />
+                        <label for="@Model.Attorney.CanPreBill">Prefacturar</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.Attorney.CanBill" />
+                        <label for="@Model.Attorney.CanBill">Facturar e Historial</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.Attorney.CanReviewBillDetail" />
+                        <label for="@Model.Attorney.CanReviewBillDetail">Revisar detalle para facturar</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.Attorney.CanAdminDeposits" />
+                        <label for="@Model.Attorney.CanAdminDeposits">Manejar abonos</label>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+
+
+        </div>
     </div>
+
     <div class="form-row">
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </div>

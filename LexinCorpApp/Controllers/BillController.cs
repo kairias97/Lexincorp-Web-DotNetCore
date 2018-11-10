@@ -43,7 +43,7 @@ namespace LexincorpApp.Controllers
             this._hostingEnvironment = hostingEnvironment;
             this._billRepo = billHeaderRepository;
         }
-        [Authorize]
+        [Authorize(Policy = "CanPreBill")]
         public IActionResult PreBilling()
         {
             NewPreBillViewModel viewModel = new NewPreBillViewModel();
@@ -51,7 +51,7 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Policy = "CanPreBill")]
         public JsonResult GeneratePreBill(BillRequest billRequest)
         {
             bool isEnglishBilling;
@@ -138,7 +138,7 @@ namespace LexincorpApp.Controllers
             return Json(new { result = memoryStream.ConvertToBase64() });
         }
 
-        [Authorize]
+        [Authorize(Policy = "CanBill")]
         public IActionResult RenderBill(int id)
         {
             var bill = _billRepo.BillHeaders.Where(b => b.Id == id).Include(b => b.BillDetails).FirstOrDefault();
@@ -222,14 +222,14 @@ namespace LexincorpApp.Controllers
             fileStreamResult.FileDownloadName = $"FacturaCliente{bill.BillName}deMes{bill.BillMonth}YAño{bill.BillYear}.pdf";
             return fileStreamResult;
         }
-        [Authorize]
+        [Authorize(Policy = "CanBill")]
         public IActionResult Billing()
         {
             NewPreBillViewModel viewModel = new NewPreBillViewModel();
             viewModel.Items = _itemRepo.Items.ToList();
             return View(viewModel);
         }
-        [Authorize]
+        [Authorize(Policy = "CanBill")]
         public JsonResult GenerateBill(BillRequest billRequest)
         {
             var user = HttpContext.User;
@@ -317,7 +317,7 @@ namespace LexincorpApp.Controllers
             fileStreamResult.FileDownloadName = $"FacturaCliente{generatedBill.BillName}deMes{generatedBill.BillMonth}YAño{generatedBill.BillYear}.pdf";
             return Json(new { result = memoryStream.ConvertToBase64() });
         }
-        [Authorize]
+        [Authorize(Policy = "CanBill")]
         public IActionResult History(string filter, int pageNumber = 1)
         {
             Func<BillHeader, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Client.Name.Contains(filter) || c.BillName.Contains(filter);

@@ -151,10 +151,11 @@ namespace LexincorpApp.Controllers
             viewModel.Expenses = _expenseRepo.Expenses;
             return View(viewModel);
         }
-        [Authorize]
-        public IActionResult DetailCheck(string filter, string dateStart, string dateEnd, int id)
+        [Authorize(Policy = "CanReviewBillDetail")]
+        public IActionResult DetailCheck(string dateStart, string dateEnd, int id)
         {
-            Func<Activity, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.ClientId == id;
+            
+            Func<Activity, bool> filterFunction = c =>  c.ClientId == id;
             CultureInfo provider = CultureInfo.InvariantCulture;
             DateTime date1 = new DateTime();
             DateTime date2 = new DateTime();
@@ -168,8 +169,10 @@ namespace LexincorpApp.Controllers
             }
             Func<Activity, bool> filterFunctionDate = a => a.RealizationDate >= date1 && a.RealizationDate <= date2;
             ActivityDetailCheckViewModel viewModel = new ActivityDetailCheckViewModel();
-            viewModel.CurrentFilter = filter;
-            if (!String.IsNullOrEmpty(filter))
+            var targetClient = _clientRepo.Clients.Where(c => c.Id == id).FirstOrDefault();
+            viewModel.CurrentFilter = targetClient?.Name ?? "";
+            viewModel.CurrentId = id;
+            if (!String.IsNullOrEmpty(viewModel.CurrentFilter))
             {
                 if (!String.IsNullOrEmpty(dateStart) && !String.IsNullOrEmpty(dateEnd))
                 {

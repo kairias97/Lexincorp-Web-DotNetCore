@@ -19,6 +19,8 @@ namespace LexincorpApp.Models
         [Required]
         public string Address { get; set; }
         [Required]
+        public string Alias { get; set; }
+        [Required]
         public string IdentificationNumber { get; set; }
         [Required]
         [Phone]
@@ -45,6 +47,11 @@ namespace LexincorpApp.Models
         public bool CanApproveVacations { get; set; }
         [NotMapped]
         public decimal AvailableVacationCount { get; set; }
+        //New permission fields
+        public bool CanAdminDeposits { get; set; } = false;
+        public bool CanPreBill { get; set; } = false;
+        public bool CanBill { get; set; } = false;
+        public bool CanReviewBillDetail { get; set; } = false;
 
         /*protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

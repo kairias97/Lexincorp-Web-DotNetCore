@@ -77,6 +77,13 @@ namespace LexincorpApp
             services.AddSingleton<ICryptoManager, BCryptManager>();
             services.AddSingleton<IGuidManager, GuidManager>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthorization(options => {
+                options.AddPolicy("CanPreBill", policy => policy.RequireClaim(PermissionsEnum.CanPreBill.ToString(), "true"));
+                options.AddPolicy("CanBill", policy => policy.RequireClaim(PermissionsEnum.CanBill.ToString(), "true"));
+                options.AddPolicy("CanAdminDeposits", policy => policy.RequireClaim(PermissionsEnum.CanAdminDeposits.ToString(), "true"));
+                options.AddPolicy("CanReviewBillDetail", policy => policy.RequireClaim(PermissionsEnum.CanReviewBillDetail.ToString(), "true"));
+                options.AddPolicy("CanApproveVacations", policy => policy.RequireClaim(PermissionsEnum.CanApproveVacations.ToString(), "true"));
+            });
             services.AddTransient<IItemRepository, EFItemRepository>();
             services.AddTransient<IVacationsRequestRepository, EFVacationsRequestRepository>();
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();
@@ -116,6 +123,7 @@ namespace LexincorpApp
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            
             //Setup of culture of the app
             var defaultDateCulture = "es-NI";
             var ci = new CultureInfo(defaultDateCulture);
