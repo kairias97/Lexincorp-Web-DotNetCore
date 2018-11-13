@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Edición de abono";
+}
+@model ClientDeposit
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#depositDate").datepicker();
+        $("#depositDate").datepicker("option", "dateFormat", "dd/mm/yy");
+        var date = new Date();
+        var lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        $("#depositDate").datepicker("option", {
+            maxDate: lastDay
+        });
+        $("#depositDate").datepicker("setDate", date);
+
+    });
+</script>
+<h2>Edición de abono</h2>
+<br />
+<form asp-action="Edit" asp-controller="ClientDeposit" role="alert">
+    @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+    {
+        // Bootstrap 2 = "alert-error", Bootstrap 3 and 4 = "alert-danger"
+        <div class="alert alert-danger alert-dismissible fade show">
+            @Html.ValidationSummary(false, "Errores de validación:")
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+        </div>
+    }
+    <div class="form-row">
+        <div class="form-group col-md-5">
+
+            <input type="number" hidden asp-for="@Model.Id" />
+            <input type="number" hidden asp-for="@Model.ClientId" />
+            <label for="ClientName">Nombre del cliente:</label>
+            <input type="text" readonly asp-for="@Model.Client.Name" class="form-control" aria-label="Nombre del cliente">
+
+        </div>
+        <div class="form-group col-md-5">
+            <label for="ClientDeposit_Package">Paquete:</label>
+
+            <input type="number" hidden asp-for="@Model.PackageId" />
+            <input type="text" readonly asp-for="@Model.Package.Name" class="form-control" aria-label="Paquete">
+
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="Package_Amount">Monto recibido (USD)*:</label>
+            <input type="number" step="0.01" min="0" class="form-control" asp-for="@Model.Amount" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="Package_RealizationDate">Fecha de recepción*:</label>
+            <input type="text" id="depositDate" class="form-control" asp-for="@Model.ReceivedDate" required />
+        </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+
+    <br />
+</form>
+<br />
+
+
+
+
+

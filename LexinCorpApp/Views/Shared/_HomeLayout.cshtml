@@ -262,7 +262,7 @@
                                 @if (User.HasClaim(claim => claim.Type == PermissionsEnum.CanAdminDeposits.ToString() && claim.Value == "true"))
                                 {
                                     <li class="nav-item sidebar-li">
-                                        <a class="nav-link" style="color:white" asp-controller="PackageDeposit" asp-action="Admin">
+                                        <a class="nav-link" style="color:white" asp-controller="ClientDeposit" asp-action="Admin">
                                             <i class="fas fa-dollar-sign fa-fw"></i>&nbsp; Abonos
                                         </a>
                                     </li>

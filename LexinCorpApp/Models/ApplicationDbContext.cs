@@ -38,6 +38,7 @@ namespace LexincorpApp.Models
         public DbSet<NotificationAnswer> NotificationAnswers { get; set; }
         public DbSet<VacationsRequestAnswer> VacationsRequestAnswers { get; set; }
         public DbSet<VacationsMonthlyCredit> VacationsMonthlyCredits { get; set; }
+        public DbSet<ClientDeposit> ClientDeposits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -110,6 +111,11 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<Activity>()
                 .Property(a => a.IsBillable)
                 .HasDefaultValue(false);
+            modelBuilder.Entity<ClientDeposit>()
+                .HasOne(cd => cd.Package)
+                .WithMany(package => package.ClientDeposits)
+                .HasForeignKey(cd => cd.PackageId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

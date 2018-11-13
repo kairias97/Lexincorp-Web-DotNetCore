@@ -45,6 +45,7 @@ namespace LexincorpApp.Models
         public bool Active { get; set; } = true;
         public bool IsHourBilled { get; set; }
         public virtual ICollection<Package> Packages { get; set; }
+        public virtual ICollection<ClientDeposit> ClientDeposits { get; set; }
         public virtual ICollection<RetainerSubscription> RetainerSubscriptions { get; set; }
         public virtual ICollection<BillableRetainer> BillableRetainers { get; set; }
     }

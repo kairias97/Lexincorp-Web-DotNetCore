@@ -104,6 +104,15 @@ namespace LexincorpApp.Controllers
             //viewModel.NewExpenseReport.FinalDate = DateTime.Now.Date;
             return View(viewModel);
         }
+        [AllowAnonymous]
+        public JsonResult GetList()
+        {
+            var expenses = _expensesRepo.Expenses
+                .Where(e => e.Active)
+                .Select(e => new { id = e.Id, name = e.Name, isReadOnly = e.IsReadOnly, amount = e.Amount})
+                .ToList();
+            return Json(expenses);
+        }
         [Authorize]
         [HttpPost]
         public IActionResult Report(NewExpenseReport newExpenseReport)

@@ -27,5 +27,6 @@ namespace LexincorpApp.Models
         public bool IsBilled { get; set; }
         [Required(ErrorMessage = "Se debe indicar un monto de gastos acordado en USD")]
         public decimal AgreedExpensesAmount { get; set; }
+        public virtual ICollection<ClientDeposit> ClientDeposits { get; set; }
     }
 }

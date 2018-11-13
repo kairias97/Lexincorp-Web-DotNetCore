@@ -168,6 +168,15 @@ namespace LexincorpApp.Controllers
             return Json(list);
         }
         [Authorize(Roles = "Administrador, Regular")]
+        public JsonResult SearchAllUnbilled(int clientId)
+        {
+            var list = _packagesRepo.Packages
+                .Where(p => p.ClientId == clientId && p.IsBilled == false)
+                .OrderBy(p => p.Name)
+                .Select(p => new { p.Name, p.Id });
+            return Json(list);
+        }
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult SearchFinished(int clientId)
         {
             var list = _packagesRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == clientId && p.IsFinished == true && p.IsBilled == false)
