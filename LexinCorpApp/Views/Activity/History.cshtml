@@ -253,7 +253,7 @@
             $.ajax({
                 url: '@Url.Action("GetActivityDataById","Activity")',
                 type: "GET",
-                data: {id: id},
+                data: { id: id, finishedPackage: null},
                 dataType: "json",
                 dataFilter: function (data) { return data; },
                 success: function (data) {
@@ -396,15 +396,15 @@
     </div>
     <label>Filtro por rango de fechas:</label>
     <div class="input-group mb-3">
-        <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon3" />
-        <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon3" />
+        <input type="text" id="dateStart" autocomplete="off" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon3" />
+        <input type="text" id="dateEnd" autocomplete="off" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon3" />
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon3">Buscar</button>
         </div>
     </div>
     <br />
     <div class="table-responsive">
-        <table class="table table-striped table-bordered">
+        <table class="table table-sm table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Cliente</th>
@@ -560,8 +560,8 @@
                             <button class="btn btn-primary btn-sm" style="margin-top:30px" id="btnAddExpense" type="button">Agregar</button>
                         </div>
                     </div>
-                    <div id="containerTable" class="form-row table-responsive table-striped">
-                        <table id="expensesTable" class="table table-stribed table-bordered">
+                    <div id="containerTable" class="form-row table-sm table-responsive table-striped">
+                        <table id="expensesTable" class="table table-sm table-stribed table-bordered">
                             <thead>
                                 <tr>
                                     <th hidden>ID</th>

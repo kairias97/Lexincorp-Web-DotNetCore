@@ -152,34 +152,55 @@ namespace LexincorpApp.Controllers
             return View(viewModel);
         }
         [Authorize(Policy = "CanReviewBillDetail")]
-        public IActionResult DetailCheck(string dateStart, string dateEnd, int id)
+        public IActionResult DetailCheck(string dateStart, string dateEnd, int id, bool ByRange = false, bool checkItem = false, bool checkHours = false, bool checkAll = false)
         {
-            
-            Func<Activity, bool> filterFunction = c =>  c.ClientId == id;
+            CultureInfo esNI = new CultureInfo("es-NI");
+            Func<Activity, bool> clientFilter = c =>  c.ClientId == id;
             CultureInfo provider = CultureInfo.InvariantCulture;
             DateTime date1 = new DateTime();
             DateTime date2 = new DateTime();
             if (dateStart != null && dateStart != "")
             {
-                date1 = DateTime.ParseExact(dateStart, "dd/MM/yyyy", provider);
+                var parsedDate1 = DateTime.TryParseExact(dateStart,"dd/MM/yyyy", esNI, DateTimeStyles.None, out date1);
+                if (!parsedDate1)
+                {
+                    dateStart = "";
+                }
             }
             if (dateEnd != null && dateEnd != "")
             {
-                date2 = DateTime.ParseExact(dateEnd, "dd/MM/yyyy", provider);
+                var parsedDate2 = DateTime.TryParseExact(dateEnd, "dd/MM/yyyy", esNI, DateTimeStyles.None, out date2);
+                if (!parsedDate2)
+                {
+                    dateEnd = "";
+                }
             }
             Func<Activity, bool> filterFunctionDate = a => a.RealizationDate >= date1 && a.RealizationDate <= date2;
             ActivityDetailCheckViewModel viewModel = new ActivityDetailCheckViewModel();
             var targetClient = _clientRepo.Clients.Where(c => c.Id == id).FirstOrDefault();
             viewModel.CurrentFilter = targetClient?.Name ?? "";
             viewModel.CurrentId = id;
+            viewModel.ByRange = ByRange;
+            viewModel.checkAll = checkAll;
+            viewModel.checkHours = checkHours;
+            viewModel.checkItem = checkItem;
             if (!String.IsNullOrEmpty(viewModel.CurrentFilter))
             {
                 if (!String.IsNullOrEmpty(dateStart) && !String.IsNullOrEmpty(dateEnd))
                 {
                     List<Activity> activities = _activityRepo.Activities
-                    .Where(a => a.IsBillable == false && a.IsBilled == false && a.ActivityType != ActivityTypeEnum.NoBillable)
-                    .Where(filterFunction)
-                    .Where(filterFunctionDate)
+                    .Include(a=> a.Creator)
+                    .ThenInclude(u => u.Attorney)
+                    .Where(a => 
+                        (a.IsBillable == false && a.IsBilled == false)
+                        && 
+                        ((a.ActivityType == ActivityTypeEnum.Package && a.Package.IsFinished) 
+                            || (a.ActivityType != ActivityTypeEnum.Package && a.ActivityType != ActivityTypeEnum.NoBillable))
+                            
+                        && clientFilter(a)
+                        && filterFunctionDate(a)
+                        
+                        )
                     .OrderBy(a => a.RealizationDate).ToList();
                     List<Package> packages = new List<Package>();
                     List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
@@ -214,8 +235,15 @@ namespace LexincorpApp.Controllers
                 else
                 {
                     List<Activity> activities = _activityRepo.Activities
-                    .Where(a => a.IsBillable == false && a.IsBilled == false && a.ActivityType != ActivityTypeEnum.NoBillable)
-                    .Where(filterFunction)
+                    .Where(a =>
+                        (a.IsBillable == false && a.IsBilled == false)
+                        &&
+                        ((a.ActivityType == ActivityTypeEnum.Package && a.Package.IsFinished)
+                            || (a.ActivityType != ActivityTypeEnum.Package && a.ActivityType != ActivityTypeEnum.NoBillable))
+
+                        && clientFilter(a)
+
+                        )
                     .OrderBy(a => a.RealizationDate).ToList();
                     List<Package> packages = new List<Package>();
                     List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
@@ -395,11 +423,17 @@ namespace LexincorpApp.Controllers
             return fileStreamResult;
         }
         [Authorize]
-        public JsonResult GetActivitiesByClient(int id)
+        public JsonResult GetActivitiesByClient(int id, int attorneyId)
         {
-            var results = _activityRepo.Activities.Where(a => a.ClientId == id).OrderByDescending(a => a.RealizationDate).Take(10)
+            //To get the current identity in case it would be an admin
+            if (!User.IsInRole("Administrador"))
+            {
+                attorneyId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            }
+            var results = _activityRepo.Activities.Where(a => a.ClientId == id && a.CreatorId == attorneyId).OrderByDescending(a => a.RealizationDate).Take(10)
                 .Select(a => new
                 {
+                    description = a.Description,
                     serviceName = a.Service.Name,
                     hoursWorked = Math.Round(a.HoursWorked, 2),
                     activityType = a.ActivityType,
@@ -411,13 +445,20 @@ namespace LexincorpApp.Controllers
             return Json(results);
         }
         [Authorize]
-        public JsonResult GetActivityDataById(int id)
+        public JsonResult GetActivityDataById(int id, bool? finishedPackage)
         {
             var result = _activityRepo.Activities.Where(a => a.Id == id).FirstOrDefault();
-            var packages = _packageRepo.Packages.Include(p => p.Client).Where(p => p.ClientId == result.ClientId && p.IsFinished == false && p.IsBilled == false)
+            var packages = _packageRepo
+                .Packages
+                .Include(p => p.Client)
+                .Where(p => p.ClientId == result.ClientId 
+                    && (finishedPackage == null || p.IsFinished == (bool)finishedPackage) && p.IsBilled == false)
                 .OrderBy(p => p.Name).ToList();
             var retainers = _billableRetainerRepo.BillableRetainers
-                .Where(b => b.ClientId == result.ClientId && b.IsVisibleForActivities && b.Year == result.RealizationDate.Year && b.Month == result.RealizationDate.Month)
+                .Where(b => b.ClientId == result.ClientId 
+                    && b.IsVisibleForActivities && b.Year 
+                    == result.RealizationDate.Year 
+                    && b.Month == result.RealizationDate.Month)
                 .ToList();
             var activity = new
             {

@@ -4,7 +4,98 @@
 }
 <script type="text/javascript">
     var ids = [];
+    function validateIfCheckAll() {
+        var checkboxesToVerify = $("#tableActivities tbody tr td:first-child input:checkbox:not(:checked)");
+        var rowCount = $("#tableActivities tbody tr").length;
+        var packagesCount = $("#packages option:not([value=''])").length;
+        var retainersCount = $("#retainersCheck option:not([value=''])").length;
+
+
+        if (checkboxesToVerify.length == 0 && packagesCount === 0 && retainersCount === 0 && rowCount > 0) {
+            $("#checkAll").prop("checked", true);
+
+        }
+
+    }
+    function onRowClicked(typeId, retId, packageId, row) {
+        //To exclude packages and retainers
+        if (typeId !== 2 && typeId !== 3) {
+            var checkbox = $(row).find("td:first-child input[type=checkbox]");
+
+            var value = typeId === 1 ? "hora" : "item";
+            
+            if (checkbox.is(":checked")) {
+                checkbox.prop("checked", false);
+                //Since it is uncheking, it means the check is erased
+                $(typeId === 1 ? "#checkHours" : "#checkItem").prop("checked", false);
+
+            }else {
+                checkbox.prop("checked", true);
+                //check if there is no more unchecked
+                var checkboxesToVerify = $("#tableActivities tbody tr[data-item = " + value + "] td:first-child input:checkbox:not(:checked)");
+                if (checkboxesToVerify.length == 0) {
+                    $(typeId === 1 ? "#checkHours" : "#checkItem").prop("checked", true);
+
+                }
+            }
+            handleCheck(checkbox);
+
+        } else if (typeId === 2) {
+            var checkbox = $(row).find("td:first-child input[type=checkbox]");
+            if (checkbox.is(":checked")) {
+                //Handle here the deselection
+                $(`#packagesList li[data-id=${packageId}] a`).click();
+            } else {
+                //select from dropdown
+                
+                $(`#packages option[value=${packageId}]`).prop('selected', true);
+                $("#packages").trigger('change');
+            }
+        } else if (typeId === 3) {
+            
+            var checkbox = $(row).find("td:first-child input[type=checkbox]");
+            if (checkbox.is(":checked")) {
+                //handle here the deselection
+                $(`#retainersList li[data-id=${retId}] a`).click();
+            } else {
+                //select from dropdown
+                $(`#retainersCheck option[value=${retId}]`).prop('selected', true);
+                $("#retainersCheck").trigger('change');
+            }
+            
+
+        }
+        validateIfCheckAll();
+    }
     $(function () {
+        $("#ByRange").on('change', function () {
+            if ($(this).is(':checked')) {
+                $("#dateStart").prop("disabled", false);
+                $("#dateEnd").prop("disabled", false);
+
+            } else {
+                $("#dateStart").val("");
+                $("#dateEnd").val("");
+                $("#dateStart").prop("disabled", true);
+                $("#dateEnd").prop("disabled", true);
+                $("#searchBtn").click();
+
+            }
+        });
+        $("#dateStart").change(function () {
+
+            if ($("#dateStart").val() !== '' && $("#dateEnd").val() !== '') {
+                $("#searchBtn").click();
+
+            }
+
+        });
+        $("#dateEnd").change(function () {
+            if ($("#dateStart").val() !== '' && $("#dateEnd").val() !== '') {
+                $("#searchBtn").click();
+
+            }
+        });
         $("#dateStart").datepicker();
         $("#dateStart").datepicker("option", "dateFormat", "dd/mm/yy");
         $("#dateEnd").datepicker();
@@ -44,7 +135,7 @@
             select: function (event, ui) {
                 //$("#Package_ClientId").val(ui.item.clientId);
                 $("#clientId").val(ui.item.clientId);
-                $("#button-addon2").click();    
+                $("#searchBtn").click();
             }
 
             });
@@ -91,7 +182,7 @@
             $("#expenses").prop("title", "Seleccionar gastos")
         });
         $("#btnSubmit").click(function () {
-            console.log(validateData());
+            
             if (validateData()) {
                 var body = {};
                 body.Id = $("#activityId").val();
@@ -115,6 +206,7 @@
                 });
                 body.Expenses = expenses;
                 body.Description = $("#description").val();
+                $("#btnSubmit").prop('disabled', true);
                 $.ajax({
                     url: '@Url.Action("Update","Activity")',
                     type: "POST",
@@ -123,14 +215,16 @@
                     dataFilter: function (data) { return data; },
                     success: function (data) {
                         showSuccess("Actividad actualizada exitosamente");
+                        $("#btnSubmit").prop('disabled', false);
                         $("#editForm").modal("hide");
                         clean();
                         setTimeout(
                             function () {
                                 location.reload();
-                            }, 2000);
+                            }, 1500);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $("#btnSubmit").prop('disabled', false);
                         loadingOverlay.cancel(newActivitySpinHandle);
                         var err = eval("(" + XMLHttpRequest.responseText + ")");
                         alert(err.Message);
@@ -264,54 +358,73 @@
             if (value !== "") {
                 var rows = $("#tableActivities tbody tr[data-packageId = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", true);
                     handleCheck(check);
                 });
+                var selected = $("#packages").find('option:selected');
+                var id = $(selected).attr("data-id");
+                var amount = $(selected).attr("data-amount");
+                var name = $(selected).attr("data-name");
+                //add to the list and remove the item
+                var liToAdd = ` <li data-id="${id}" data-amount="${amount}" data-name="${name}">${name} ($${amount})<a onclick="handlePackageErase(${id},'${name}', ${amount}, this)" href="#"><i class="fas fa-eraser" ></i></a></li>`
+                $("#packagesList").append(liToAdd);
+                $(selected).remove();
+                validateIfCheckAll();
             }
-            else{
+            /*else{
                 var rows = $("#tableActivities tbody tr[data-package=paquete]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", false);
                     handleCheck(check);
                 });
-            }
+            }*/
         });
         $("#retainersCheck").change(function () {
             var value = $("#retainersCheck").val();
             if (value !== "") {
                 var rows = $("#tableActivities tbody tr[data-retainerId = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", true);
                     handleCheck(check);
                 });
+                var selected = $("#retainersCheck").find('option:selected');
+                var id = $(selected).attr("data-id");
+                var amount = $(selected).attr("data-amount");
+                var name = $(selected).attr("data-name");
+                //add to the list and remove the item
+                var liToAdd = ` <li data-id="${id}" data-amount="${amount}" data-name="${name}">${name} ($${amount})<a onclick="handleRetainerErase(${id},'${name}', ${amount}, this)" href="#"><i class="fas fa-eraser" ></i></a></li>`
+                $("#retainersList").append(liToAdd);
+                $(selected).remove();
+                validateIfCheckAll();
             }
-            else {
+            /*else {
                 var rows = $("#tableActivities tbody tr[data-retainer = retainer]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", false);
                     handleCheck(check);
                 });
-            }
+            }*/
         });
         $("#checkItem").change(function () {
             if ($("#checkItem").prop("checked")) {
                 var value = "item";
                 var rows = $("#tableActivities tbody tr[data-item = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", true);
                     handleCheck(check);
                 });
             }
             else {
+                $("#checkAll").prop("checked", false);
                 var value = "item";
                 var rows = $("#tableActivities tbody tr[data-item = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", false);
                     handleCheck(check);
                 });
@@ -322,16 +435,17 @@
                 var value = "hora";
                 var rows = $("#tableActivities tbody tr[data-hour = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", true);
                     handleCheck(check);
                 });
             }
             else {
+                $("#checkAll").prop("checked", false);
                 var value = "hora";
                 var rows = $("#tableActivities tbody tr[data-hour = " + value + "]");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", false);
                     handleCheck(check);
                 });
@@ -339,22 +453,94 @@
         });
         $("#checkAll").change(function () {
             if ($("#checkAll").prop("checked")) {
+                $("#checkItem").prop("checked", true);
+                $("#checkHours").prop("checked", true);
                 var rows = $("#tableActivities tbody tr");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", true);
                     handleCheck(check);
                 });
+                //Handle the selection of each package and retainer
+                //Firstly for packages
+                var packagesToAdd = $("#packages").find('option[value!=""]');
+                packagesToAdd.each(function (index, val) { 
+                    var selected = $(this);
+                    var id = $(selected).attr("data-id");
+                    var amount = $(selected).attr("data-amount");
+                    var name = $(selected).attr("data-name");
+                    //add to the list and remove the item
+                    var liToAdd = ` <li data-id="${id}" data-amount="${amount}" data-name="${name}">${name} ($${amount})<a onclick="handlePackageErase(${id},'${name}', ${amount}, this)" href="#"><i class="fas fa-eraser" ></i></a></li>`
+                    $("#packagesList").append(liToAdd);
+                    $(selected).remove();
+
+                    //Select all packages in the table
+                    var rows = $("#tableActivities tbody tr[data-packageId = " + id + "]");
+                    rows.each(function (index, val) {
+                        var check = $(this).find("td:first-child input[type=checkbox]");
+                        check.prop("checked", true);
+                        handleCheck(check);
+                    });
+                });
+                //Then add for retainers
+                //Firstly for packages
+                var retainersToAdd = $("#retainersCheck").find('option[value!=""]');
+                retainersToAdd.each(function (index, val) {
+                    var selected = $(this);
+                    var id = $(selected).attr("data-id");
+                    var amount = $(selected).attr("data-amount");
+                    var name = $(selected).attr("data-name");
+                    //add to the list and remove the item
+                    var liToAdd = ` <li data-id="${id}" data-amount="${amount}" data-name="${name}">${name} ($${amount})<a onclick="handleRetainerErase(${id},'${name}', ${amount}, this)" href="#"><i class="fas fa-eraser" ></i></a></li>`
+                    $("#retainersList").append(liToAdd);
+                    $(selected).remove();
+                    //Select all retainers in the table
+                    var rows = $("#tableActivities tbody tr[data-retainerId = " + value + "]");
+                    rows.each(function (index, val) {
+                        var check = $(this).find("td:first-child input[type=checkbox]");
+                        check.prop("checked", true);
+                        handleCheck(check);
+                    });
+                });
+
             }
-            else {
+            /*omitting uncheck for now else {
                 var rows = $("#tableActivities tbody tr");
                 rows.each(function (index, val) {
-                    var check = $(this).find("td:last-child input[type=checkbox]");
+                    var check = $(this).find("td:first-child input[type=checkbox]");
                     check.prop("checked", false);
                     handleCheck(check);
                 });
-            }
+            }*/
         });
+        if ($("#checkAll").prop("checked")) {
+            var rows = $("#tableActivities tbody tr");
+            rows.each(function (index, val) {
+                var check = $(this).find("td:first-child input[type=checkbox]");
+                check.prop("checked", true);
+                handleCheck(check);
+            });
+        }
+        if ($("#checkHours").prop("checked")) {
+            var value = "hora";
+            var rows = $("#tableActivities tbody tr[data-hour = " + value + "]");
+            rows.each(function (index, val) {
+                var check = $(this).find("td:first-child input[type=checkbox]");
+                check.prop("checked", true);
+                handleCheck(check);
+            });
+
+        } if ($("#checkItem").prop("checked")) {
+            var value = "item";
+            var rows = $("#tableActivities tbody tr[data-item = " + value + "]");
+            rows.each(function (index, val) {
+                var check = $(this).find("td:first-child input[type=checkbox]");
+                check.prop("checked", true);
+                handleCheck(check);
+            });
+
+        }
+
     });
     function validateData() {
         if ($("#hours").val() !== "" && $("#description").val() !== "") {
@@ -430,6 +616,7 @@
             }
         }
         else {
+            $("#checkAll").prop("checked", false);
             ids.splice(ids.indexOf(id), 1);
             var row = $(element).closest("tr");
             if (row.attr("data-packageId") !== "") {
@@ -453,7 +640,7 @@
             $.ajax({
                 url: '@Url.Action("GetActivityDataById","Activity")',
                 type: "GET",
-                data: {id: id},
+                data: {id: id, finishedPackage: null},
                 dataType: "json",
                 dataFilter: function (data) { return data; },
                 success: function (data) {
@@ -508,7 +695,7 @@
                         $("#divItemQuantity").prop("hidden", false);
                     }
                     else if (data.type == 5) {
-                        
+
                     }
                     $("#activityDate").val(data.date);
                     $("#hours").val(data.hoursWorked);
@@ -539,7 +726,32 @@
                 }
             })
     }
+    function handlePackageErase(id, name, amount, item) {
 
+        var option = `<option value="${id}" data-id="${id}" data-amount="${amount}" data-name="${name}">${name}</option>`;
+        $('#packages').append(option);
+        $(item).closest('li').remove();
+        //remove the package from list
+        var rows = $("#tableActivities tbody tr[data-packageId = "+id+"]");
+        rows.each(function (index, val) {
+            var check = $(this).find("td:first-child input[type=checkbox]");
+            check.prop("checked", false);
+            handleCheck(check);
+        });
+
+    }
+    function handleRetainerErase(id, name, amount, item) {
+
+        var option = `<option value="${id}" data-id="${id}" data-amount="${amount}" data-name="${name}">${name}</option>`;
+        $('#retainersCheck').append(option);
+        $(item).closest('li').remove();
+        var rows = $("#tableActivities tbody tr[data-retainerId = " + id + "]");
+        rows.each(function (index, val) {
+            var check = $(this).find("td:first-child input[type=checkbox]");
+            check.prop("checked", false);
+            handleCheck(check);
+        });
+    }
     function clean() {
         $("#activityId").val("");
         $("#type").val("");
@@ -580,130 +792,350 @@
         $('tfoot tr td:last-child').html(total);
     }
 </script>
-<h2>Revisión de detalles</h2>
+<h4>Revisión de detalles facturables</h4>
 <form asp-controller="Activity" asp-action="DetailCheck" method="get">
     <input type="number" hidden id="activityId" />
     <input type="number" hidden id="type" />
     <div id="placeholderSuccess" tabindex="">
 
     </div>
-    <label for="filter">Filtro de búsqueda:</label>
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" id="clientFilter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
-        <input type="text" class="form-control" id="clientId" name="id" hidden value="@Model.CurrentId" />
-        <input type="text" id="dateStart" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon2" />
-        <input type="text" id="dateEnd" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon2" />
-        <div class="input-group-append">
-            <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="filter">Cliente:</label>
+            <input type="text" class="form-control form-control-sm" id="clientFilter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="searchBtn">
+            <input type="text" class="form-control form-control-sm" id="clientId" name="id" hidden value="@Model.CurrentId" />
+
         </div>
+        <div class="form-group col-md-2">
+            <label for="filter">Inicio:</label>
+            @if (Model.ByRange)
+            {
+                <input type="text" id="dateStart" autocomplete="off" class="form-control form-control-sm" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha" aria-label="Fecha de inicio" aria-describedby="searchBtn" />
+
+
+            }
+            else
+            {
+                <input type="text" id="dateStart" autocomplete="off" class="form-control form-control-sm" disabled name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha" aria-label="Fecha de inicio" aria-describedby="searchBtn" />
+
+
+            }
+
+        </div>
+
+        <div class="form-group col-md-2">
+            <label for="filter">Fin:</label>
+            @if (Model.ByRange)
+            {
+                <input type="text" id="dateEnd" autocomplete="off" class="form-control form-control-sm" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha" aria-label="Fecha de fin" aria-describedby="button-addon2" />
+
+
+            }
+            else
+            {
+                <input type="text" id="dateEnd" autocomplete="off" class="form-control form-control-sm" disabled name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha" aria-label="Fecha de fin" aria-describedby="button-addon2" />
+
+
+            }
+
+        </div>
+        <div class="form-group col-md-1">
+            <div class="form-check">
+                <label style="font-size:small">Rango</label>
+                @Html.EditorFor(x => x.ByRange)
+                @*@if (Model.ByRange)
+                {
+                    <input type="checkbox" checked name="byRange" id="byRange" />
+
+                }
+                else
+                {
+                    <input type="checkbox" name="byRange" id="byRange" />
+
+                }*@
+                <br />
+                <button class="btn btn-outline-info" type="submit" id="searchBtn">Buscar</button>
+            </div>
+
+        </div>
+        <div class="form-group col-md-1">
+            <div class="form-check">
+                <label style="font-size:small">Ítem:</label>
+
+                @Html.EditorFor(x => x.checkItem)
+            </div>
+            <div class="form-check">
+                <label style="font-size:small">Hora:</label>
+                @Html.EditorFor(x => x.checkHours)
+            </div>
+            <div class="form-check">
+                <label style="font-size:small">Todo:</label>
+                @Html.EditorFor(x => x.checkAll)
+            </div>
+
+        </div>
+        <div class="form-group col-md-1">
+            <span style="font-size:small"><span class="hourly-square"></span>&nbsp;Hora</span><br />
+            <span style="font-size:small"><span class="item-square"></span>&nbsp;Ítem</span><br />
+        </div>
+        <div class="form-group col-md-1">
+            <span style="font-size:small"><span class="package-square"></span>&nbsp;Paquete</span><br />
+            <span style="font-size:small"><span class="retainer-square"></span>&nbsp;Retainer</span><br />
+        </div>
+
     </div>
     <div class="form-row">
         <div class="form-group col-md-3">
             @if (Model.Packages.Count() > 0)
             {
-                <label>Paquetes disponibles para este cliente:</label>
+                <label>Paquetes facturables:</label>
                 <select class="form-control form-control-sm" id="packages">
                     <option value="">Seleccionar paquete</option>
-                    @foreach (var p in Model.Packages)
+                    @if (!Model.checkAll)
                     {
-                        <option value="@p.Id">@p.Name</option>
+                        @foreach (var p in Model.Packages)
+                        {
+                            <option value="@p.Id" data-id="@p.Id" data-amount="@p.Amount" data-name="@p.Name">@p.Name</option>
+                        }
+
                     }
+
                 </select>
             }
             else
             {
-                <label>Paquetes disponibles para este cliente:</label>
+                <label>Paquetes facturables:</label>
                 <select class="form-control form-control-sm" disabled></select>
             }
         </div>
         <div class="form-group col-md-3">
             @if (Model.BillableRetainers.Count() > 0)
             {
-                <label>Retainers disponibles para este cliente:</label>
+                <label>Retainers facturables:</label>
                 <select class="form-control form-control-sm" id="retainersCheck">
                     <option value="">Seleccionar retainer</option>
-                    @foreach (var p in Model.BillableRetainers)
+                    @if (!Model.checkAll)
                     {
-                        <option value="@p.Id">@p.Name</option>
+                        @foreach (var p in Model.BillableRetainers)
+                        {
+                            <option value="@p.Id" data-id="@p.Id" data-amount="@p.AgreedFee" data-name="@p.Name">@p.Name</option>
+                        }
+
                     }
+
                 </select>
             }
             else
             {
-                <label>Retainers disponibles para este cliente:</label>
+                <label>Retainers facturables:</label>
                 <select class="form-control form-control-sm" disabled></select>
             }
         </div>
-        <div class="form-group col-md-2">
-            <label>Ítems:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkItem" />
+        <div class="form-group col-md-3">
+
+            <p><strong>Paquetes seleccionados:</strong></p>
+            <ul id="packagesList">
+                @if(Model.checkAll)
+                {
+                    foreach (var p in Model.Packages)
+                    {
+                        <li data-id="@p.Id" data-amount="@p.Amount" data-name="@p.Name">@($"{p.Name} (${p.Amount})")<a onclick="handlePackageErase(@(p.Id),'@(p.Name)', @(p.Amount), this)" href="#"><i class="fas fa-eraser"></i></a></li>
+
+                    }
+
+                }
+            </ul>
         </div>
-        <div class="form-group col-md-2">
-            <label>Horas:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkHours" />
+        <div class="form-group col-md-3">
+           <p><strong>Retainers seleccionados:</strong></p>
+           <ul id="retainersList">
+               @if (Model.checkAll)
+               {
+                   foreach (var r in Model.BillableRetainers)
+                   {
+                       <li data-id="@r.Id" data-amount="@r.AgreedFee" data-name="@r.Name">@($"{r.Name} (${r.AgreedFee})")<a onclick="handleRetainerErase(@(r.Id),'@r.Name', @r.AgreedFee, this)" href="#"><i class="fas fa-eraser"></i></a></li>
+
+                   }
+
+               }
+           </ul>
         </div>
-        <div class="form-group col-md-2">
-            <label>Todo:</label>
-            <input type="checkbox" class="form-control form-control-sm" id="checkAll" />
-        </div>
+
+
     </div>
-    <br />
     <div class="table-responsive">
-        <table class="table table-bordered" id="tableActivities">
-            <thead>
-                <tr>
-                    <th>Concepto</th>
-                    <th>Horas</th>
-                    <th>Asociado a</th>
-                    <th>Fecha</th>
-                    <th>Acciones</th>
-                    <th></th>
+        <table class="table table-sm table-bordered table-hover" id="tableActivities">
+            <thead id="#detailHeader">
+                <tr class="d-flex">
+                    <th class="col-1"></th>
+                    <th class="col-1">Fecha</th>
+                    <th class="col-4">Concepto</th>
+                    <th class="col-1">Horas</th>
+                    <th class="col-1">Precio</th>
+                    <th class="col-3">Asociado a</th>
+                    <th class="col-1">Alias</th>
+
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="table-wrapper-scroll-y">
                 @foreach (var activity in Model.Activities)
                 {
-                    <tr data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
+                    <tr class="d-flex" data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
                         data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
-                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")">
-                        <td>@activity.Description</td>
-                        <td>@Math.Round(activity.HoursWorked, 2)</td>
+                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")" onclick="onRowClicked(@((int)activity.ActivityType), @(activity.BillableRetainerId ?? 0 ), @(activity.PackageId ?? 0),this)">
+                        <td class="col-1">
+                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit fa-2x" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                            @if (activity.ActivityType == ActivityTypeEnum.Retainer || activity.ActivityType == ActivityTypeEnum.Package)
+                            {
+                                <input type="checkbox" data-id="@activity.Id" disabled />
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" data-id="@activity.Id" />
+
+                            }
+                            <span style="font-size:small"><span class="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hourly": activity.ActivityType == ActivityTypeEnum.Item ? "item" : activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer": activity.ActivityType == ActivityTypeEnum.Package ? "package" : "")-square"></span>&nbsp;</span>
+                        </td>
+                        <td class="col-1">@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                        <td class="col-4">@activity.Description</td>
+                        <td class="col-1">@Math.Round(activity.HoursWorked, 2)</td>
+
+                        <td class="col-1">@Math.Round(activity.Subtotal, 2)</td>
                         @if (activity.ActivityType == ActivityTypeEnum.Package)
                         {
-                            <td>@(activity.Package?.Name ?? "-")</td>
+                            <td class="col-3">@(activity.Package?.Name ?? "-")</td>
                         }
                         else if (activity.ActivityType == ActivityTypeEnum.Retainer)
                         {
-                            <td>@(activity.BillableRetainer?.Name ?? "-")</td>
+                            <td class="col-3">@(activity.BillableRetainer?.Name ?? "-")</td>
                         }
                         else if (activity.ActivityType == ActivityTypeEnum.Item)
                         {
-                            <td>Ítem</td>
+                            <td class="col-3">Ítem</td>
                         }
                         else if (activity.ActivityType == ActivityTypeEnum.Hourly)
                         {
-                            <td>Hora</td>
+                            <td class="col-3">Hora</td>
                         }
                         else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
                         {
-                            <td>No cobrable</td>
+                            <td class="col-3">No cobrable</td>
                         }
-                        <td>@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
-                        </td>
-                        <td>
-                            <input type="checkbox" onclick="handleCheck(this)" class="form-control" data-id="@activity.Id" />
-                        </td>
+                        <td class="col-1">@activity.Creator.Attorney.Alias</td>
+
+
 
                     </tr>
                 }
+                @foreach (var activity in Model.Activities)
+                {
+                    <tr class="d-flex" data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
+                        data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
+                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")" onclick="onRowClicked(@((int)activity.ActivityType), @(activity.BillableRetainerId ?? 0 ), @(activity.PackageId ?? 0),this)">
+                        <td class="col-1">
+                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit fa-2x" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                            @if (activity.ActivityType == ActivityTypeEnum.Retainer || activity.ActivityType == ActivityTypeEnum.Package)
+                            {
+                                <input type="checkbox" data-id="@activity.Id" disabled />
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" data-id="@activity.Id" />
+
+                            }
+                            <span style="font-size:small"><span class="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hourly": activity.ActivityType == ActivityTypeEnum.Item ? "item" : activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer": activity.ActivityType == ActivityTypeEnum.Package ? "package" : "")-square"></span>&nbsp;</span>
+                        </td>
+                        <td class="col-1">@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                        <td class="col-4">@activity.Description</td>
+                        <td class="col-1">@Math.Round(activity.HoursWorked, 2)</td>
+
+                        <td class="col-1">@Math.Round(activity.Subtotal, 2)</td>
+                        @if (activity.ActivityType == ActivityTypeEnum.Package)
+                        {
+                            <td class="col-3">@(activity.Package?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
+                        {
+                            <td class="col-3">@(activity.BillableRetainer?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Item)
+                        {
+                            <td class="col-3">Ítem</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
+                        {
+                            <td class="col-3">Hora</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
+                        {
+                            <td class="col-3">No cobrable</td>
+                        }
+                        <td class="col-1">@activity.Creator.Attorney.Alias</td>
+
+
+
+                    </tr>
+                }
+                @foreach (var activity in Model.Activities)
+                {
+                    <tr class="d-flex" data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
+                        data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
+                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")" onclick="onRowClicked(@((int)activity.ActivityType), @(activity.BillableRetainerId ?? 0 ), @(activity.PackageId ?? 0),this)">
+                        <td class="col-1">
+                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit fa-2x" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
+                            @if (activity.ActivityType == ActivityTypeEnum.Retainer || activity.ActivityType == ActivityTypeEnum.Package)
+                            {
+                                <input type="checkbox" data-id="@activity.Id" disabled />
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" data-id="@activity.Id" />
+
+                            }
+                            <span style="font-size:small"><span class="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hourly": activity.ActivityType == ActivityTypeEnum.Item ? "item" : activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer": activity.ActivityType == ActivityTypeEnum.Package ? "package" : "")-square"></span>&nbsp;</span>
+                        </td>
+                        <td class="col-1">@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
+                        <td class="col-4">@activity.Description</td>
+                        <td class="col-1">@Math.Round(activity.HoursWorked, 2)</td>
+
+                        <td class="col-1">@Math.Round(activity.Subtotal, 2)</td>
+                        @if (activity.ActivityType == ActivityTypeEnum.Package)
+                        {
+                            <td class="col-3">@(activity.Package?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
+                        {
+                            <td class="col-3">@(activity.BillableRetainer?.Name ?? "-")</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Item)
+                        {
+                            <td class="col-3">Ítem</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
+                        {
+                            <td class="col-3">Hora</td>
+                        }
+                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
+                        {
+                            <td class="col-3">No cobrable</td>
+                        }
+                        <td class="col-1">@activity.Creator.Attorney.Alias</td>
+
+
+
+                    </tr>
+                }
+
             </tbody>
         </table>
+
     </div>
 
     <button class="btn btn-primary btn-sm" type="button" id="btnMark">Marcar como facturable las actividades seleccionadas</button>
-
+    <br />
     <!--Modal begin for edit-->
     <!-- Modal -->
     <div class="modal fade" id="editForm" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -794,7 +1226,7 @@
                         </div>
                     </div>
                     <div id="containerTable" class="form-row table-responsive table-striped">
-                        <table id="expensesTable" class="table table-stribed table-bordered">
+                        <table id="expensesTable" class="table table-sm table-stribed table-bordered">
                             <thead>
                                 <tr>
                                     <th hidden>ID</th>

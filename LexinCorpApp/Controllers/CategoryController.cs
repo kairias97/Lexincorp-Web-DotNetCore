@@ -86,5 +86,11 @@ namespace LexincorpApp.Controllers
             TempData["updated"] = true;
             return RedirectToAction("Admin", new { filter = TempData["filter"] });
         }
+        [AllowAnonymous]
+        public JsonResult GetList()
+        {
+            var categories = _categoriesRepo.Categories.Where(c => c.Active).Select(c => new { id = c.Id, name = c.Name }).ToList();
+            return Json(categories);
+        }
     }
 }

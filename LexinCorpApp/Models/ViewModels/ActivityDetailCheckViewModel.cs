@@ -17,5 +17,11 @@ namespace LexincorpApp.Models
         public IEnumerable<Package> Packages { get; set; }
         public IEnumerable<BillableRetainer> BillableRetainers { get; set; }
         public int CurrentId { get; set; }
+        public bool ByRange { get; set; }
+        public bool checkHours { get; set; }
+        public bool checkItem { get; set; }
+        public bool checkAll { get; set; }
+
+
     }
 }

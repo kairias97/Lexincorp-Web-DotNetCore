@@ -79,7 +79,7 @@
     <div class="form-row">
         <div class="form-group col-md-5">
             <label for="Package_RealizationDate">Fecha del paquete (dd/MM/yyyy)*:</label>
-            <input type="text" id="packageDate" class="form-control" asp-for="@Model.RealizationDate" required />
+            <input type="text" id="packageDate" autocomplete="off" class="form-control" asp-for="@Model.RealizationDate" required />
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Guardar cambios</button>
