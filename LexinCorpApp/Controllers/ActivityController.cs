@@ -204,28 +204,26 @@ namespace LexincorpApp.Controllers
                     .OrderBy(a => a.RealizationDate).ToList();
                     List<Package> packages = new List<Package>();
                     List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
-                    foreach(var a in activities)
-                    {
-                        if(a.PackageId != null)
-                        {
-                            var package = _packageRepo.Packages.Where(p => p.Id == a.PackageId).FirstOrDefault();
-                            bool contains = packages.Any(pa => pa.Id == package.Id);
-                            if(contains == false)
-                            {
-                                packages.Add(package);
-                            }
-                        }
-                        else if(a.BillableRetainerId != null)
-                        {
-                            var retainer = _billableRetainerRepo.BillableRetainers.Where(b => b.Id == a.BillableRetainerId).FirstOrDefault();
-                            bool contains = billableRetainers.Any(bi => bi.Id == retainer.Id);
-                            if(contains == false)
-                            {
-                                billableRetainers.Add(retainer);
-                            }
-                        }
-                        
-                    }
+                    //get the packages ids
+                    var packagesIds = activities
+                        .Where(a => a.PackageId != null && a.ActivityType == ActivityTypeEnum.Package)
+                        .Select(a => a.PackageId).ToList();
+                    //add the package list
+                    packages = _packageRepo.Packages.Where(p => packagesIds.Contains(p.Id)).ToList();
+
+                    //getting the retainersIds
+                    var retainersIds = activities
+                        .Where(a => a.BillableRetainerId != null && a.ActivityType == ActivityTypeEnum.Retainer)
+                        .Select(a => a.BillableRetainerId).ToList();
+                    //getting the retainers list based on ids and also the retainers with no activities
+                    billableRetainers = _billableRetainerRepo.BillableRetainers
+                        .Where(r => retainersIds.Contains(r.Id) ||
+                        (r.ClientId == viewModel.CurrentId && !r.IsBilled && !r.IsBillable
+                        && r.InitialDate >= date1 && r.InitialDate <= date2
+                        ) 
+                        ).ToList();
+                    
+
                     viewModel.Activities = activities;
                     viewModel.CurrentStartDate = date1.ToString("dd/MM/yyyy");
                     viewModel.CurrentEndDate = date2.ToString("dd/MM/yyyy");
@@ -247,28 +245,24 @@ namespace LexincorpApp.Controllers
                     .OrderBy(a => a.RealizationDate).ToList();
                     List<Package> packages = new List<Package>();
                     List<BillableRetainer> billableRetainers = new List<BillableRetainer>();
-                    foreach (var a in activities)
-                    {
-                        if (a.PackageId != null)
-                        {
-                            var package = _packageRepo.Packages.Where(p => p.Id == a.PackageId).FirstOrDefault();
-                            bool contains = packages.Any(pa => pa.Id == package.Id);
-                            if (contains == false)
-                            {
-                                packages.Add(package);
-                            }
-                        }
-                        else if (a.BillableRetainerId != null)
-                        {
-                            var retainer = _billableRetainerRepo.BillableRetainers.Where(b => b.Id == a.BillableRetainerId).FirstOrDefault();
-                            bool contains = billableRetainers.Any(bi => bi.Id == retainer.Id);
-                            if (contains == false)
-                            {
-                                billableRetainers.Add(retainer);
-                            }
-                        }
+                    //get the packages ids
+                    var packagesIds = activities
+                        .Where(a => a.PackageId != null && a.ActivityType == ActivityTypeEnum.Package)
+                        .Select(a => a.PackageId).ToList();
+                    //add the package list
+                    packages = _packageRepo.Packages.Where(p => packagesIds.Contains(p.Id)).ToList();
 
-                    }
+                    //getting the retainersIds
+                    var retainersIds = activities
+                        .Where(a => a.BillableRetainerId != null && a.ActivityType == ActivityTypeEnum.Retainer)
+                        .Select(a => a.BillableRetainerId).ToList();
+                    //getting the retainers list based on ids and also the retainers with no activities
+                    billableRetainers = _billableRetainerRepo.BillableRetainers
+                        .Where(r => retainersIds.Contains(r.Id) ||
+                        (r.ClientId == viewModel.CurrentId && !r.IsBilled && !r.IsBillable
+                        )
+                        ).ToList();
+
                     viewModel.Activities = activities;
                     viewModel.Packages = packages;
                     viewModel.BillableRetainers = billableRetainers;
@@ -508,9 +502,13 @@ namespace LexincorpApp.Controllers
         }
         [Authorize]
         [HttpPost]
-        public JsonResult MarkActivities(List<int> body)
+        public JsonResult MarkActivities(List<int> body, List<int> retainersIds)
         {
-            _activityRepo.MarkActivitiesAsBillable(body);
+            if (body.Count == 0 && retainersIds.Count == 0)
+            {
+                return Json(new { message = "No ha seleccionado nada para ser facturable", success = false});
+            }
+            _activityRepo.MarkActivitiesAsBillable(body, retainersIds);
             return Json(new { message = "Actividades marcadas como facturables exitosamente", success = true });
         }
     }

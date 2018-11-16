@@ -336,12 +336,18 @@ namespace LexincorpApp.Models
             }
         }
 
-        public void MarkActivitiesAsBillable(List<int> list)
+        public void MarkActivitiesAsBillable(List<int> activitiesIds, List<int> retainersIds)
         {
-            foreach (var item in list)
+            var activities = context.Activities.Where(a => activitiesIds.Contains(a.Id)).ToList();
+            var retainers = context.BillableRetainers.Where(r => retainersIds.Contains(r.Id)).ToList();
+            foreach (var activity in activities)
             {
-                var activity = context.Activities.Where(a => a.Id == item).FirstOrDefault();
                 activity.IsBillable = true;
+            }
+            //Putting the retainers as billable
+            foreach (var r in retainers)
+            {
+                r.IsBillable = true;
             }
             context.SaveChanges();
         }

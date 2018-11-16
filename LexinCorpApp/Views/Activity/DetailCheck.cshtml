@@ -236,20 +236,29 @@
             }
         });
         $("#btnMark").click(function () {
+            var retainersIds = [];
+            $("#retainersList li").each(function () { 
+                var li = $(this);
+                retainersIds.push(li.data("id"));
+            });
             var newActivitySpinHandle = loadingOverlay.activate();
             $.ajax({
                 url: '@Url.Action("MarkActivities","Activity")',
                 type: "POST",
-                data: { body: ids },
+                data: { body: ids, retainersIds: retainersIds},
                 dataType: "json",
                 dataFilter: function (data) { return data; },
                 success: function (data) {
                     loadingOverlay.cancel(newActivitySpinHandle);
                     showSuccess(data.message);
-                    setTimeout(
-                        function () {
-                            location.reload();
-                        }, 2000);
+                    if (data.success === true) {
+                        setTimeout(
+                            function () {
+                                location.reload();
+                            }, 2000);
+
+                    }
+                    
                 }
                 ,
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -260,7 +269,7 @@
             })
         });
         $("#activityType").change(function () {
-            console.log("Entra al metodo")
+            
             if ($("#activityType").val() == 1) {
                 $("#divFeePerHour").prop("hidden", false);
                 $("#feePerHour").prop("disabled", false);

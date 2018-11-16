@@ -24,5 +24,7 @@ namespace LexincorpApp.Models
         public int Month { get; set; }
         public int Year { get; set; }
         public bool IsVisibleForActivities { get; set; }
+        public bool IsBillable { get; set; }
+        public DateTime InitialDate { get; set; }
     }
 }
