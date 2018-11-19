@@ -7,11 +7,11 @@ namespace LexincorpApp.Models {
 
     public enum  BillDetailTypeEnum:int
     {
-        RetainerHeader = 1,
-        PackageHeader = 2,
-        RetainerDetail = 3,
-        PackageDetail = 4,
-        Item = 5,
-        Hours = 6
+        Hours = 1,
+        Package = 2,
+        Retainer = 3,
+        Item = 4, 
+        RetainerDetail = 5,
+        PackageDetail = 6
     }
 }

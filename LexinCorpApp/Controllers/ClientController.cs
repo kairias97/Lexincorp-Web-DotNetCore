@@ -19,6 +19,8 @@ namespace LexincorpApp.Controllers
         private readonly IDocumentDeliveryMethodRepository _documentDeliveryMethodsRepo;
         private readonly IRetainerSubscriptionRepository _retainerSubscriptionRepo;
         private readonly IPackageRepository _packageRepo;
+        private readonly IActivityRepository _activityRepo;
+
         public int PageSize = 5;
 
         public ClientController(
@@ -27,7 +29,8 @@ namespace LexincorpApp.Controllers
             IBillingModeRepository _billingModesRepo,
             IDocumentDeliveryMethodRepository _documentDeliveryMethodsRepo,
             IRetainerSubscriptionRepository retainerSubscriptionRepository,
-            IPackageRepository packageRepository)
+            IPackageRepository packageRepository, 
+            IActivityRepository activityRepository)
         {
             this._clientsRepo = _clientsRepo;
             this._clientTypesRepo = _clientTypesRepo;
@@ -35,6 +38,7 @@ namespace LexincorpApp.Controllers
             this._documentDeliveryMethodsRepo = _documentDeliveryMethodsRepo;
             this._retainerSubscriptionRepo = retainerSubscriptionRepository;
             this._packageRepo = packageRepository;
+            this._activityRepo = activityRepository;
         }
         [Authorize]
         public IActionResult Index()
@@ -163,6 +167,25 @@ namespace LexincorpApp.Controllers
                 .Select(c=> new { Name = c.Name, Id = c.Id, BillingInEnglish = c.BillingInEnglish,
                 FeePerHour = c.FixedCostPerHour, Packages = c.Packages.Where(p => p.IsFinished == false),
                 IsHourBilled = c.IsHourBilled ? "Permite" : "No Permite"});
+            return Json(list);
+        }
+        [Authorize]
+        public JsonResult SearchClientWithHasItems(string term)
+        {
+            Func<Client, bool> filterFunction = c => String.IsNullOrEmpty(term) || c.Name.CaseInsensitiveContains(term);
+
+            var list = _clientsRepo.Clients.Include(c => c.Packages).Where(filterFunction)
+                .OrderBy(c => c.Name)
+                .Take(10)
+                .Select(c => new {
+                    Name = c.Name,
+                    Id = c.Id,
+                    BillingInEnglish = c.BillingInEnglish,
+                    FeePerHour = c.FixedCostPerHour,
+                    Packages = c.Packages.Where(p => p.IsFinished == false),
+                    IsHourBilled = c.IsHourBilled ? "Permite" : "No Permite",
+                    HasUnbilledItems = _activityRepo.Activities.Any(a => a.ClientId == c.Id && a.ActivityType == ActivityTypeEnum.Item && !a.IsBilled)
+                });
             return Json(list);
         }
         [Authorize]

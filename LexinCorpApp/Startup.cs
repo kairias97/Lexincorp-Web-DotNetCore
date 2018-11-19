@@ -76,7 +76,12 @@ namespace LexincorpApp
             services.AddTransient<IVacationsMovementRepository, EFVacationsMovementRepository>();
             services.AddSingleton<ICryptoManager, BCryptManager>();
             services.AddSingleton<IGuidManager, GuidManager>();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.Cookie.Expiration = TimeSpan.FromHours(12);
+                options.ExpireTimeSpan = TimeSpan.FromHours(12);
+
+            });
             services.AddAuthorization(options => {
                 options.AddPolicy("CanPreBill", policy => policy.RequireClaim(PermissionsEnum.CanPreBill.ToString(), "true"));
                 options.AddPolicy("CanBill", policy => policy.RequireClaim(PermissionsEnum.CanBill.ToString(), "true"));
@@ -84,6 +89,7 @@ namespace LexincorpApp
                 options.AddPolicy("CanReviewBillDetail", policy => policy.RequireClaim(PermissionsEnum.CanReviewBillDetail.ToString(), "true"));
                 options.AddPolicy("CanApproveVacations", policy => policy.RequireClaim(PermissionsEnum.CanApproveVacations.ToString(), "true"));
             });
+            
             services.AddTransient<IItemRepository, EFItemRepository>();
             services.AddTransient<IVacationsRequestRepository, EFVacationsRequestRepository>();
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();

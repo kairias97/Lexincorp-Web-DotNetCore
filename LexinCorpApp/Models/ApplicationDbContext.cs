@@ -39,6 +39,8 @@ namespace LexincorpApp.Models
         public DbSet<VacationsRequestAnswer> VacationsRequestAnswers { get; set; }
         public DbSet<VacationsMonthlyCredit> VacationsMonthlyCredits { get; set; }
         public DbSet<ClientDeposit> ClientDeposits { get; set; }
+        public virtual DbSet<BillSummary> BillSummaries { get; set; }
+        public virtual DbSet<BillSummary> BillExpenses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

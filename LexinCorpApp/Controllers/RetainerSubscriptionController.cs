@@ -82,6 +82,18 @@ namespace LexincorpApp.Controllers
             return Json(results);
         }
         [Authorize(Roles = "Administrador, Regular")]
+        public JsonResult GetUnbilledByDateMonthClient(int clientId, int month, int year)
+        {
+            var results = _billableRetainerRepo.BillableRetainers
+                .Where(b => b.ClientId == clientId && b.Month == month && b.Year == year && !b.IsBilled)
+                .Select(b => new
+                {
+                    id = b.Id,
+                    name = b.Name
+                });
+            return Json(results);
+        }
+        [Authorize(Roles = "Administrador, Regular")]
         public JsonResult GetByClientAndDate(int clientId, string date)
         {
             DateTime d = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);

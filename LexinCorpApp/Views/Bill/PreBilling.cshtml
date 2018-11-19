@@ -3,6 +3,113 @@
     ViewData["Title"] = "Prefacturación";
 }
 <script type="text/javascript">
+    function verifyAvailable() {
+        var isItemHidden = $("#itemCheckContainer").is(':hidden');
+        var isPackageHidden = $("#packageCheckContainer").is(':hidden');
+        var isRetainerHidden = $("#retainerCheckContainer").is(':hidden');
+        if (isItemHidden && isPackageHidden && isRetainerHidden) {
+            $("#btnGenerate").prop('disabled', true);
+            showSuccess("No hay nada disponible para prefacturar");
+        } else {
+            hideSuccess();
+            $("#btnGenerate").prop('disabled', false);
+
+
+        }
+
+    }
+    function showSuccess(message) {
+        $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    function showError(message) {
+        $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    function hideSuccess() {
+        $("#placeholderSuccess").empty();
+
+    }
+    function hideError() {
+        $("#placeholderError").empty();
+
+    }
+    function fetchRetainers(clientId, month, year) {
+         $.ajax({
+                url: "@Url.Action("GetUnbilledByDateMonthClient", "RetainerSubscription")",
+                    type: "GET",
+                    data: { clientId: clientId, month: month, year: year },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
+                        if (data.length > 0) {
+                            $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
+                            $.each(data, function (i, item) {
+                                //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
+                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                                $("#retainers").append(options);
+                            });
+
+                            $("#retainersContainer").prop('hidden', false);
+                            $("#retainerCheckContainer").prop('hidden', false);
+                        } else {
+                            
+                            $("#retainersContainer").prop('hidden', true);
+                            $("#retainerCheckContainer").prop('hidden', true);
+                            $("#retainerCheckContainer").prop('checked', false);
+                        }
+                        
+                        //console.log(data);
+                        
+                        verifyAvailable();
+                        //console.log($("#retainers").children().length);
+                        $("#retainers").val("");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        //alert(err.Message);
+                    }
+                });
+
+    }
+    function fetchPackages(clientId) {
+        $.ajax({
+                url: "@Url.Action("SearchAllUnbilled", "Package")",
+                    type: "GET",
+                    data: { clientId: clientId },
+                    dataType: "json",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
+
+                        if (data.length > 0) {
+                            $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
+                            $.each(data, function (i, item) {
+                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
+                                $("#Packages").append(options);
+                            });
+
+                            $("#packageCheckContainer").prop('hidden', false);
+                            $("#packagesContainer").prop('hidden', false);
+                        } else {
+                            $("#packagesContainer").prop('hidden', true);
+                            $("#packageCheckContainer").prop('hidden', true);
+                            $("#packageCheckContainer").prop('checked', false);
+
+                        }
+                        
+                        $("#Packages").val("");
+                        verifyAvailable();
+                        //console.log(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var err = eval("(" + XMLHttpRequest.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+
+    }
     $(function () {
         $("#billDate").datepicker();
         $("#billDate").datepicker("option", "dateFormat", "dd/mm/yy");
@@ -17,7 +124,7 @@
         $("#clientFilter").autocomplete({
                 source: function (request, response) {
                 $.ajax({
-                    url: "@Url.Action("Search","Client")",
+                    url: "@Url.Action("SearchClientWithHasItems", "Client")",
                     type: "GET",
                     data: request,
                     dataType: "json",
@@ -32,8 +139,9 @@
                                 clientId: item.id,
                                 isEnglish: item.billingInEnglish,
                                 feePerHour: item.feePerHour,
-                                packages: item.packages
-                                    }
+                                packages: item.packages,
+                                hasUnbilledItems: item.hasUnbilledItems
+                                }
                                 }))
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -45,6 +153,28 @@
                     },
             minLength: 1,
             select: function (event, ui) {
+                //Clean the selections of retainer and packages
+
+                $("#packageCheckContainer").prop('hidden', true);
+                $("#packageCheckContainer").prop('checked', false);
+
+                $("#retainerCheckContainer").prop('hidden', true);
+                $("#retainerCheckContainer").prop('checked', false);
+                $("#packageCheck").prop('checked', false);
+                $("#retainerCheck").prop('checked', false);
+                $("#packageCheck").prop('disabled', false);
+                $("#retainerCheck").prop('disabled', false);
+                console.log(ui.item);
+                console.log(ui.item.hasUnbilledItems);
+                if (ui.item.hasUnbilledItems) {
+                    $("#itemCheckContainer").prop('hidden', false);
+
+                    $("#itemCheckContainer").prop('checked', false);
+                } else {
+                    $("#itemCheckContainer").prop('hidden', true);
+                    $("#itemCheckContainer").prop('checked', false);
+
+                }
                 //$("#Package_ClientId").val(ui.item.clientId);
                 $("#ClientId").val(ui.item.clientId);
                 $("#ClientName").val(ui.item.clientName);
@@ -54,50 +184,11 @@
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
-                $.ajax({
-                url: "@Url.Action("SearchFinished", "Package")",
-                    type: "GET",
-                    data: { clientId: ui.item.clientId },
-                    dataType: "json",
-                    dataFilter: function (data) { return data; },
-                    success: function (data) {
-                        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
-                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#Packages").append(options);
-                        });
-                        $("#Packages").val("");
-                        //console.log(data);
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
-                $.ajax({
-                url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
-                    type: "GET",
-                    data: { clientId: ui.item.clientId, month: $("#month").val(), year: $("#year").val() },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        //console.log(data);
-                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
-                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                            //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
-                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#retainers").append(options);
-                        });
-                        //console.log($("#retainers").children().length);
-                        $("#retainers").val("");
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        //var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        //alert(err.Message);
-                    }
-                });
+                var month = $("#month").val();
+                var year = $("#year").val()
+                fetchPackages(ui.item.clientId);
+                fetchRetainers(ui.item.clientId, month, year);
+               
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 $("#hourCheck").prop("disabled", false);
                 $("#itemCheck").prop("disabled", false);
@@ -115,57 +206,18 @@
         });
         $("#billDate").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
-                    var clientId = $("#ClientId").val()
-                    $.ajax({
-                    url: "@Url.Action("SearchFinished", "Package")",
-                    type: "GET",
-                    data: { clientId: $("#ClientId").val() },
-                    dataType: "json",
-                    dataFilter: function (data) { return data; },
-                    success: function (data) {
-                        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
-                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#Packages").append(options);
-                        });
-                        $("#Packages").val("");
-                        },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            var err = eval("(" + XMLHttpRequest.responseText + ")");
-                            alert(err.Message);
-                        }
-                    });
-                $.ajax({
-                    url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
-                    type: "GET",
-                    data: { clientId: $("#ClientId").val(), month: $("#month").val(), year: $("#year").val() },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
-                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#retainers").append(options);
-                        });
-                        $("#retainers").val("");
-                        $.each(data, function (i, item) {
-                                var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#retainers").append(options);
-                            });
-                        },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            var err = eval("(" + XMLHttpRequest.responseText + ")");
-                            alert(err.Message);
-                        }
-                    });
+                var clientId = $("#ClientId").val();
+
+                var month = $("#month").val();
+                var year = $("#year").val()
+                fetchPackages(clientId);
+                fetchRetainers(clientId, month, year);
                 //$("#Packages").prop("disabled", false);
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
         });
-        $("#month").change(function () {
+        @*$("#month").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
@@ -212,8 +264,8 @@
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
-        });
-        $("#year").change(function () {
+        });*@
+        @*$("#year").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
@@ -244,12 +296,17 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
+                        
                         $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
-                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
+                        
+                            $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
+                            $.each(data, function (i, item) {
                                 var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#retainers").append(options);
-                        });
+                                $("#retainers").append(options);
+                            });
+
+                        
+                        
                         $("#retainers").val("");
                         },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -261,7 +318,7 @@
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
-        });
+        });*@
         //$("#itemCheck").change(function () {
         //    if ($("#itemCheck").prop("checked")) {
         //        $("#items").prop("disabled", false);
@@ -293,30 +350,30 @@
                 $("#retainers").val("");
             }
         });
-        $("#discount").change(function () {
-            if ($("#discount").val() === "") {
-                $("#discountAmount").prop("disabled", true);
-                $("#discountAmount").val("");
-            }
-            else {
-                //console.log($("#discount").val())
-                if ($("#discount").val() == 1) {
-                    $("#discountAmount").attr({
-                        "max": 100,
-                        "min": 0
-                    });
-                    $("#discountAmount").val(0);
-                }
-                else if ($("#discount").val() == 2) {
-                    $("#discountAmount").removeAttr("max")
-                    $("#discountAmount").attr({
-                        "min": 0
-                    });
-                    $("#discountAmount").val(0);
-                }
-                $("#discountAmount").prop("disabled", false);
-            }
-        });
+        //$("#discount").change(function () {
+        //    if ($("#discount").val() === "") {
+        //        $("#discountAmount").prop("disabled", true);
+        //        $("#discountAmount").val("");
+        //    }
+        //    else {
+        //        //console.log($("#discount").val())
+        //        if ($("#discount").val() == 1) {
+        //            $("#discountAmount").attr({
+        //                "max": 100,
+        //                "min": 0
+        //            });
+        //            $("#discountAmount").val(0);
+        //        }
+        //        else if ($("#discount").val() == 2) {
+        //            $("#discountAmount").removeAttr("max")
+        //            $("#discountAmount").attr({
+        //                "min": 0
+        //            });
+        //            $("#discountAmount").val(0);
+        //        }
+        //        $("#discountAmount").prop("disabled", false);
+        //    }
+        //});
         $("#btnGenerate").click(function () {
             //openDialog();
             if (validateData()) {
@@ -354,7 +411,7 @@
                         cleanData();
                         showSuccess("Éxito al generar la prefactura");
                         $("#goTop").click();
-                        downloadPDF(data.result);
+                        downloadPDF(data.result, data.name);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         loadingOverlay.cancel(generatePreBillSpinHandle);
@@ -366,7 +423,7 @@
                 });
             }
             else {
-                showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
+                showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a prefacturar.")
                 $("#goTop").click();
             }
             //closeDialog();
@@ -399,21 +456,16 @@
                 return false;
             }
         }
-        function downloadPDF(pdf) {
+        
+        function downloadPDF(pdf, name) {
             var link = document.getElementById("download");
             link.href = 'data:application/octet-stream;base64,' + pdf;
-            link.download = 'PreFacturaCliente' + $("#billName").val() + 'Mes' + $("#month").val() + 'DelAño' + $("#year").val()+".pdf";
+            link.download = name;
             link.click();
         }
-        function showSuccess(message) {
-            $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
-        function showError(message) {
-            $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
+        
         function cleanData() {
+            $("#btnGenerate").prop('disabled', true);
             $("#ClientId").val("");
             $("#isEnglish").prop("checked", false);
             $("#IsClientSelected").prop("checked", false);
@@ -425,6 +477,12 @@
             $("#itemCheck").prop("checked", false);
             $("#packageCheck").prop("checked", false);
             $("#retainerCheck").prop("checked", false);
+
+            $("#packageCheckContainer").prop("hidden", true);
+            $("#retainerCheckContainer").prop("hidden", true);
+
+            $("#packagesContainer").prop("hidden", true);
+            $("#retainersContainer").prop("hidden", true);
             $("#items").val("");
             $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
             $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
@@ -459,83 +517,59 @@
         </div>
     </div>
     <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-4">
             <label for="clientFilter">Búsqueda del cliente:*</label>
             <input type="text" id="clientFilter" class="form-control" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="activityDate">Fecha:*</label>
             <input type="text" id="billDate" class="form-control" placeholder="Fecha" aria-label="Fecha del registro" />
         </div>
-    </div>
-    <div class="form-row" style="margin-top:20px">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-4">
             <label for="ClientName">Nombre del cliente:</label>
             <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente" />
         </div>
-        <div class="form-group col-md-5">
-            <label for="clientName">Idioma de facturación:</label>
+
+        <div class="form-group col-md-2">
+            <label for="clientName">Idioma:</label>
             <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control" aria-label="Idioma de facturación" />
         </div>
     </div>
-    <div class="row">
+    <div class="form-row">
         <div class="row col-12 text-center">
-            <h4 class="text-muted">Elementos a facturar</h4>
-        </div>
-        <div class="form-row col-md-5">
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="hourCheck">Horas </label>
-                    <input type="checkbox" id="hourCheck" class="form-check-inline" disabled />
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="itemCheck">Ítems </label>
-                    <input type="checkbox" id="itemCheck" class="form-check-inline" disabled />
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="packageCheck">Paquetes </label>
-                    <input type="checkbox" id="packageCheck" class="form-check-inline" disabled />
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="retainerCheck">Retainers </label>
-                    <input type="checkbox" id="retainerCheck" class="form-check-inline" disabled />
-                </div>
-            </div>
-        </div>
-        <div class="form-row offset-2 col-md-5">
-            @*<div class="form-row col-12">
-                    <div class="form-group col-md-12">
-                        <label for="items">Ítems:</label>
-                        <select id="items" class="form-control" disabled>
-                            <option value="" data-price="">Seleccionar Ítem</option>
-                            @foreach (var i in Model.Items)
-                            {
-                                <option value="@i.Id" data-price="@i.Amount">@i.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>*@
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="Packages">Paquetes:</label>
-                    <select class="form-control" id="Packages" disabled></select>
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-12">
-                    <label for="retainers">Retainers:</label>
-                    <select id="retainers" class="form-control" disabled></select>
-                </div>
-            </div>
+            <h4 class="text-muted">Elementos a prefacturar</h4>
         </div>
     </div>
     <div class="form-row">
+
+        <div class="form-group col-md-2">
+            <div class="form-check" id="itemCheckContainer" hidden>
+                <label for="itemCheck">Ítems </label>
+                <input type="checkbox" id="itemCheck" class="form-check-inline" disabled />
+            </div>
+            <div class="form-check" id="packageCheckContainer" hidden>
+                <label for="packageCheck">Paquetes </label>
+                <input type="checkbox" id="packageCheck" class="form-check-inline" disabled />
+            </div>
+            <div class="form-check" id="retainerCheckContainer" hidden>
+                <label for="retainerCheck">Retainers </label>
+                <input type="checkbox" id="retainerCheck" class="form-check-inline" disabled />
+            </div>
+        </div>
+        <div class="form-group col-5" id="packagesContainer" hidden>
+            <div class="form-group col-md-12">
+                <label for="Packages">Paquetes:</label>
+                <select class="form-control" id="Packages" disabled></select>
+            </div>
+        </div>
+        <div class="form-group col-5" id="retainersContainer" hidden>
+            <div class="form-group col-md-12">
+                <label for="retainers">Retainers:</label>
+                <select id="retainers" class="form-control" disabled></select>
+            </div>
+        </div>
+    </div>
+    <div class="form-row" hidden>
         <div class="form-group col-md-5">
             <label for="discount">Tipo de descuento:</label>
             <select id="discount" class="form-control" asp-items="@Html.GetEnumSelectList<BillDiscountEnum>()" disabled>
@@ -547,7 +581,7 @@
             <input type="number" class="form-control" id="discountAmount" disabled />
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row"  hidden>
         <div class="form-group col-md-5">
             <label for="month">Mes:*</label>
             <select id="month" class="form-control">
@@ -584,14 +618,14 @@
             </select>
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" hidden>
         <div class="form-group col-md-10">
             <label for="billName">Nombre de la factura:*</label>
             <input type="text" id="billName" class="form-control" placeholder="Nombre de la factura" aria-label="Nombre de la factura" />
         </div>
     </div>
     <div class="form-row">
-        <button class="btn btn-primary" id="btnGenerate" type="button">Generar prefactura</button>
+        <button class="btn btn-primary" id="btnGenerate" type="button" disabled>Generar prefactura</button>
         <a id="download" download="Prefactura.pdf" hidden></a>
         <a href="#placeholderSuccess" id="goTop" hidden></a>
     </div>

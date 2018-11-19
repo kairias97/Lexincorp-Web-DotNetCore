@@ -64,7 +64,7 @@ namespace LexincorpApp.Models
             {
                 activity.BillableQuantity = Convert.ToDecimal(newActivityRequest.HoursWorked);
                 activity.BillableRate = Convert.ToDecimal(newActivityRequest.HourlyRate);
-                activity.Subtotal = Convert.ToDecimal(newActivityRequest.HourlySubtotal);
+                activity.Subtotal = Convert.ToDecimal(activity.BillableQuantity * activity.BillableRate);
             }
             else if(newActivityRequest.ActivityType == ActivityTypeEnum.NoBillable)
             {
@@ -168,14 +168,14 @@ namespace LexincorpApp.Models
                 activity.PackageId = null;
                 activity.BillableRetainerId = updateActivityRequest.BillableRetainerId;
                 retainer.ConsumedHours = 0;
-                var availablHours = retainer.AgreedHours - retainer.ConsumedHours;
+                var availableHours = retainer.AgreedHours - retainer.ConsumedHours;
                 foreach(var r in activities)
                 {
                     if (r.Id == updateActivityRequest.Id)
                     {
-                        if (updateActivityRequest.HoursWorked > availablHours)
+                        if (updateActivityRequest.HoursWorked > availableHours)
                         {
-                            activity.BillableQuantity = updateActivityRequest.HoursWorked - availablHours;
+                            activity.BillableQuantity = updateActivityRequest.HoursWorked - availableHours;
                             activity.BillableRate = retainer.AdditionalFeePerHour;
                             activity.Subtotal = activity.BillableQuantity * activity.BillableRate;
                             retainer.ConsumedHours = retainer.AgreedHours;
@@ -204,9 +204,9 @@ namespace LexincorpApp.Models
                     }
                     else
                     {
-                        if (r.HoursWorked > availablHours)
+                        if (r.HoursWorked > availableHours)
                         {
-                            r.BillableQuantity = r.HoursWorked - availablHours;
+                            r.BillableQuantity = r.HoursWorked - availableHours;
                             r.BillableRate = retainer.AdditionalFeePerHour;
                             r.Subtotal = r.BillableQuantity * r.BillableRate;
                             retainer.ConsumedHours = retainer.AgreedHours;
@@ -232,7 +232,7 @@ namespace LexincorpApp.Models
                             r.TotalAmount = r.Subtotal;
                         }
                     }
-                    availablHours = retainer.AgreedHours - retainer.ConsumedHours;
+                    availableHours = retainer.AgreedHours - retainer.ConsumedHours;
                 }
             }
             else if(activity.ActivityType == ActivityTypeEnum.Item)

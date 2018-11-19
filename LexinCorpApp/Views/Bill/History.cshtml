@@ -17,12 +17,9 @@
             <thead>
                 <tr>
                     <th>Cliente</th>
-                    <th>Nombre de Factura</th>
                     <th>Subtotal</th>
                     <th>Impuestos</th>
                     <th>Total</th>
-                    <th>Mes facturado</th>
-                    <th>Año facturado</th>
                     <th>Fecha</th>
                     <th>Acciones</th>
                 </tr>
@@ -32,12 +29,9 @@
                 {
                     <tr>
                         <td>@bill.Client.Name</td>
-                        <td>@bill.BillName</td>
                         <td>@Math.Round(bill.BillSubtotal, 2)</td>
                         <td>@Math.Round(bill.Taxes, 2)</td>
                         <td>@Math.Round(bill.Total, 2)</td>
-                        <td>@bill.BillMonth</td>
-                        <td>@bill.BillYear</td>
                         <td>@bill.BillDate.ToString("dd/MM/yyyy")</td>
                         <td>
                             <a asp-action="RenderBill" asp-controller="Bill" asp-route-id="@bill.Id"><i class="fas fa-download" data-toggle="tooltip" data-placement="top" title="Descargar"></i></a>

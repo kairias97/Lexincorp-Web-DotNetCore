@@ -90,6 +90,8 @@ namespace LexincorpApp.Controllers
                         var authProperties = new AuthenticationProperties
                         {
                             //AllowRefresh = <bool>,
+                            AllowRefresh = true,
+                            ExpiresUtc = DateTime.UtcNow.AddHours(8),
                             // Refreshing the authentication session should be allowed.
 
                             //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),

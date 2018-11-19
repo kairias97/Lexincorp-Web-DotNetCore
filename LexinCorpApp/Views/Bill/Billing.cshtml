@@ -55,19 +55,53 @@
                 //var list = ui.item.packages;
                 var clientId = ui.item.id;
                 $.ajax({
-                url: "@Url.Action("SearchFinished", "Package")",
+                url: "@Url.Action("GetAllBillableByClient", "Bill")",
                     type: "GET",
                     data: { clientId: ui.item.clientId },
                     dataType: "json",
                     dataFilter: function (data) { return data; },
                     success: function (data) {
-                        $("#Packages").empty().append("<option value=''>Seleccionar paquete</option>").val('null');
-                        $("#Packages").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#Packages").append(options);
+                        //Process and empty packages list and also retainers list
+                        if (data.details.length == 0 && data.retainers.length == 0 && data.packages.length == 0) {
+                            $("#btnGenerate").prop('disabled', true);
+
+                            showSuccess('No hay nada pendiente por facturar');
+                        } else {
+                            $("#btnGenerate").prop('disabled', false);
+                            hideSuccess();
+                        }
+                        $("#retainersList").empty();
+                        $("#packagesList").empty();
+                        $("#tableActivities2 tbody").empty();
+                        
+                        $.each(data.details, function (i, item) {
+                            var cssClass = "";
+                            switch (item.typeId) {
+                                case 1:
+                                    cssClass = "table-warning";
+                                    break;
+                                case 2:
+                                    cssClass = "table-primary";
+                                    break;
+                                case 3:
+                                    cssClass = "table-success";
+                                    break;
+                                case 4:
+                                    cssClass = "table-danger";
+                                    break;
+                                default:
+                            }
+                            var options = "<tr class='d-flex "+cssClass+"' ><td class='col-1'>" + item.date + "</td><td class='col-4'>" + item.description + "</td><td class='col-1'>" + item.hours + "</td><td class='col-1'>" + item.price + "</td><td class='col-4'>" + item.associatedTo + "</td><td class='col-1'>" + item.alias + "</td></tr>";
+                            $("#tableActivities2 tbody").append(options);
                         });
-                        $("#Packages").val("");
+                        $.each(data.retainers, function (i, item) {
+                            var options = "<li>" + item.label + "</li>";
+                            $("#retainersList").append(options);
+                        });
+                        $.each(data.packages, function (i, item) {
+                            var options = "<li>"+item.label+"</li>";
+                            $("#packagesList").append(options);
+                        });
                         //console.log(data);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -75,29 +109,7 @@
                         alert(err.Message);
                     }
                 });
-                $.ajax({
-                url: "@Url.Action("GetByDateMonthClient", "RetainerSubscription")",
-                    type: "GET",
-                    data: { clientId: ui.item.clientId, month: $("#month").val(), year: $("#year").val() },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data);
-                        $("#retainers").empty().append("<option value=''>Seleccionar retainer</option>").val('null');
-                        $("#retainers").append("<option value='-1'>Todos</option>").val('-1');
-                        $.each(data, function (i, item) {
-                            //var name = $("#isEnglish").val() ? item.retainerType.englishName : item.retainerType.spanishName;
-                            var options = "<option value='" + item.id + "'>" + item.name + "</option>";
-                            $("#retainers").append(options);
-                        });
-                        console.log($("#retainers").children().length);
-                        $("#retainers").val("");
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        //var err = eval("(" + XMLHttpRequest.responseText + ")");
-                        //alert(err.Message);
-                    }
-                });
+                
                 $("#clientLanguage").val(ui.item.isEnglish ? "Inglés" : "Español");
                 $("#hourCheck").prop("disabled", false);
                 $("#itemCheck").prop("disabled", false);
@@ -113,7 +125,7 @@
             }
 
         });
-        $("#billDate").change(function () {
+        @*$("#billDate").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
@@ -164,8 +176,8 @@
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
-        });
-        $("#month").change(function () {
+        });*@
+        @*$("#month").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
@@ -212,8 +224,8 @@
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
-        });
-        $("#year").change(function () {
+        });*@
+        @*$("#year").change(function () {
             if ($("#IsClientSelected").is(":checked")) {
                     var clientId = $("#ClientId").val()
                     $.ajax({
@@ -261,7 +273,7 @@
                 //$("#retainers").prop("disabled", false);
                 //$("#items").prop("disabled", false);
                 }
-        });
+        });*@
         //$("#itemCheck").change(function () {
         //    if ($("#itemCheck").prop("checked")) {
         //        $("#items").prop("disabled", false);
@@ -271,76 +283,59 @@
         //        $("#items").prop("disabled", true);
         //    }
         //});
-        $("#packageCheck").change(function () {
-            if ($("#packageCheck").prop("checked")) {
-                if ($("#Packages").children().length > 2) {
-                    $("#Packages").prop("disabled", false);
-                }
-            }
-            else {
-                $("#Packages").val("");
-                $("#Packages").prop("disabled", true);
-            }
-        });
-        $("#retainerCheck").change(function () {
-            if ($("#retainerCheck").prop("checked")) {
-                if ($("#retainers").children().length > 2) {
-                    $("#retainers").prop("disabled", false);
-                }
-            }
-            else {
-                $("#retainers").prop("disabled", true);
-                $("#retainers").val("");
-            }
-        });
-        $("#discount").change(function () {
-            if ($("#discount").val() === "") {
-                $("#discountAmount").prop("disabled", true);
-                $("#discountAmount").val("");
-            }
-            else {
-                console.log($("#discount").val())
-                if ($("#discount").val() == 1) {
-                    $("#discountAmount").attr({
-                        "max": 100,
-                        "min": 0
-                    });
-                    $("#discountAmount").val(0);
-                }
-                else if ($("#discount").val() == 2) {
-                    $("#discountAmount").removeAttr("max")
-                    $("#discountAmount").attr({
-                        "min": 0
-                    });
-                    $("#discountAmount").val(0);
-                }
-                $("#discountAmount").prop("disabled", false);
-            }
-        });
+        //$("#packageCheck").change(function () {
+        //    if ($("#packageCheck").prop("checked")) {
+        //        if ($("#Packages").children().length > 2) {
+        //            $("#Packages").prop("disabled", false);
+        //        }
+        //    }
+        //    else {
+        //        $("#Packages").val("");
+        //        $("#Packages").prop("disabled", true);
+        //    }
+        //});
+        //$("#retainerCheck").change(function () {
+        //    if ($("#retainerCheck").prop("checked")) {
+        //        if ($("#retainers").children().length > 2) {
+        //            $("#retainers").prop("disabled", false);
+        //        }
+        //    }
+        //    else {
+        //        $("#retainers").prop("disabled", true);
+        //        $("#retainers").val("");
+        //    }
+        //});
+        //$("#discount").change(function () {
+        //    if ($("#discount").val() === "") {
+        //        $("#discountAmount").prop("disabled", true);
+        //        $("#discountAmount").val("");
+        //    }
+        //    else {
+        //        console.log($("#discount").val())
+        //        if ($("#discount").val() == 1) {
+        //            $("#discountAmount").attr({
+        //                "max": 100,
+        //                "min": 0
+        //            });
+        //            $("#discountAmount").val(0);
+        //        }
+        //        else if ($("#discount").val() == 2) {
+        //            $("#discountAmount").removeAttr("max")
+        //            $("#discountAmount").attr({
+        //                "min": 0
+        //            });
+        //            $("#discountAmount").val(0);
+        //        }
+        //        $("#discountAmount").prop("disabled", false);
+        //    }
+        //});
         $("#btnGenerate").click(function () {
+            //Now it always does the action since in the ui is already validated if the button is active or not
+             var request = {}
 
-            if (validateData()) {
-                //var header = {}
-                //header.ClientId = $("#ClientId").val();
-                //header.BillDate = $("#billDate").val();
-                //header.BillDiscountType = $("#discount").val();
-                //header.BillDiscount = $("#discountAmount").val();
-                //header.BillMonth = $("#month").val();
-                //header.BillYear = $("#year").val();
-                //header.BillName = $("#billName").val();
-                var request = {}
-                request.Hours = $("#hourCheck").prop("checked");
-                request.IncludeItems = $("#itemCheck").prop("checked");
-                request.PackageId = $("#Packages").val();
-                request.BillableRetainerId = $("#retainers").val();
                 //request.ItemId = $("#items").val();
                 request.ClientId = $("#ClientId").val();
                 request.BillDate = $("#billDate").val();
-                request.BillDiscountType = $("#discount").val();
-                request.BillDiscount = $("#discountAmount").val();
-                request.BillMonth = $("#month").val();
-                request.BillYear = $("#year").val();
-                request.BillName = $("#billName").val();
                 //Show popup
                 var generateBillSpinHandle = loadingOverlay.activate();
                 $.ajax({
@@ -354,7 +349,7 @@
                         cleanData();
                         showSuccess("Éxito al generar la factura");
                         $("#goTop").click();
-                        downloadPDF(data.result);
+                        downloadPDF(data.result, data.name);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         loadingOverlay.cancel(generateBillSpinHandle);
@@ -364,13 +359,18 @@
                         alert(err.Message);
                     }
                 });
-            }
-            else {
-                showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
-                $("#goTop").click();
-            }
+
+            //if (validateData()) {
+
+               
+            //}
+            //else {
+            //    showError("Debe llenar los campos requeridos (*) y escoger al menos uno de los elementos a facturar.")
+            //    $("#goTop").click();
+            //}
         });
         function validateData() {
+            return true;
             if ($("#IsClientSelected").is(":checked") && $("#billDate").val() !== "" && $("#month").val() !== "" && $("#year").val() !== "" &&
                 ($("#Packages").val() !== "" || $("#retainers").val() !== "" || $("#hourCheck").is(":checked") || $("#itemCheck").is(":checked")) &&
                 ($("#discount").val() == 1 ? $("#discountAmount").val() >= 0 && $("#discountAmount").val() <= 100 :
@@ -392,21 +392,18 @@
             e.preventDefault();
             //window.scrollTo(x - coord, y - coord);
         });
-        function downloadPDF(pdf) {
+        function downloadPDF(pdf, name) {
             var link = document.getElementById("download");
             link.href = 'data:application/octet-stream;base64,' + pdf;
-            link.download = 'FacturaCliente' + $("#billName").val() + 'Mes' + $("#month").val()+'DelAño'+$("#year").val()+'.pdf';
+            link.download = name;
             link.click();
         }
-        function showSuccess(message) {
-            $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
-        function showError(message) {
-            $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        }
+        
         function cleanData() {
+            $("#btnGenerate").prop('disabled', true);
+            $("#retainersList").empty();
+            $("#packagesList").empty();
+            $("#tableActivities2 tbody").empty();
             $("#ClientId").val("");
             $("#isEnglish").prop("checked", false);
             $("#IsClientSelected").prop("checked", false);
@@ -429,6 +426,22 @@
             $("#billName").val("");
         }
     });
+    function hideSuccess() {
+        $("#placeholderSuccess").empty();
+
+    }
+    function hideError() {
+        $("#placeholderError").empty();
+
+    }
+    function showSuccess(message) {
+        $("#placeholderSuccess").html('<div class="alert alert-success alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    function showError(message) {
+        $("#placeholderError").html('<div class="alert alert-danger alert-dismissible fade show">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
 </script>
 <h4>Facturación</h4>
 <br />
@@ -437,29 +450,45 @@
     <input type="checkbox" hidden asp-for="@Model.IsEnglish" id="isEnglish" />
     <input type="checkbox" hidden asp-for="@Model.IsClientSelected" id="IsClientSelected" />
     <div class="form-row">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-4">
             <label for="clientFilter">Búsqueda del cliente:*</label>
             <input type="text" id="clientFilter" class="form-control" placeholder="Búsqueda del cliente" aria-label="Búsqueda del cliente" />
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-2">
             <label for="activityDate">Fecha:*</label>
             <input type="text" id="billDate" class="form-control" placeholder="Fecha" aria-label="Fecha del registro" />
         </div>
-    </div>
-    <div class="form-row" style="margin-top:20px">
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-4">
             <label for="ClientName">Nombre del cliente:</label>
             <input type="text" readonly asp-for="@Model.ClientName" class="form-control" aria-label="Nombre del cliente" />
         </div>
-        <div class="form-group col-md-5">
-            <label for="clientName">Idioma de facturación:</label>
+        <div class="form-group col-md-2">
+            <label for="clientName">Idioma:</label>
             <input type="text" readonly id="clientLanguage" value="@(Model.IsClientSelected ? ((Model.IsEnglish) ? "Inglés" : "Español"): "")" class="form-control" aria-label="Idioma de facturación" />
         </div>
     </div>
-    <div class="row">
-        <div class="row col-12 text-center">
+
+    <div class="form-row">
+        <div class="form-group col-12 text-left">
             <h4 class="text-muted">Elementos a facturar</h4>
         </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <p><strong>Paquetes a facturar:</strong></p>
+            <ul id="packagesList">
+                
+            </ul>
+        </div>
+        <div class="form-group col-md-5">
+            <p><strong>Retainers a facturar:</strong></p>
+            <ul id="retainersList">
+
+            </ul>
+        </div>
+    </div>
+    <div class="form-row" hidden>
+        
         <div class="form-row col-md-5">
             <div class="form-row col-12">
                 <div class="form-group col-md-12">
@@ -513,7 +542,7 @@
             </div>
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" hidden>
         <div class="form-group col-md-5">
             <label for="discount">Tipo de descuento:</label>
             <select id="discount" class="form-control" asp-items="@Html.GetEnumSelectList<BillDiscountEnum>()" disabled>
@@ -525,7 +554,7 @@
             <input type="number" class="form-control" id="discountAmount" disabled />
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" hidden>
         <div class="form-group col-md-5">
             <label for="month">Mes:*</label>
             <select id="month" class="form-control">
@@ -564,14 +593,35 @@
             </select>
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" hidden>
         <div class="form-group col-md-10">
             <label for="billName">Nombre de la factura:*</label>
             <input type="text" id="billName" class="form-control" placeholder="Nombre de la factura" aria-label="Nombre de la factura" />
         </div>
     </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover" id="tableActivities2">
+            <thead id="#detailHeader">
+                <tr class="d-flex">
+                    
+                    <th class="col-1">Fecha</th>
+                    <th class="col-4">Concepto</th>
+                    <th class="col-1">Horas</th>
+                    <th class="col-1">Precio</th>
+                    <th class="col-4">Asociado a</th>
+                    <th class="col-1">Alias</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-wrapper-scroll-y" style="cursor: default;">
+                
+
+            </tbody>
+        </table>
+
+    </div>
     <div class="form-row">
-        <button class="btn btn-primary" id="btnGenerate" type="button">Generar factura</button>
+        <button class="btn btn-primary" id="btnGenerate" type="button" disabled>Generar factura</button>
         <a id="download" download="Factura.pdf" hidden></a>
         <a href="#placeholderSuccess" id="goTop" hidden></a>
     </div>

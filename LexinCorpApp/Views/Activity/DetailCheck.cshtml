@@ -218,10 +218,11 @@
                         $("#btnSubmit").prop('disabled', false);
                         $("#editForm").modal("hide");
                         clean();
+                        $("#btnMark").prop('disabled', true);
                         setTimeout(
                             function () {
                                 location.reload();
-                            }, 1500);
+                            }, 1000);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         $("#btnSubmit").prop('disabled', false);
@@ -1037,106 +1038,7 @@
 
                     </tr>
                 }
-                @foreach (var activity in Model.Activities)
-                {
-                    <tr class="d-flex" data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
-                        data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
-                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")" onclick="onRowClicked(@((int)activity.ActivityType), @(activity.BillableRetainerId ?? 0 ), @(activity.PackageId ?? 0),this)">
-                        <td class="col-1">
-                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit fa-2x" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
-                            @if (activity.ActivityType == ActivityTypeEnum.Retainer || activity.ActivityType == ActivityTypeEnum.Package)
-                            {
-                                <input type="checkbox" data-id="@activity.Id" disabled />
-
-                            }
-                            else
-                            {
-                                <input type="checkbox" data-id="@activity.Id" />
-
-                            }
-                            <span style="font-size:small"><span class="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hourly": activity.ActivityType == ActivityTypeEnum.Item ? "item" : activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer": activity.ActivityType == ActivityTypeEnum.Package ? "package" : "")-square"></span>&nbsp;</span>
-                        </td>
-                        <td class="col-1">@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                        <td class="col-4">@activity.Description</td>
-                        <td class="col-1">@Math.Round(activity.HoursWorked, 2)</td>
-
-                        <td class="col-1">@Math.Round(activity.Subtotal, 2)</td>
-                        @if (activity.ActivityType == ActivityTypeEnum.Package)
-                        {
-                            <td class="col-3">@(activity.Package?.Name ?? "-")</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
-                        {
-                            <td class="col-3">@(activity.BillableRetainer?.Name ?? "-")</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Item)
-                        {
-                            <td class="col-3">Ítem</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
-                        {
-                            <td class="col-3">Hora</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
-                        {
-                            <td class="col-3">No cobrable</td>
-                        }
-                        <td class="col-1">@activity.Creator.Attorney.Alias</td>
-
-
-
-                    </tr>
-                }
-                @foreach (var activity in Model.Activities)
-                {
-                    <tr class="d-flex" data-packageId="@activity.PackageId" data-retainerId="@activity.BillableRetainerId" data-hour="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hora" : "")"
-                        data-item="@(activity.ActivityType == ActivityTypeEnum.Item ? "item" : "")" data-package="@(activity.ActivityType == ActivityTypeEnum.Package ? "paquete" : "")"
-                        data-retainer="@(activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer" : "")" onclick="onRowClicked(@((int)activity.ActivityType), @(activity.BillableRetainerId ?? 0 ), @(activity.PackageId ?? 0),this)">
-                        <td class="col-1">
-                            <a onclick="handleEdit(@activity.Id)"><i class="fas fa-edit fa-2x" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
-                            @if (activity.ActivityType == ActivityTypeEnum.Retainer || activity.ActivityType == ActivityTypeEnum.Package)
-                            {
-                                <input type="checkbox" data-id="@activity.Id" disabled />
-
-                            }
-                            else
-                            {
-                                <input type="checkbox" data-id="@activity.Id" />
-
-                            }
-                            <span style="font-size:small"><span class="@(activity.ActivityType == ActivityTypeEnum.Hourly ? "hourly": activity.ActivityType == ActivityTypeEnum.Item ? "item" : activity.ActivityType == ActivityTypeEnum.Retainer ? "retainer": activity.ActivityType == ActivityTypeEnum.Package ? "package" : "")-square"></span>&nbsp;</span>
-                        </td>
-                        <td class="col-1">@activity.RealizationDate.ToString("dd/MM/yyyy")</td>
-                        <td class="col-4">@activity.Description</td>
-                        <td class="col-1">@Math.Round(activity.HoursWorked, 2)</td>
-
-                        <td class="col-1">@Math.Round(activity.Subtotal, 2)</td>
-                        @if (activity.ActivityType == ActivityTypeEnum.Package)
-                        {
-                            <td class="col-3">@(activity.Package?.Name ?? "-")</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Retainer)
-                        {
-                            <td class="col-3">@(activity.BillableRetainer?.Name ?? "-")</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Item)
-                        {
-                            <td class="col-3">Ítem</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.Hourly)
-                        {
-                            <td class="col-3">Hora</td>
-                        }
-                        else if (activity.ActivityType == ActivityTypeEnum.NoBillable)
-                        {
-                            <td class="col-3">No cobrable</td>
-                        }
-                        <td class="col-1">@activity.Creator.Attorney.Alias</td>
-
-
-
-                    </tr>
-                }
+                
 
             </tbody>
         </table>

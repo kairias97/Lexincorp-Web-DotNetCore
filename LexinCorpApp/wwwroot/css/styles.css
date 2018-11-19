@@ -85,6 +85,7 @@ table thead {
 #tableActivities tbody tr td:hover {
     cursor: pointer;
 }
+
 @media (min-width: 992px) {
     #tableActivities tbody tr td {
     font-size:x-small;

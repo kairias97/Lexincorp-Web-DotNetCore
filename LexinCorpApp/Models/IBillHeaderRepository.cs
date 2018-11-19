@@ -9,7 +9,7 @@ namespace LexincorpApp.Models
     {
         IQueryable<BillHeader> BillHeaders { get; }
         //void Save(BillHeader billHeader, List<Package> packagesToBill, List<BillableRetainer> retainersToBill);
-        BillHeader GeneratePreBill(BillRequest preBillingRequest, out bool IsEnglishBill);
+        PreBill GeneratePreBill(PreBillRequest preBillingRequest, out bool IsEnglishBill);
         BillHeader GenerateBill(BillRequest billingRequest, int userId, out bool IsEnglishBill);
     }
 }

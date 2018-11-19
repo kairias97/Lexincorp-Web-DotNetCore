@@ -62,10 +62,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ActivitiesDS.xsd</DependentUpon>
     </Compile>
+    <Compile Include="BillDS.cs">
+      <DependentUpon>BillDS.xsd</DependentUpon>
+    </Compile>
     <Compile Include="BillDS.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>BillDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DSPreBill.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DSPreBill.xsd</DependentUpon>
     </Compile>
     <Compile Include="ExpensesDS.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,10 +91,29 @@
     <None Include="Activities.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="Bill.rdlc" />
+    <None Include="Bill.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="DSPreBill.xsc">
+      <DependentUpon>DSPreBill.xsd</DependentUpon>
+    </None>
+    <None Include="DSPreBill.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DSPreBill.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DSPreBill.xss">
+      <DependentUpon>DSPreBill.xsd</DependentUpon>
+    </None>
     <None Include="Expenses.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Bill2.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="PreBill.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

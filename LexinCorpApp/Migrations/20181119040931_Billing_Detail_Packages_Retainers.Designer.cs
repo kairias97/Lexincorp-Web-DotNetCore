@@ -4,14 +4,16 @@ using LexincorpApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LexincorpApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181119040931_Billing_Detail_Packages_Retainers")]
+    partial class Billing_Detail_Packages_Retainers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +275,7 @@ namespace LexincorpApp.Migrations
                     b.ToTable("BillDetails");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.BillExpense", b =>
+            modelBuilder.Entity("LexincorpApp.Models.BillExpenses", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,7 +305,7 @@ namespace LexincorpApp.Migrations
 
                     b.HasIndex("BillHeaderId");
 
-                    b.ToTable("BillExpense");
+                    b.ToTable("BillExpenses");
                 });
 
             modelBuilder.Entity("LexincorpApp.Models.BillHeader", b =>
@@ -963,7 +965,7 @@ namespace LexincorpApp.Migrations
                         .HasForeignKey("PackageId");
                 });
 
-            modelBuilder.Entity("LexincorpApp.Models.BillExpense", b =>
+            modelBuilder.Entity("LexincorpApp.Models.BillExpenses", b =>
                 {
                     b.HasOne("LexincorpApp.Models.BillHeader", "BillHeader")
                         .WithMany("BillExpenses")
