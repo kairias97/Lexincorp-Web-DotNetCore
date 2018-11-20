@@ -2,11 +2,38 @@
 @{
     ViewData["Title"] = "Historial de facturación";
 }
+<script type="text/javascript">
+    $(function () {
+        $('a[data-target="#deleteModal"]').on('click', function () {
+            var targetId = $(this).data("id");
+            var clientName = $(this).data("clientname");
+            console.log($(this).data())
+            var confirmationMessage = '¿Está seguro que desea anular la factura <strong>No. ' + targetId + '</strong> '
+                + 'para el cliente <strong>' + clientName + '</strong>?';
+            $('input[name="billId"]').val(targetId);
+            $('.modal-body').html(confirmationMessage);
+
+        });
+
+    });
+</script>
 <h2>Historial de facturas</h2>
+@if (ViewBag.Disabled ?? false)
+{
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <p>Factura anulada exitosamente!</p>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+}
 <form asp-controller="Bill" asp-action="History" method="get">
     <label for="filter">Filtro de búsqueda:</label>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente o nombre de a quien se facturó" aria-label="Nombre del cliente o nombre de factura" aria-describedby="button-addon2">
+        <input type="text" class="form-control" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente o nombre de factura" aria-describedby="button-addon2">
         <div class="input-group-append">
             <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
         </div>
@@ -17,10 +44,13 @@
             <thead>
                 <tr>
                     <th>Cliente</th>
-                    <th>Subtotal</th>
-                    <th>Impuestos</th>
-                    <th>Total</th>
+                    <th>Subtotal USD$</th>
+                    <th>Total Gastos USD$</th>
+                    <th>Total Abonos USD$</th>
+                    <th>Impuestos USD$</th>
+                    <th>Total USD$</th>
                     <th>Fecha</th>
+                    <th>Facturado por</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -30,11 +60,16 @@
                     <tr>
                         <td>@bill.Client.Name</td>
                         <td>@Math.Round(bill.BillSubtotal, 2)</td>
+                        <td>@Math.Round(bill.TotalExpenses, 2)</td>
+                        <td>@Math.Round(bill.TotalPayments, 2)</td>
                         <td>@Math.Round(bill.Taxes, 2)</td>
                         <td>@Math.Round(bill.Total, 2)</td>
                         <td>@bill.BillDate.ToString("dd/MM/yyyy")</td>
+                        <td>@bill.Creator.Attorney.Alias</td>
                         <td>
                             <a asp-action="RenderBill" asp-controller="Bill" asp-route-id="@bill.Id"><i class="fas fa-download" data-toggle="tooltip" data-placement="top" title="Descargar"></i></a>
+                            <a data-toggle="modal" href="#" data-id="@bill.Id" data-clientname="@bill.Client?.Name" data-target="#deleteModal"><i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Anular"></i></a>
+
                         </td>
                     </tr>
                 }
@@ -50,3 +85,29 @@
 
     </div>
 </form>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Anular factura</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <form asp-action="Disable" method="post">
+                    <input type="number" name="billId" value="" hidden />
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

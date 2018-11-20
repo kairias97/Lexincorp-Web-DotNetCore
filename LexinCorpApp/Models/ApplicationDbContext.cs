@@ -53,6 +53,9 @@ namespace LexincorpApp.Models
             modelBuilder.Entity<User>()
                 .Property(u => u.Active)
                 .HasDefaultValue(true);
+            modelBuilder.Entity<BillHeader>()
+                .Property(u => u.Active)
+                .HasDefaultValue(true);
             modelBuilder.Entity<Attorney>()
                 .HasIndex(a => a.Email)
                 .IsUnique();

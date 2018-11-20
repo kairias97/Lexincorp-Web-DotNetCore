@@ -2952,7 +2952,6 @@ Tax / Impuesto (15%)  USD$</Value>
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -3488,7 +3487,7 @@ Tax / Impuesto (15%)  USD$</Value>
       <Width>21.30593cm</Width>
       <Page>
         <PageHeader>
-          <Height>8.92937cm</Height>
+          <Height>8.1584cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -3800,7 +3799,7 @@ Payment Terms</Value>
               <KeepTogether>true</KeepTogether>
               <Top>4.93994cm</Top>
               <Left>0.5cm</Left>
-              <Height>3.71573cm</Height>
+              <Height>3.06741cm</Height>
               <Width>19.5cm</Width>
               <ZIndex>1</ZIndex>
               <Style>

@@ -121,80 +121,114 @@ namespace LexincorpApp.Controllers
         [Authorize(Policy = "CanBill")]
         public IActionResult RenderBill(int id)
         {
-            var bill = _billRepo.BillHeaders.Where(b => b.Id == id).Include(b => b.BillDetails).FirstOrDefault();
-            var details = new List<BillDetail>();
-            //var details = bill.BillDetails.Select(d => new
-            //{
-            //    BillDetailType = Convert.ToInt32(d.BillDetailType),
-            //    d.FixedAmount,
-            //    d.UnitRate,
-            //    d.Quantity,
-            //    d.Subtotal,
-            //    d.Description,
-            //    d.TaxesAmount
-            //}).ToList();
+            var bill = _billRepo.BillHeaders
+                .Include(b => b.BillDetails)
+                .Include(b => b.BillSummaries)
+                .Include(b => b.BillExpenses)
+                .Include(b => b.Client)
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
+            bool isBillingInEnglish = bill.Client.BillingInEnglish;
+
+            var details = bill.BillDetails.Select(d => new
+            {
+                TypeId = Convert.ToInt32(d.BillDetailType),
+                Cost = d.UnitCost,
+                Hours = d.Time,
+                Quantity = Convert.ToInt32(d.Quantity),
+                Subtotal = d.Subtotal,
+                Description = d.Description,
+                Date = d.Date.ToString("dd/MM/yyyy"),
+                Alias = d.Attorney
+            }).ToList();
+            //Generate summary
+            var summary = bill.BillSummaries.Select(d => new
+            {
+                TypeId = Convert.ToInt32(d.TypeId),
+                Date = d.Date.ToString("dd/MM/yyyy"),
+                Description = d.Description,
+                Time = d.Time,
+                Quantity = d.Quantity,
+                Total = d.Total
+            }).ToList();
+            //Generate expenses
+            var expenses = bill.BillExpenses.Select(d => new
+            {
+                Date = d.Date.ToString("dd/MM/yyyy"),
+                Description = d.Description,
+                Cost = d.Cost,
+                Quantity = d.Quantity,
+                Subtotal = d.Subtotal,
+                Month = d.Month,
+                Year = d.Year,
+                SpanishMonth = d.SpanishMonth,
+                EnglishMonth = d.EnglishMonth
+
+            }).ToList();
             string basePath = _hostingEnvironment.ContentRootPath;
-            string fullPath = basePath + @"/Reports/Bill.rdlc";
+            string fullPath = basePath + @"/Reports/Bill2.rdlc";
             FileStream inputStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             ReportDataSourceCollection dataSources = new ReportDataSourceCollection();
+
             dataSources.Add(new ReportDataSource { Name = "BillDataSet", Value = details });
+            dataSources.Add(new ReportDataSource { Name = "DSSummary", Value = summary });
+            dataSources.Add(new ReportDataSource { Name = "DSExpenses", Value = expenses });
 
             Syncfusion.ReportWriter.ReportWriter writer = new Syncfusion.ReportWriter.ReportWriter(inputStream, dataSources);
-
+            //writer.DataSources = dataSources;
             //Setting up the parameters
             List<ReportParameter> parameters = new List<ReportParameter>();
-            //IsEnglish
-            bool isBillingInEnglish = _clientRepo.Clients.Where(c => c.Id == bill.ClientId).Select(c => c.BillingInEnglish).First();
-            ReportParameter isEnglishParam = new ReportParameter();
-            isEnglishParam.Name = "IsEnglish";
-            isEnglishParam.Values = new List<string>() { isBillingInEnglish ? "1" : "0" };
-            //IsBilled
-            ReportParameter isBilledParam = new ReportParameter();
-            isBilledParam.Name = "IsBilled";
-            isBilledParam.Values = new List<string>() { "1" };
+
             //ClientName
             ReportParameter clientNameParam = new ReportParameter();
             clientNameParam.Name = "ClientName";
-            clientNameParam.Values = new List<string>() { "" };
-            //BillingPeriod
-
-            string culture = isBillingInEnglish ? "en" : "es";
-            string billingPeriod = $"{CultureInfo.GetCultureInfoByIetfLanguageTag(culture).DateTimeFormat.GetMonthName(DateTime.UtcNow.AddHours(-6).Month)} - ";
-
-            ReportParameter billingPeriodParam = new ReportParameter();
-            billingPeriodParam.Name = "BillingPeriod";
-            billingPeriodParam.Values = new List<string>() { billingPeriod };
+            clientNameParam.Values = new List<string>() { bill.Client.Name };
             //Subtotal
             ReportParameter subTotalExpenseParam = new ReportParameter();
-            subTotalExpenseParam.Name = "Subtotal";
+            subTotalExpenseParam.Name = "SubtotalFee";
             subTotalExpenseParam.Values = new List<string>() { bill.BillSubtotal.ToString() };
-            //Discount
-            ReportParameter discountParam = new ReportParameter();
-            discountParam.Name = "Discount";
-            discountParam.Values = new List<string>() { "" };
+
             //Taxes
             ReportParameter taxesParam = new ReportParameter();
-            taxesParam.Name = "Taxes";
+            taxesParam.Name = "Tax";
             taxesParam.Values = new List<string>() { bill.Taxes.ToString() };
-            //TotalExpense
+            //TotalAmount
             ReportParameter totalParam = new ReportParameter();
-            totalParam.Name = "Total";
+            totalParam.Name = "TotalAmount";
             totalParam.Values = new List<string>() { bill.Total.ToString() };
-            //TotalExpense
+            //BillDate
             ReportParameter billDateParam = new ReportParameter();
             billDateParam.Name = "BillDate";
-            billDateParam.Values = new List<string>() { bill.BillDate.ToString() };
+            billDateParam.Values = new List<string>() { bill.BillDate.ToString("dd/MM/yyyy") };
+            //TotalExpense
+            ReportParameter expensesParam = new ReportParameter();
+            expensesParam.Name = "TotalExpenses";
+            expensesParam.Values = new List<string>() { bill.TotalExpenses.ToString() };
+            //TotalPayments
+            ReportParameter paymentsParams = new ReportParameter();
+            paymentsParams.Name = "TotalPayments";
+            paymentsParams.Values = new List<string>() { bill.TotalPayments.ToString() };
+            //IsEnglish
+            ReportParameter isEnglishParam = new ReportParameter();
+            isEnglishParam.Name = "IsEnglish";
+            isEnglishParam.Values = new List<string>() { isBillingInEnglish ? "1" : "0" };
+            //IsEnglish
+            ReportParameter numberParam = new ReportParameter();
+            isEnglishParam.Name = "BillNumber";
+            isEnglishParam.Values = new List<string>() { Convert.ToString(bill.Id) };
 
             parameters.Add(isEnglishParam);
-            parameters.Add(isBilledParam);
             parameters.Add(clientNameParam);
-            parameters.Add(billingPeriodParam);
             parameters.Add(subTotalExpenseParam);
-            parameters.Add(discountParam);
             parameters.Add(taxesParam);
             parameters.Add(totalParam);
             parameters.Add(billDateParam);
+            parameters.Add(expensesParam);
+            parameters.Add(paymentsParams);
+            parameters.Add(numberParam);
+
             writer.SetParameters(parameters);
+
             writer.ReportProcessingMode = ProcessingMode.Local;
             MemoryStream memoryStream = new MemoryStream();
             writer.Save(memoryStream, WriterFormat.PDF);
@@ -237,7 +271,8 @@ namespace LexincorpApp.Controllers
         public IActionResult Billing()
         {
             NewPreBillViewModel viewModel = new NewPreBillViewModel();
-            viewModel.Items = _itemRepo.Items.ToList();
+            //viewModel.Items = _itemRepo.Items.ToList();
+            viewModel.Items = new List<Item>();
             return View(viewModel);
         }
         [Authorize(Policy = "CanBill")]
@@ -359,6 +394,8 @@ namespace LexincorpApp.Controllers
         [Authorize(Policy = "CanBill")]
         public IActionResult History(string filter, int pageNumber = 1)
         {
+            ViewBag.Disabled = TempData["disabled"];
+            TempData["filter"] = filter;
             Func<BillHeader, bool> filterFunction = c => String.IsNullOrEmpty(filter) || c.Client.Name.Contains(filter);
             var user = HttpContext.User;
             var id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -367,7 +404,10 @@ namespace LexincorpApp.Controllers
             viewModel.BillHeaders = _billRepo
                 .BillHeaders
                 .Include(b => b.Client)
+                .Include(b => b.Creator)
+                .ThenInclude(u => u.Attorney)
                 .Where(filterFunction)
+                .Where(b => b.Active)
                 .OrderByDescending(b => b.BillDate)
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize);
@@ -378,6 +418,14 @@ namespace LexincorpApp.Controllers
                 TotalItems = _billRepo.BillHeaders.Where(a => a.CreatorId == Convert.ToInt32(id)).Count(filterFunction)
             };
             return View(viewModel);
+        }
+
+        [Authorize(Policy = "CanBill")]
+        public IActionResult Disable(int billId)
+        {
+            _billRepo.DisableBill(billId);
+            TempData["disabled"] = true;
+            return RedirectToAction(nameof(History), new { filter = TempData["filter"] });
         }
     }
 }

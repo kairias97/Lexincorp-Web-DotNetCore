@@ -252,11 +252,12 @@
                 success: function (data) {
                     loadingOverlay.cancel(newActivitySpinHandle);
                     showSuccess(data.message);
+                    $("#btnMark").prop('disabled', true);
                     if (data.success === true) {
                         setTimeout(
                             function () {
                                 location.reload();
-                            }, 2000);
+                            }, 1000);
 
                     }
                     

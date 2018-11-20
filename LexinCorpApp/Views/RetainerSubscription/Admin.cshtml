@@ -77,6 +77,7 @@
                     <td>
                         <a asp-action="Edit" asp-controller="RetainerSubscription" asp-route-id="@subscription.Id"><i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Editar"></i></a>
                         <a data-toggle="modal" href="#" data-id="@subscription.Id" data-clientname="@subscription.Client?.Name" data-subscription="@subscription.Retainer?.SpanishName" data-target="#deleteModal"><i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Eliminar"></i></a>
+                    
                     </td>
                 </tr>
             }

@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\PreBill.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\PreBill.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
 
@@ -32,6 +42,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Bill.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Bill2.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Expenses.rdlc">

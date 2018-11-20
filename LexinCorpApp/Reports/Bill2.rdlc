@@ -948,7 +948,7 @@ PAQUETE</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIf(Fields!TypeId.Value &lt;&gt; 1, CStr(Fields!Quantity.Value) , "")</Value>
+                                  <Value>=IIf(Fields!TypeId.Value = 4, CStr(Fields!Quantity.Value) , "")</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -983,7 +983,7 @@ PAQUETE</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIf(Fields!TypeId.Value = 4 Or Fields!TypeId.Value = 2,  "", CDec(Fields!Time.Value).ToString("n2"))</Value>
+                                  <Value>=IIf(Fields!TypeId.Value = 4,  "", CDec(Fields!Time.Value).ToString("n2"))</Value>
                                   <Style>
                                     <FontFamily>Times New Roman</FontFamily>
                                     <FontSize>8pt</FontSize>

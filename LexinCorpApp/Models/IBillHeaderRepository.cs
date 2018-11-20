@@ -11,5 +11,6 @@ namespace LexincorpApp.Models
         //void Save(BillHeader billHeader, List<Package> packagesToBill, List<BillableRetainer> retainersToBill);
         PreBill GeneratePreBill(PreBillRequest preBillingRequest, out bool IsEnglishBill);
         BillHeader GenerateBill(BillRequest billingRequest, int userId, out bool IsEnglishBill);
+        void DisableBill(int billId);
     }
 }
