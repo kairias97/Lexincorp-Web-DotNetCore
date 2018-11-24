@@ -56,7 +56,8 @@ namespace LexincorpApp.Controllers
         [HttpGet]
         public JsonResult GetDashboardChartInfo()
         {
-            var attorneys = _attorneyRepo.Attorneys.Where(a => a.User.Active).Select(a => new { a.UserId, a.Alias }).ToList();
+            var attorneys = _attorneyRepo.Attorneys
+                .Where(a => a.User.Active && a.User.Username != "webAdmin").Select(a => new { a.UserId, a.Alias }).ToList();
             var namesArray = attorneys.Select(a => a.Alias).ToList();
             var currentDate = DateTime.Now;
             var orderedWorkedHours = new List<decimal>();
