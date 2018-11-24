@@ -387,15 +387,9 @@
     <div id="placeholderSuccess" tabindex="">
 
     </div>
-    <label for="filter">Filtro de búsqueda:</label>
+    <label for="filter">Filtro de búsqueda y por rango de fechas:</label>
     <div class="input-group mb-3">
         <input type="text" class="form-control" id="filter" name="filter" value="@Model.CurrentFilter" placeholder="Nombre del cliente" aria-label="Nombre del cliente" aria-describedby="button-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-info" type="submit" id="button-addon2">Buscar</button>
-        </div>
-    </div>
-    <label>Filtro por rango de fechas:</label>
-    <div class="input-group mb-3">
         <input type="text" id="dateStart" autocomplete="off" class="form-control" name="dateStart" value="@Model.CurrentStartDate" placeholder="Fecha de inicio" aria-label="Fecha de inicio" aria-describedby="button-addon3" />
         <input type="text" id="dateEnd" autocomplete="off" class="form-control" name="dateEnd" value="@Model.CurrentEndDate" placeholder="Fecha de fin" aria-label="Fecha de fin" aria-describedby="button-addon3" />
         <div class="input-group-append">
