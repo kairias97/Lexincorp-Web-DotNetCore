@@ -23,6 +23,7 @@
             <thead>
                 <tr>
                     <th>Descripción</th>
+                    <th>Cliente</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -31,6 +32,7 @@
                 {
                     <tr>
                         <td>@notification.ClosureNotification?.Description</td>
+                        <td>@notification.ClosureNotification?.Package?.Client?.Name</td>
                         <td>
                             <form asp-action="AllowClosure" asp-controller="Notification" method="post" style="display:inline">
                                 <input value="@notification.Id" name="notificationAnswerId" hidden />

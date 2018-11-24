@@ -126,6 +126,8 @@ namespace LexincorpApp.Models
         {
             return context.NotificationAnswers
                 .Include(na => na.ClosureNotification)
+                .ThenInclude(cn => cn.Package)
+                .ThenInclude(p => p.Client)
                 .Where(na => na.TargetUserId == userId && !na.IsAnswered && na.ClosureNotification.Active)
                 .ToList();
 
